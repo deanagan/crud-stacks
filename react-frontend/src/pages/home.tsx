@@ -63,7 +63,7 @@ export const Home = () => {
                 deleter: (<ActionLink color='red' message='delete' deleteFn={() => deleteEntry(repair.id as number)}/>)
             }
           ))}
-        columnLabels={['Name', 'Detail', 'Completed', 'Update', 'Remove Request']}
+        columnLabels={['Name', 'Detail', 'Completed', 'Update', 'Remove Task']}
         rowFields={['name', 'detail', 'fixed', 'switch', 'deleter']}
       />
 
