@@ -18,7 +18,7 @@ const Wrapper = styled(ViewBox)`
 
 export const Home = () => {
   const dispatch = useDispatch();
-  const { repairs } = useSelector((state: State) => state.repair);
+  const { tasks } = useSelector((state: State) => state.task);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [idForDeletion, setIdForDeletion] = useState<number | null>(null);
@@ -26,7 +26,7 @@ export const Home = () => {
   const [newName, setNewName] = useState("");
   const [newDetail, setNewDetail] = useState("");
 
-  const { addRepair, deleteRepairEntry } = bindActionCreators(actionCreators, dispatch);
+  const { addTask, deleteTask } = bindActionCreators(actionCreators, dispatch);
 
 
   const deleteEntry = (id: number) => {
@@ -47,20 +47,20 @@ export const Home = () => {
   }
 
   useEffect(() => {
-    dispatch(actionCreators.getRepairEntries());
+    dispatch(actionCreators.getTasks());
   }, [dispatch]);
 
   return (
     <Wrapper w={600} h={600}>
       <Table
-        rowData={repairs.map((repair) => (
+        rowData={tasks.map((task) => (
             {
-                id: repair.id as number,
-                name: repair.name,
-                detail: repair.detail,
-                fixed: repair.fixed ? "True" : "False",
-                switch: (<ToggleSwitch switchId={repair.id as number} fixed={repair.fixed}/>),
-                deleter: (<ActionLink color='red' message='delete' deleteFn={() => deleteEntry(repair.id as number)}/>)
+                id: task.id as number,
+                name: task.name,
+                detail: task.detail,
+                fixed: task.fixed ? "True" : "False",
+                switch: (<ToggleSwitch switchId={task.id as number} fixed={task.fixed}/>),
+                deleter: (<ActionLink color='red' message='delete' deleteFn={() => deleteEntry(task.id as number)}/>)
             }
           ))}
         columnLabels={['Name', 'Detail', 'Completed', 'Update', 'Remove Task']}
@@ -76,7 +76,7 @@ export const Home = () => {
         }}
         onOk={() => {
           setShowAddModal(false);
-          addRepair({name: newName, detail: newDetail, fixed: false});
+          addTask({name: newName, detail: newDetail, fixed: false});
         }}
         show={showAddModal}
         title="Add New Request"
@@ -88,7 +88,7 @@ export const Home = () => {
        />
        <Modal
         onCancel={() => cancelDeletion()}
-        onOk={() => idForDeletion !== null && deleteRepairEntry(idForDeletion)}
+        onOk={() => idForDeletion !== null && deleteTask(idForDeletion)}
         show={showDeleteModal}
         title="Delete Request"
         okText="Ok"

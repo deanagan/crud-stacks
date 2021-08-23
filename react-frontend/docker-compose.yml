@@ -1,8 +1,8 @@
 version: '3.7'
 
 services:
-  repair-me:
-    container_name: repair-me
+  react-frontend:
+    container_name: react-frontend
     build:
       context: .
       dockerfile: Dockerfile

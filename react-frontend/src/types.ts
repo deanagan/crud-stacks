@@ -1,14 +1,14 @@
 
-export interface Repair {
+export interface Task {
     id?: number;
     name: string;
     detail: string;
     fixed: boolean;
 }
 
-export interface RepairState {
+export interface TaskState {
     readonly loading: boolean;
-    readonly repairs: Repair[];
+    readonly tasks: Task[];
     readonly errors?: string;
 }
 

@@ -1,8 +1,8 @@
 import { combineReducers } from "redux";
-import repairReducer from "./repairReducer";
+import taskReducer from "./taskReducer";
 
 const reducers = combineReducers({
-    repair: repairReducer
+    task: taskReducer
 });
 
 export default reducers;

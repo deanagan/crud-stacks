@@ -62,11 +62,11 @@ interface ToggleSwitchProp {
 export const ToggleSwitch: FC<ToggleSwitchProp> = ({ switchId, fixed }) => {
   const dispatch = useDispatch();
 
-  const { updateRepairState } = bindActionCreators(actionCreators, dispatch);
+  const { updateTaskState } = bindActionCreators(actionCreators, dispatch);
   const [switchState, setSwitchState] = useState(fixed);
 
   const onSwitchChanged = (fixed: boolean) => {
-    updateRepairState(switchId, fixed);
+    updateTaskState(switchId, fixed);
     setSwitchState(fixed);
   };
 

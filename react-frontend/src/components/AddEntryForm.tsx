@@ -51,7 +51,7 @@ export const AddEntryForm: FC<AddEntryFormProp> = ({
       <FormGroup>
         <Label htmlFor="name">Name</Label>
         <Input
-          placeholder="Enter name of repair request"
+          placeholder="Enter name of task"
           value={name}
           id="name"
           onChange={(e: ChangeEvent<HTMLInputElement>) =>
