@@ -1,0 +1,22 @@
+version: '3.4'
+
+services:
+  planningboard:
+    image: docker.pkg.github.com/deanagan/planning-board-backend/planningboard:latest
+    ports:
+      - "8090:80"
+    depends_on:
+      - db
+  db:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    user: root
+    environment:
+      SA_PASSWORD: "1Secure*Password1"
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: "Express"
+    volumes:
+      - ./sqlvolume/data:/var/opt/mssql/data
+      - ./sqlvolume/log:/var/opt/mssql/log
+      - ./sqlvolume/secrets:/var/opt/mssql/secrets
+    ports:
+    - "14331:1433"
