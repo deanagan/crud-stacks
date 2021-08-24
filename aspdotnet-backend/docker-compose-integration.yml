@@ -16,7 +16,7 @@ services:
 #       - 5000:5000
 #     environment:
 #       - ASPNETCORE_ENVIRONMENT=Integration
-#     #entrypoint: dotnet /app/PlanningBoard.Api.dll
+#     #entrypoint: dotnet /app/TodoBackend.Api.dll
 #     depends_on:
 #       - db
   db:

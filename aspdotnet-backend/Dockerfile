@@ -3,9 +3,9 @@ FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build-env
 WORKDIR /app
 
 COPY *.sln .
-COPY PlanningBoard.Api/*.csproj ./PlanningBoard.Api/
-COPY PlanningBoard.Api.UnitTests/*.csproj ./PlanningBoard.Api.UnitTests/
-COPY PlanningBoard.Api.IntegrationTests/*.csproj ./PlanningBoard.Api.IntegrationTests/
+COPY TodoBackend.Api/*.csproj ./TodoBackend.Api/
+COPY TodoBackend.Api.UnitTests/*.csproj ./TodoBackend.Api.UnitTests/
+COPY TodoBackend.Api.IntegrationTests/*.csproj ./TodoBackend.Api.IntegrationTests/
 
 RUN dotnet restore
 
@@ -20,4 +20,4 @@ WORKDIR /app
 COPY --from=build-env app/out ./
 #RUN dotnet test -l:"console;verbosity=detailed"
 
-ENTRYPOINT ["dotnet", "PlanningBoard.Api.dll"]
+ENTRYPOINT ["dotnet", "TodoBackend.Api.dll"]

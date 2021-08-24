@@ -1,8 +1,8 @@
 version: '3.4'
 
 services:
-  planningboard:
-    image: planningboard
+  todo:
+    image: todo
     build:
       context: .
       dockerfile: Dockerfile
@@ -12,7 +12,7 @@ services:
       - db
       - integration-test
   integration-test:
-    image: planningboard
+    image: todo
     build:
       context: .
       dockerfile: Dockerfile

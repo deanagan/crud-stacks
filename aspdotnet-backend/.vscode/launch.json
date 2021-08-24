@@ -10,9 +10,9 @@
              "request": "launch",
              "preLaunchTask": "build",
              // If you have changed target frameworks, make sure to update the program path.
-             "program": "${workspaceFolder}/PlanningBoard.Api/bin/Debug/net5.0/PlanningBoard.Api.dll",
+             "program": "${workspaceFolder}/TodoBackend.Api/bin/Debug/net5.0/TodoBackend.Api.dll",
              "args": [],
-             "cwd": "${workspaceFolder}/PlanningBoard.Api",
+             "cwd": "${workspaceFolder}/TodoBackend.Api",
              "stopAtEntry": false,
              // Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser
              "serverReadyAction": {
@@ -23,7 +23,7 @@
                  "ASPNETCORE_ENVIRONMENT": "Development"
              },
              "sourceFileMap": {
-                 "/Views": "${workspaceFolder}/PlanningBoard.Api/Views"
+                 "/Views": "${workspaceFolder}/TodoBackend.Api/Views"
              }
          },
          {

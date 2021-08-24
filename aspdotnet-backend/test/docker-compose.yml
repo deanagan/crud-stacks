@@ -1,8 +1,8 @@
 version: '3.4'
 
 services:
-  planningboard:
-    image: docker.pkg.github.com/deanagan/planning-board-backend/planningboard:latest
+  todo:
+    image: docker.pkg.github.com/deanagan/aspdotnet-backend/todo:latest
     ports:
       - "8090:80"
     depends_on:

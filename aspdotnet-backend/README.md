@@ -1,13 +1,13 @@
 [![.NET](https://github.com/deanagan/planning-board-backend/actions/workflows/dotnet.yml/badge.svg)](https://github.com/deanagan/planning-board-backend/actions/workflows/dotnet.yml)
 [![Docker](https://github.com/deanagan/planning-board-backend/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/deanagan/planning-board-backend/actions/workflows/docker-publish.yml)
 # Docker image created with:
-docker build --pull -t planningboard .
+docker build --pull -t todo .
 
 # Docker run
-docker run -d -p 8090:80 --name planningboard planningboard
+docker run -d -p 8090:80 --name todo todo
 
 # Docker stop
-docker stop planningboard
+docker stop todo
 
 # Docker check container in use
 docker ps -a
@@ -16,11 +16,11 @@ docker ps -a
 docker rm [CONTAINER ID]
 
 # Docker commit
-docker commit -m "Add comment here" -a "[full name]" planningboard [docker hub username]/planningboard:latest
+docker commit -m "Add comment here" -a "[full name]" todo [docker hub username]/todo:latest
 
 # Docker login and push committed image
 docker login
-docker push [docker hub username]/planningboard:latest
+docker push [docker hub username]/todo:latest
 
 # To run docker compose
 `docker-compose up --build`
@@ -40,7 +40,7 @@ After updating the environment variable path, you can use `refreshenv`, which co
 ## Dropping Database
 
 To dry-run which database will be dropped:
-  `dotnet ef database drop --dry-run --project PlanningBoard.Api`
+  `dotnet ef database drop --dry-run --project TodoBackend.Api`
 
 
 
@@ -48,7 +48,7 @@ To dry-run which database will be dropped:
     `dotnet ef migrations add [migration name] [options]`
     Options can be -o <PATH> and -n <NAMESPACE>
 
-    For this project's initial migration, I did(note this was done from PlanningBoard.Api folder):
+    For this project's initial migration, I did(note this was done from TodoBackend.Api folder):
     ```
     dotnet ef migrations add Initial -o ./Data/Migrations -n Data.Migrations
     ```
@@ -71,8 +71,8 @@ To run tests with verbosity enabled:
 version: '3.4'
 
 services:
-  planningboard:
-    image: docker.pkg.github.com/deanagan/planning-board-backend/planningboard:latest
+  todo:
+    image: docker.pkg.github.com/deanagan/planning-board-backend/todo:latest
     ports:
       - "8090:80"
     depends_on:
