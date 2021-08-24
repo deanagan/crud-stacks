@@ -56,18 +56,18 @@ const ToggleSwitchWrapper = styled.input.attrs({ type: 'checkbox' })`
 
 interface ToggleSwitchProp {
   switchId: number;
-  fixed: boolean;
+  isDone: boolean;
 }
 
-export const ToggleSwitch: FC<ToggleSwitchProp> = ({ switchId, fixed }) => {
+export const ToggleSwitch: FC<ToggleSwitchProp> = ({ switchId, isDone }) => {
   const dispatch = useDispatch();
 
-  const { updateTaskState } = bindActionCreators(actionCreators, dispatch);
-  const [switchState, setSwitchState] = useState(fixed);
+  const { updateTodoState } = bindActionCreators(actionCreators, dispatch);
+  const [switchState, setSwitchState] = useState(isDone);
 
-  const onSwitchChanged = (fixed: boolean) => {
-    updateTaskState(switchId, fixed);
-    setSwitchState(fixed);
+  const onSwitchChanged = (isDone: boolean) => {
+    updateTodoState(switchId, isDone);
+    setSwitchState(isDone);
   };
 
   return (

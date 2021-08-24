@@ -18,7 +18,7 @@ const Wrapper = styled(ViewBox)`
 
 export const Home = () => {
   const dispatch = useDispatch();
-  const { tasks } = useSelector((state: State) => state.task);
+  const { todos } = useSelector((state: State) => state.todo);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [idForDeletion, setIdForDeletion] = useState<number | null>(null);
@@ -26,7 +26,7 @@ export const Home = () => {
   const [newName, setNewName] = useState("");
   const [newDetail, setNewDetail] = useState("");
 
-  const { addTask, deleteTask } = bindActionCreators(actionCreators, dispatch);
+  const { addTodo, deleteTodo } = bindActionCreators(actionCreators, dispatch);
 
 
   const deleteEntry = (id: number) => {
@@ -47,24 +47,24 @@ export const Home = () => {
   }
 
   useEffect(() => {
-    dispatch(actionCreators.getTasks());
+    dispatch(actionCreators.getTodos());
   }, [dispatch]);
 
   return (
     <Wrapper w={600} h={600}>
       <Table
-        rowData={tasks.map((task) => (
+        rowData={todos.map((todo) => (
             {
-                id: task.id as number,
-                name: task.name,
-                detail: task.detail,
-                fixed: task.fixed ? "True" : "False",
-                switch: (<ToggleSwitch switchId={task.id as number} fixed={task.fixed}/>),
-                deleter: (<ActionLink color='red' message='delete' deleteFn={() => deleteEntry(task.id as number)}/>)
+                id: todo.id as number,
+                name: todo.name,
+                detail: todo.detail,
+                isDone: todo.isDone ? "True" : "False",
+                switch: (<ToggleSwitch switchId={todo.id as number} isDone={todo.isDone}/>),
+                deleter: (<ActionLink color='red' message='delete' deleteFn={() => deleteEntry(todo.id as number)}/>)
             }
           ))}
-        columnLabels={['Name', 'Detail', 'Completed', 'Update', 'Remove Task']}
-        rowFields={['name', 'detail', 'fixed', 'switch', 'deleter']}
+        columnLabels={['Name', 'Detail', 'Completed', 'Update', 'Remove Todo']}
+        rowFields={['name', 'detail', 'isDone', 'switch', 'deleter']}
       />
 
       <Button onClick={() => setShowAddModal(true)}>Add Request</Button>
@@ -76,7 +76,7 @@ export const Home = () => {
         }}
         onOk={() => {
           setShowAddModal(false);
-          addTask({name: newName, detail: newDetail, fixed: false});
+          addTodo({name: newName, detail: newDetail, isDone: false});
         }}
         show={showAddModal}
         title="Add New Request"
@@ -88,7 +88,7 @@ export const Home = () => {
        />
        <Modal
         onCancel={() => cancelDeletion()}
-        onOk={() => idForDeletion !== null && deleteTask(idForDeletion)}
+        onOk={() => idForDeletion !== null && deleteTodo(idForDeletion)}
         show={showDeleteModal}
         title="Delete Request"
         okText="Ok"

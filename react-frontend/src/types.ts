@@ -1,14 +1,14 @@
 
-export interface Task {
+export interface Todo {
     id?: number;
     name: string;
     detail: string;
-    fixed: boolean;
+    isDone: boolean;
 }
 
-export interface TaskState {
+export interface TodoState {
     readonly loading: boolean;
-    readonly tasks: Task[];
+    readonly todos: Todo[];
     readonly errors?: string;
 }
 
