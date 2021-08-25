@@ -19,12 +19,7 @@ namespace TodoBackend.Api.Data.Access
             _dbSet = context.Set<T>();
         }
 
-        public IQueryable<T> GetUsingRawSql(string query, params object[] parameters)
-        {
-            return _dbSet.FromSqlRaw(query, parameters);
-        }
-
-        public IQueryable<T> GetAll()
+        public IEnumerable<T> GetAll()
         {
             return _dbSet;
         }

@@ -6,11 +6,11 @@ namespace TodoBackend.Api.Interfaces
 {
     public interface IDataRepository<T> where T : class
     {
-        IQueryable<T> GetAll();
+        IEnumerable<T> GetAll();
         Task<IEnumerable<T>> GetAllAsync();
         T Get(params object[] parameters);
         Task<T> GetAsync(params object[] parameters);
-        IQueryable<T> GetUsingRawSql(string query, params object[] parameters);
+
         void Add(T parameter);
         void AddRange(IEnumerable<T> parameters);
         Task AddAsync(T parameter);
