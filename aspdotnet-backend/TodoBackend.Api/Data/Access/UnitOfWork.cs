@@ -1,8 +1,9 @@
-using TodoBackend.Api.Data.Models;
 using TodoBackend.Api.Data.Access;
+using TodoBackend.Api.Data.Contexts;
+using TodoBackend.Api.Data.Models;
 using TodoBackend.Api.Interfaces;
 
-namespace TodoBackend.Api.Data.Contexts
+namespace TodoBackend.Api.Data.Access
 {
     public class UnitOfWork : IUnitOfWork
     {
