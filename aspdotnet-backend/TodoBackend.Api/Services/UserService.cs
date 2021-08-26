@@ -2,35 +2,29 @@ using System.Collections.Generic;
 using System.Linq;
 using TodoBackend.Api.Data.Models;
 using TodoBackend.Api.Interfaces;
-using System.Text;
+using TodoBackend.Api.Data.Dtos;
 
 using System.Threading.Tasks;
+using AutoMapper;
 
 namespace TodoBackend.Api.Services
 {
     public class UserService : IUserService
     {
         private readonly IUnitOfWork _unitOfWork;
-        public UserService(IUnitOfWork unitOfWork)
+        private readonly IDataRepository<UserDto> _userRepository;
+        private readonly IMapper _mapper;
+        public UserService(IUnitOfWork unitOfWork, IDataRepository<UserDto> userRepository, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
+            _userRepository = userRepository;
+            _mapper = mapper;
         }
 
         public async Task<IEnumerable<UserView>> GetUsersAsync()
         {
-            var users = from user in await _unitOfWork.Users.GetAllAsync()
-                        join role in await _unitOfWork.Roles.GetAllAsync()
-                        on user.RoleId equals role.Id
-                        select new UserView
-                        {
-                            Id = user.Id,
-                            Name = user.Name,
-                            Email = user.Email,
-                            Hash = user.Hash,
-                            Role = role
-                        };
-
-            return users;
+            var userDtos = await _userRepository.GetAllAsync();
+            return _mapper.Map<IEnumerable<UserView>>(userDtos);
         }
 
         public IEnumerable<UserView> GetUsers()

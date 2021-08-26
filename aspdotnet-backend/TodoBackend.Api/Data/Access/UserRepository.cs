@@ -7,13 +7,11 @@ using Microsoft.Data.SqlClient;
 using Dapper;
 
 using TodoBackend.Api.Interfaces;
-using TodoBackend.Api.Data.Models;
-
-
+using TodoBackend.Api.Data.Dtos;
 
 namespace TodoBackend.Api.Data.Access
 {
-    public class UserRepository : IDataRepository<User>
+    public class UserRepository : IDataRepository<UserDto>
     {
         private readonly string _connectionString;
         public UserRepository(IConfiguration configuration)
@@ -21,58 +19,68 @@ namespace TodoBackend.Api.Data.Access
             _connectionString = configuration["ConnectionStrings:DefaultConnection"];
         }
 
-        public IEnumerable<User> GetAll()
+        private string GetQueryString()
         {
-            const string sql = @"
-                    select u.Name,
+            return @"
+                    select u.Id,
+                           u.Name,
                            u.Email,
-                           r.Name as Role,
+                           u.Hash,
+                           r.Id as RoleId,
+                           r.Name as RoleName,
                            r.Description
                     from dbo.Users as u with (nolock)
                         inner join dbo.Roles as r with (nolock) on u.RoleId = r.Id";
+        }
 
+        public async Task<IEnumerable<UserDto>> GetAllAsync()
+        {
             using (var conn = new SqlConnection(_connectionString))
             {
-                return conn.Query<User>(sql);
+                return await conn.QueryAsync<UserDto>(GetQueryString());
             }
         }
 
-        public void Add(User parameter)
+        public IEnumerable<UserDto> GetAll()
+        {
+            using (var conn = new SqlConnection(_connectionString))
+            {
+                return conn.Query<UserDto>(GetQueryString());
+            }
+        }
+
+        public void Add(UserDto parameter)
         {
             throw new System.NotImplementedException();
         }
 
-        public Task AddAsync(User parameter)
+        public Task AddAsync(UserDto parameter)
         {
             throw new System.NotImplementedException();
         }
 
-        public void AddRange(IEnumerable<User> parameters)
+        public void AddRange(IEnumerable<UserDto> parameters)
         {
             throw new System.NotImplementedException();
         }
 
-        public void Delete(User parameter)
+        public void Delete(UserDto parameter)
         {
             throw new System.NotImplementedException();
         }
 
-        public User Get(params object[] parameters)
+        public UserDto Get(params object[] parameters)
         {
             throw new System.NotImplementedException();
         }
 
-        public Task<IEnumerable<User>> GetAllAsync()
+
+        public Task<UserDto> GetAsync(params object[] parameters)
         {
             throw new System.NotImplementedException();
         }
 
-        public Task<User> GetAsync(params object[] parameters)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void Update(User parameter)
+        public void Update(UserDto parameter)
         {
             throw new System.NotImplementedException();
         }

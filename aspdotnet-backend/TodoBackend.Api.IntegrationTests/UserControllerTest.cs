@@ -91,33 +91,33 @@ namespace TodoBackend.Api.IntegrationTests
             response.EnsureSuccessStatusCode();
         }
 
-        [Fact]
-        public async Task ShouldReturnExpectedMediaType_WhenGettingAllUsers()
-        {
-            var response = await _client.GetAsync("");
+        // [Fact]
+        // public async Task ShouldReturnExpectedMediaType_WhenGettingAllUsers()
+        // {
+        //     var response = await _client.GetAsync("");
 
-            response.Content.Headers.ContentType.MediaType.Should().Be("application/json");
-        }
+        //     response.Content.Headers.ContentType.MediaType.Should().Be("application/json");
+        // }
 
-        [Fact]
-        public async Task ShouldReturnExpectedHeader_WhenGettingAllUsers()
-        {
-            var response = await _client.GetAsync("users");
+        // [Fact]
+        // public async Task ShouldReturnExpectedHeader_WhenGettingAllUsers()
+        // {
+        //     var response = await _client.GetAsync("users");
 
-            using (new AssertionScope())
-            {
-                response.Content.Should().NotBeNull();
-                response.Content.Headers.ContentLength.Should().BeGreaterThan(0);
-            }
-        }
+        //     using (new AssertionScope())
+        //     {
+        //         response.Content.Should().NotBeNull();
+        //         response.Content.Headers.ContentLength.Should().BeGreaterThan(0);
+        //     }
+        // }
 
-        [Fact]
-        public async Task ShouldReturnExpectedContent_WhenGettingAllUsers()
-        {
-            var response = await _client.GetStringAsync("users");
+        // [Fact]
+        // public async Task ShouldReturnExpectedContent_WhenGettingAllUsers()
+        // {
+        //     var response = await _client.GetStringAsync("users");
 
-            response.Should().NotBeNull();
-        }
+        //     response.Should().NotBeNull();
+        // }
 
         [Fact]
         public async void ReturnOk_WhenDoingGetUser()

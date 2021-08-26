@@ -20,6 +20,8 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 
 using TodoBackend.Api.Services;
 using TodoBackend.Api.Interfaces;
+using TodoBackend.Api.Data.Dtos;
+using TodoBackend.Api.Bindings;
 
 namespace TodoBackend.Api
 {
@@ -39,7 +41,9 @@ namespace TodoBackend.Api
             services.AddHealthChecks();
             ConfigureDBContext(services);
             services.AddScoped(typeof(IDataRepository<>), typeof(DataRepository<>));
+            services.AddScoped(typeof(IDataRepository<UserDto>), typeof(UserRepository));
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Todo", Version = "v1" });

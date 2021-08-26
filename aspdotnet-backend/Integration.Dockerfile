@@ -6,4 +6,4 @@ WORKDIR /app/TodoBackend.Api
 RUN dotnet restore
 
 
-# ENTRYPOINT ["dotnet", "TodoBackend.Api.dll"]
+ENTRYPOINT ["dotnet", "TodoBackend.Api.dll"]
