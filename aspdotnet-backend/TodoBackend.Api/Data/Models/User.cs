@@ -1,22 +1,15 @@
-using System.ComponentModel.DataAnnotations;
+using System;
 
 namespace TodoBackend.Api.Data.Models
 {
     public class User
     {
-        public int Id { get; set; }
-
+        public int UserId { get; set; }
+        public Guid UserUniqueId { get; set; }
         public string Name { get; set; }
-
-        public int RoleId { get; set; }
-
-        public Role Role { get; set;}
-
-        // [RegularExpression("^[a-zA-Z0-9_\\.-]+@([a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$", ErrorMessage = "E-mail is not valid")]
-        public string Email { get; set; }
-
-//        [Required]
         public string Hash { get; set; }
-
+        public string Email { get; set; }
+        public DateTime Create { get; set; }
+        public Role Role { get; set;}
     }
 }
