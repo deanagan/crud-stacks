@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TodoBackend.Api", "TodoBack
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TodoBackend.Api.UnitTests", "TodoBackend.Api.UnitTests\TodoBackend.Api.UnitTests.csproj", "{F05152AA-EC9B-4699-A1A8-DBAB85E837C0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TodoBackend.Api.IntegrationTests", "TodoBackend.Api.IntegrationTests\TodoBackend.Api.IntegrationTests.csproj", "{9D775CFF-E0CB-4CFF-A8D4-90608CFB9858}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

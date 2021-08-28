@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using TodoBackend.Api.Data.Models;
@@ -6,13 +7,11 @@ namespace TodoBackend.Api.Interfaces
 {
     public interface IUserService
     {
-        Task<IEnumerable<UserView>> GetUsersAsync();
-        IEnumerable<UserView> GetUsers();
-        Task<UserView> GetUser(int id);
-        void CreateUser(User user);
-        bool UpdateUser(User user);
-
-        bool DeleteUser(int id);
+        Task<IEnumerable<UserView>> GetAllUsers();
+        Task<UserView> GetUserByGuid(Guid guid);
+        void CreateUser(UserView user);
+        bool UpdateUser(UserView user);
+        bool DeleteUser(Guid guid);
     }
 
 }

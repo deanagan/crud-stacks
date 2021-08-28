@@ -28,7 +28,7 @@ namespace TodoBackend.Api.Controllers
         {
             try
             {
-                var result = await _userService.GetUsersAsync();
+                var result = await _userService.GetAllUsers();
                 if (result == null)
                 {
                     return NoContent();
@@ -43,12 +43,12 @@ namespace TodoBackend.Api.Controllers
 
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetUser(int id)
+        [HttpGet("{guid}")]
+        public async Task<IActionResult> GetUser(Guid guid)
         {
             try
             {
-                var result = await _userService.GetUser(id);
+                var result = await _userService.GetUserByGuid(guid);
                 if (result == null)
                 {
                     return NoContent();
@@ -62,7 +62,7 @@ namespace TodoBackend.Api.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateUser(User user)
+        public IActionResult CreateUser(UserView user)
         {
             if (user != null)
             {
@@ -80,21 +80,21 @@ namespace TodoBackend.Api.Controllers
             return BadRequest("user creation failed.");
         }
 
-        [HttpPut("{id}")]
-        public IActionResult UpdateUser(int id, User user)
+        [HttpPut("{guid}")]
+        public IActionResult UpdateUser(Guid guid, UserView user)
         {
             if (user != null)
             {
                 try
                 {
-                    user.Id = id;
+                    //user.Id = guid;
                     if (_userService.UpdateUser(user))
                     {
                         return NoContent();
                     }
                     else
                     {
-                        return BadRequest($"User with {id} not found.");
+                        return BadRequest($"User with {guid} not found.");
                     }
                 }
                 catch (Exception ex)
@@ -106,12 +106,12 @@ namespace TodoBackend.Api.Controllers
             return BadRequest("User is null");
         }
 
-        [HttpDelete("{id}")]
-        public IActionResult DeleteUser(int id)
+        [HttpDelete("{guid}")]
+        public IActionResult DeleteUser(Guid guid)
         {
             try
             {
-                if (_userService.DeleteUser(id))
+                if (_userService.DeleteUser(guid))
                 {
                     return NoContent();
                 }
