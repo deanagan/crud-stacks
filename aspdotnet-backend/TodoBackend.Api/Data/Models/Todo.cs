@@ -8,7 +8,7 @@ namespace TodoBackend.Api.Data.Models
         public string Name { get; set; }
         public int Detail { get; set; }
         public bool IsDone { get; set; }
-        public int Assignee { get; set; }
+        public int UserId { get; set; }
         public DateTime Created { get; set; }
     }
 }

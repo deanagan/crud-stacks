@@ -11,8 +11,8 @@ namespace TodoBackend.Api.Bindings
             CreateMap<UserDto, UserView>()
                 .ForMember(dest => dest.Role, opt => opt.MapFrom(src => new Role
                     {
-                        Id = src.RoleId,
-                        Name = src.RoleName,
+                        RoleId = src.RoleId,
+                        RoleKind = src.RoleName,
                         Description = src.Description
                     }));
 

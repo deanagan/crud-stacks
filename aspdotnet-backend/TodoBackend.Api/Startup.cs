@@ -48,9 +48,10 @@ namespace TodoBackend.Api
 
             EnsureDatabase.For.SqlDatabase(connectionString);
             var upgrader = DeployChanges.To
-                .SqlDatabase(connectionString, null)
-                .WithScriptsEmbeddedInAssembly(System.Reflection.Assembly.GetExecutingAssembly())
-                .WithTransaction()
+                .SqlDatabase(connectionString)
+                .WithScriptsFromFileSystem(@"./SqlScripts")
+                .WithTransactionPerScript()
+                .LogToConsole()
                 .Build();
 
             if (upgrader.IsUpgradeRequired())
