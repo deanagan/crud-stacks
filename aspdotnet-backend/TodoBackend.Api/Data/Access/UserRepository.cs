@@ -20,16 +20,21 @@ namespace TodoBackend.Api.Data.Access
             _connectionString = configuration["ConnectionStrings:DefaultConnection"];
         }
 
-        public async Task<IEnumerable<UserDto>> GetAllAsync()
+        public async Task<IEnumerable<UserDto>> GetAllUsers()
         {
             var sql = @"
                     select u.Id,
-                           u.Name,
+                           u.UniqueId,
+                           u.FirstName,
+                           u.LastName,
                            u.Email,
                            u.Hash,
+                           u.Created,
                            r.Id as RoleId,
-                           r.Name as RoleName,
-                           r.Description
+                           r.UniqueId as RoleUniqueId,
+                           r.Kind as RoleKind,
+                           r.Description as RoleDescription,
+                           r.Created as RoleCreated
                     from dbo.Users as u with (nolock)
                         inner join dbo.Roles as r with (nolock) on u.RoleId = r.Id";
 
@@ -37,12 +42,6 @@ namespace TodoBackend.Api.Data.Access
             {
                 return await conn.QueryAsync<UserDto>(sql);
             }
-        }
-
-
-        Task<IEnumerable<UserDto>> IUserRepository.GetAllUsers()
-        {
-            throw new NotImplementedException();
         }
 
         Task<UserDto> IUserRepository.GetUserByGuid(Guid user)

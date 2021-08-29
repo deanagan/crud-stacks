@@ -68,7 +68,7 @@ namespace TodoBackend.Api.Controllers
                 try
                 {
                     _todoService.CreateTodo(todo);
-                    return CreatedAtAction(nameof(GetTodos), new { Id = todo.TodoId }, todo);
+                    return CreatedAtAction(nameof(GetTodos), new { Id = todo.Id }, todo);
                 }
                 catch (Exception ex)
                 {
@@ -86,7 +86,7 @@ namespace TodoBackend.Api.Controllers
             {
                 try
                 {
-                    todo.TodoId = id;
+                    todo.Id = id;
                     if (_todoService.UpdateTodo(todo))
                     {
                         return NoContent();
