@@ -20,9 +20,11 @@ namespace TodoBackend.Api.Services
             _mapper = mapper;
         }
 
-        void IUserService.CreateUser(UserView user)
+        public UserView CreateUser(User user)
         {
-            throw new NotImplementedException();
+            var userDto = _mapper.Map<UserDto>(user);
+            _userRepository.AddUser(userDto);
+            return _mapper.Map<UserView>(userDto);
         }
 
         bool IUserService.DeleteUser(Guid guid)
@@ -36,9 +38,10 @@ namespace TodoBackend.Api.Services
             return _mapper.Map<IEnumerable<UserView>>(userDtos);
         }
 
-        Task<UserView> IUserService.GetUserByGuid(Guid guid)
+        public async Task<UserView> GetUserByGuid(Guid guid)
         {
-            throw new NotImplementedException();
+            var userDtos = await _userRepository.GetUserByGuid(guid);
+            return _mapper.Map<UserView>(userDtos);
         }
 
         bool IUserService.UpdateUser(UserView user)

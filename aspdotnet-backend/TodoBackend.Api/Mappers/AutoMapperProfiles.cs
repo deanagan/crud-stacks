@@ -17,6 +17,7 @@ namespace TodoBackend.Api.Bindings
                         Created = src.RoleCreated,
                         Description = src.RoleDescription
                     }));
+            CreateMap<User, UserDto>();
 
         }
     }

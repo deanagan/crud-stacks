@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 using Microsoft.Extensions.Logging;
@@ -51,14 +52,14 @@ namespace TodoBackend.Api.Tests
             A.CallTo(() => _userService.GetAllUsers()).Returns(new List<UserView>{ fakeUser1, fakeUser2 });
 
             // Act
-            // var result = await controller.GetUser(fakeUser1.Id) as ObjectResult;
+            var result = await controller.GetUser(fakeUser1.UniqueId) as ObjectResult;
 
-            // // Assert
-            // using (new AssertionScope())
-            // {
-            //     result.StatusCode.Should().Be(StatusCodes.Status200OK);
-            //     result.Value.Should().Equals(fakeUser1);
-            // }
+            // Assert
+            using (new AssertionScope())
+            {
+                result.StatusCode.Should().Be(StatusCodes.Status200OK);
+                result.Value.Should().Equals(fakeUser1);
+            }
         }
 
         [Fact]
@@ -66,7 +67,7 @@ namespace TodoBackend.Api.Tests
         {
             // Arrange
             var controller = new UsersController(_fakeLogger, _userService);
-            var fakeUser = A.Fake<UserView>();
+            var fakeUser = A.Fake<User>();
 
             // Act
             var result = controller.CreateUser(fakeUser) as ObjectResult;

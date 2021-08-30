@@ -8,7 +8,7 @@ namespace TodoBackend.Api.Interfaces
     public interface IUserRepository
     {
         Task<IEnumerable<UserDto>> GetAllUsers();
-        Task<UserDto> GetUserByGuid(Guid user);
+        Task<UserDto> GetUserByGuid(Guid userGuid);
         void AddUser(UserDto parameter);
         void AddUsers(IEnumerable<UserDto> userGuids);
         void UpdateUser(Guid userGuid);

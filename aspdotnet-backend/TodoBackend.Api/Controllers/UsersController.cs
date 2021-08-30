@@ -62,14 +62,14 @@ namespace TodoBackend.Api.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateUser(UserView user)
+        public IActionResult CreateUser(User user)
         {
             if (user != null)
             {
                 try
                 {
-                    _userService.CreateUser(user);
-                    return CreatedAtAction(nameof(GetUsers), new { Id = user.Id }, user);
+                    var newUser = _userService.CreateUser(user);
+                    return CreatedAtAction(nameof(GetUsers), new { UniqueId = newUser.UniqueId }, newUser);
                 }
                 catch (Exception ex)
                 {

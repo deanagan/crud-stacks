@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace TodoBackend.Api.Data.Models
 {
@@ -6,10 +7,14 @@ namespace TodoBackend.Api.Data.Models
     {
         public int Id { get; set; }
         public Guid UniqueId { get; set; }
-        public string Name { get; set; }
-        public string Hash { get; set; }
+        [Required]
+        public string FirstName { get; set; }
+        [Required]
+        public string LastName { get; set; }
+        [Required]
         public string Email { get; set; }
+        public string Hash { get; set; }
         public DateTime Created { get; set; }
-        public Role Role { get; set;}
+        public int RoleId { get; set; }
     }
 }
