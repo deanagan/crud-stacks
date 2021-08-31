@@ -15,6 +15,7 @@ namespace TodoBackend.Api.Data.Models
         public string Email { get; set; }
         public string Hash { get; set; }
         public DateTime Created { get; set; }
-        public int RoleId { get; set; }
+        [Required]
+        public Role Role { get; set; }
     }
 }
