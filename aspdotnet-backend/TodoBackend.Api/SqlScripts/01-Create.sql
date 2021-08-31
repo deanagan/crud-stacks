@@ -4,6 +4,7 @@ CREATE TABLE [dbo].[Roles](
   [Kind] nvarchar(150) NOT NULL,
   [Description] nvarchar(max) NOT NULL,
   [Created] datetime DEFAULT GETUTCDATE(),
+  [Updated] datetime DEFAULT GETUTCDATE(),
   CONSTRAINT PK_Roles PRIMARY KEY CLUSTERED([Id] ASC)
 )
 GO
@@ -16,6 +17,7 @@ CREATE TABLE [dbo].[Users](
   [Email] nvarchar(150) NOT NULL,
   [Hash] nvarchar(150) NOT NULL,
   [Created] datetime DEFAULT GETUTCDATE(),
+  [Updated] datetime DEFAULT GETUTCDATE(),
   [RoleId] INT NOT NULL,
   CONSTRAINT PK_Users PRIMARY KEY CLUSTERED ( [Id] ASC ),
   CONSTRAINT FK_Roles FOREIGN KEY ([RoleId]) REFERENCES [dbo].[Roles] ([Id]),
@@ -29,6 +31,7 @@ CREATE TABLE [dbo].[Todo](
   [Detail] nvarchar(max) NOT NULL,
   [IsDone] bit DEFAULT 0,
   [Created] datetime DEFAULT GETUTCDATE(),
+  [Updated] datetime DEFAULT GETUTCDATE(),
   [UserId] INT,
   CONSTRAINT PK_Todo PRIMARY KEY CLUSTERED ( [Id] ASC ),
   CONSTRAINT FK_Users FOREIGN KEY ([UserId]) REFERENCES [dbo].[Users] ([Id]),

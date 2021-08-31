@@ -15,6 +15,7 @@ namespace TodoBackend.Api.Bindings
                         UniqueId = src.RoleUniqueId,
                         Kind = src.RoleKind,
                         Created = src.RoleCreated,
+                        Updated = src.RoleUpdated,
                         Description = src.RoleDescription
                     }));
             CreateMap<User, UserDto>()

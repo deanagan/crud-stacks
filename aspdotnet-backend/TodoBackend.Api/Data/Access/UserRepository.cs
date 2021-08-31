@@ -34,11 +34,13 @@ namespace TodoBackend.Api.Data.Access
                            u.Email,
                            u.Hash,
                            u.Created,
+                           u.Updated,
                            r.Id as RoleId,
                            r.UniqueId as RoleUniqueId,
                            r.Kind as RoleKind,
                            r.Description as RoleDescription,
-                           r.Created as RoleCreated
+                           r.Created as RoleCreated,
+                           r.Updated as RoleUpdated
                     from dbo.Users as u with (nolock)
                         inner join dbo.Roles as r with (nolock) on u.RoleId = r.Id";
 
@@ -58,11 +60,13 @@ namespace TodoBackend.Api.Data.Access
                            u.Email,
                            u.Hash,
                            u.Created,
+                           u.Updated,
                            r.Id as RoleId,
                            r.UniqueId as RoleUniqueId,
                            r.Kind as RoleKind,
                            r.Description as RoleDescription,
-                           r.Created as RoleCreated
+                           r.Created as RoleCreated,
+                           r.Updated as RoleUpdated
                     from dbo.Users as u with (nolock)
                         inner join dbo.Roles as r with (nolock) on u.RoleId = r.Id
                     where u.UniqueId = @UserGuid";
@@ -79,7 +83,8 @@ namespace TodoBackend.Api.Data.Access
             var sql = @"
                         declare @Outcome table (
                             UniqueId uniqueidentifier,
-                            Created datetime
+                            Created datetime,
+                            Updated datetime
                         );
                         insert into dbo.Users (
                             [UniqueId],
@@ -89,7 +94,7 @@ namespace TodoBackend.Api.Data.Access
                             [Hash],
                             [RoleId]
                         )
-                        output inserted.UniqueId, inserted.Created into @Outcome
+                        output inserted.UniqueId, inserted.Created, inserted.Updated into @Outcome
                         values (
                             NEWID(),
                             @FirstName,
@@ -98,13 +103,16 @@ namespace TodoBackend.Api.Data.Access
                             @Hash,
                             @RoleId
                             );
-                        select @UniqueId = UniqueId, @UserCreated = Created
+                        select @UniqueId = UniqueId,
+                               @UserCreated = Created,
+                               @UserUpdated = Updated
                         from @Outcome;
 
                         select @RoleUniqueId = r.UniqueId,
                                @Kind = r.Kind,
                                @Description = r.Description,
-                               @RoleCreated = r.Created
+                               @RoleCreated = r.Created,
+                               @RoleUpdated = r.Updated
                         from dbo.Roles as r
                         where r.Id = @RoleId;
                         ";
@@ -122,7 +130,9 @@ namespace TodoBackend.Api.Data.Access
                 parameter.Add("@Kind", null, DbType.String, ParameterDirection.Output, 150);
                 parameter.Add("@Description", null, DbType.String, ParameterDirection.Output, -1);
                 parameter.Add("@RoleCreated", null, DbType.DateTime, ParameterDirection.Output);
+                parameter.Add("@RoleUpdated", null, DbType.DateTime, ParameterDirection.Output);
                 parameter.Add("@UserCreated", null, DbType.DateTime, ParameterDirection.Output);
+                parameter.Add("@UserUpdated", null, DbType.DateTime, ParameterDirection.Output);
                 conn.Execute(sql, parameter);
 
                 userDto.UniqueId = parameter.Get<Guid>("@UniqueId");
@@ -130,7 +140,9 @@ namespace TodoBackend.Api.Data.Access
                 userDto.RoleKind = parameter.Get<string>("@Kind");
                 userDto.RoleDescription = parameter.Get<string>("@Description");
                 userDto.RoleCreated = parameter.Get<DateTime>("@RoleCreated");
+                userDto.RoleUpdated = parameter.Get<DateTime>("@RoleUpdated");
                 userDto.Created = parameter.Get<DateTime>("@UserCreated");
+                userDto.Updated = parameter.Get<DateTime>("@UserUpdated");
             }
         }
 

@@ -10,5 +10,6 @@ namespace TodoBackend.Api.Data.Models
         public bool IsDone { get; set; }
         public int UserId { get; set; }
         public DateTime Created { get; set; }
+        public DateTime Updated { get; set; }
     }
 }

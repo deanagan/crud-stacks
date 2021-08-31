@@ -84,7 +84,7 @@ namespace TodoBackend.Api.Tests
         {
             // Arrange
             var controller = new UsersController(_fakeLogger, _userService);
-            var fakeUser = A.Fake<UserView>();
+            var fakeUser = A.Fake<User>();
             A.CallTo(() => _userService.UpdateUser(fakeUser)).Returns(true);
 
             // Act
@@ -103,7 +103,7 @@ namespace TodoBackend.Api.Tests
         {
             // Arrange
             var controller = new UsersController(_fakeLogger, _userService);
-            var fakeUser = A.Fake<UserView>();
+            var fakeUser = A.Fake<User>();
             fakeUser.Id = 23;
             A.CallTo(() => _userService.UpdateUser(fakeUser)).Returns(false);
 

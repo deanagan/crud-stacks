@@ -81,13 +81,12 @@ namespace TodoBackend.Api.Controllers
         }
 
         [HttpPut("{guid}")]
-        public IActionResult UpdateUser(Guid guid, UserView user)
+        public IActionResult UpdateUser(Guid guid, User user)
         {
             if (user != null)
             {
                 try
                 {
-                    //user.Id = guid;
                     if (_userService.UpdateUser(user))
                     {
                         return NoContent();

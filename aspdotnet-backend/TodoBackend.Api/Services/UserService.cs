@@ -44,9 +44,12 @@ namespace TodoBackend.Api.Services
             return _mapper.Map<UserView>(userDtos);
         }
 
-        bool IUserService.UpdateUser(UserView user)
+        public bool UpdateUser(User user)
         {
-            throw new NotImplementedException();
+            // var userDto = _mapper.Map<UserDto>(user);
+            // _userRepository.AddUser(userDto);
+            // return _mapper.Map<UserView>(userDto);
+            return false;
         }
     }
 }

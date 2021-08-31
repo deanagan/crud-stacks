@@ -10,7 +10,7 @@ namespace TodoBackend.Api.Interfaces
         Task<IEnumerable<UserView>> GetAllUsers();
         Task<UserView> GetUserByGuid(Guid guid);
         UserView CreateUser(User user);
-        bool UpdateUser(UserView user);
+        bool UpdateUser(User user);
         bool DeleteUser(Guid guid);
     }
 
