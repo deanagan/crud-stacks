@@ -4,6 +4,10 @@ namespace TodoBackend.Api.Data.Dtos
 {
     public class UserDto
     {
+        public UserDto Clone()
+        {
+            return (UserDto) MemberwiseClone();
+        }
         public int Id { get; set; }
         public Guid UniqueId { get; set; }
         public string FirstName { get; set; }

@@ -78,7 +78,7 @@ namespace TodoBackend.Api.Data.Access
             }
         }
 
-        public void AddUser(UserDto userDto)
+        public UserDto AddUser(UserDto userDto)
         {
             var sql = @"
                         declare @Outcome table (
@@ -135,14 +135,17 @@ namespace TodoBackend.Api.Data.Access
                 parameter.Add("@UserUpdated", null, DbType.DateTime, ParameterDirection.Output);
                 conn.Execute(sql, parameter);
 
-                userDto.UniqueId = parameter.Get<Guid>("@UniqueId");
-                userDto.RoleUniqueId = parameter.Get<Guid>("@RoleUniqueId");
-                userDto.RoleKind = parameter.Get<string>("@Kind");
-                userDto.RoleDescription = parameter.Get<string>("@Description");
-                userDto.RoleCreated = parameter.Get<DateTime>("@RoleCreated");
-                userDto.RoleUpdated = parameter.Get<DateTime>("@RoleUpdated");
-                userDto.Created = parameter.Get<DateTime>("@UserCreated");
-                userDto.Updated = parameter.Get<DateTime>("@UserUpdated");
+                var newUserDto = userDto.Clone();
+                newUserDto.UniqueId = parameter.Get<Guid>("@UniqueId");
+                newUserDto.RoleUniqueId = parameter.Get<Guid>("@RoleUniqueId");
+                newUserDto.RoleKind = parameter.Get<string>("@Kind");
+                newUserDto.RoleDescription = parameter.Get<string>("@Description");
+                newUserDto.RoleCreated = parameter.Get<DateTime>("@RoleCreated");
+                newUserDto.RoleUpdated = parameter.Get<DateTime>("@RoleUpdated");
+                newUserDto.Created = parameter.Get<DateTime>("@UserCreated");
+                newUserDto.Updated = parameter.Get<DateTime>("@UserUpdated");
+
+                return newUserDto;
             }
         }
 
@@ -151,9 +154,111 @@ namespace TodoBackend.Api.Data.Access
             throw new NotImplementedException();
         }
 
-        void IUserRepository.UpdateUser(Guid userGuid)
+        public UserDto UpdateUser(Guid userGuid, UserDto userDto)
         {
-            throw new NotImplementedException();
+            var sql = @"
+                        declare @NewValues table
+                        (
+                            UniqueId uniqueidentifier default (@UniqueId)
+                            FirstName nvarchar(100) default (@FirstName),
+                            LastName nvarchar(100) default (@LastName),
+                            Email nvarchar(150) default (@Email),
+                            Hash nvarchar(150) default (@Hash),
+                            Updated datetime default (GETUTCDATE()),
+                            RoleId int default (@RoleId)
+                        )
+
+                        declare @Outcome table
+                        (
+                            UserId int,
+                            UserCreated datetime,
+                            UserUpdated datetime,
+                            RoleUniqueId int,
+                            RoleKind nvarchar(150),
+                            RoleDescription nvarchar(max),
+                            RoleCreated datetime,
+                            RoleUpdated datetime
+                        )
+
+                        update dbo.Users u
+                        set u.FirstName = @FirstName,
+                            u.LastName = @LastName,
+                            u.Email = @Email,
+                            u.Hash = @Hash,
+                            u.Updated = @NewValues.Updated,
+                            u.RoleId = @RoleId
+                        where u.UniqueId = @UniqueId
+                        and exists
+                            (
+                            select u.FirstName,
+                                   u.LastName,
+                                   u.Email,
+                                   u.Hash,
+                                   u.Updated,
+                                   u.RoleId
+                            except
+                            select nv.FirstName,
+                                   nv.LastName,
+                                   nv.Email,
+                                   nv.Hash,
+                                   nv.Updated
+                                   nv.RoleId
+                            from @NewValues nv
+                            where nv.UniqueId = u.UniqueId
+                            )
+
+                        select u.Id,
+                               u.Created,
+                               u.Updated,
+                               r.UniqueId,
+                               r.RoleKind,
+                               r.Description,
+                               r.Created,
+                               r.Updated
+                        into @Outcome
+                        from dbo.Users with (nolock) as u
+                            inner join dbo.Roles with (nolock) as r on u.RoleId = r.Id
+                        where r.Id = @RoleId;
+                        ";
+
+            using (var conn = new SqlConnection(_connectionString))
+            {
+                var parameter = new DynamicParameters();
+                parameter.Add("@UniqueId", userGuid);
+                parameter.Add("@FirstName", userDto.FirstName);
+                parameter.Add("@LastName", userDto.LastName);
+                parameter.Add("@Email", userDto.Email);
+                parameter.Add("@Hash", userDto.Hash);
+                parameter.Add("@RoleId", userDto.RoleId);
+
+                parameter.Add("@UserId", null, DbType.Int32, ParameterDirection.Output);
+                parameter.Add("@UserCreated", null, DbType.DateTime, ParameterDirection.Output);
+                parameter.Add("@UserUpdated", null, DbType.DateTime, ParameterDirection.Output);
+                parameter.Add("@RoleUniqueId", null, DbType.Guid, ParameterDirection.Output);
+                parameter.Add("@RoleKind", null, DbType.String, ParameterDirection.Output, 150);
+                parameter.Add("@RoleDescription", null, DbType.String, ParameterDirection.Output, -1);
+                parameter.Add("@RoleCreated", null, DbType.DateTime, ParameterDirection.Output);
+                parameter.Add("@RoleUpdated", null, DbType.DateTime, ParameterDirection.Output);
+
+                conn.Execute(sql, parameter);
+
+                return new UserDto {
+                    Id = userDto.Id,
+                    UniqueId = userGuid,
+                    FirstName = userDto.FirstName,
+                    LastName = userDto.LastName,
+                    Email = userDto.Email,
+                    Hash = userDto.Hash,
+                    Created = userDto.Created,
+                    Updated = userDto.Updated,
+                    RoleId = userDto.RoleId,
+                    RoleUniqueId = parameter.Get<Guid>("RoleUniqueId"),
+                    RoleKind = parameter.Get<string>("@RoleKind"),
+                    RoleDescription = parameter.Get<string>("@RoleDescription"),
+                    RoleCreated = parameter.Get<DateTime>("@RoleCreated"),
+                    RoleUpdated = parameter.Get<DateTime>("@RoleUpdate")
+                };
+            }
         }
 
         void IUserRepository.DeleteUser(Guid userGuid)

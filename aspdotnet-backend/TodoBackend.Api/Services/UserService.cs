@@ -23,8 +23,8 @@ namespace TodoBackend.Api.Services
         public UserView CreateUser(User user)
         {
             var userDto = _mapper.Map<UserDto>(user);
-            _userRepository.AddUser(userDto);
-            return _mapper.Map<UserView>(userDto);
+            var newUserDto = _userRepository.AddUser(userDto);
+            return _mapper.Map<UserView>(newUserDto);
         }
 
         bool IUserService.DeleteUser(Guid guid)
@@ -44,12 +44,11 @@ namespace TodoBackend.Api.Services
             return _mapper.Map<UserView>(userDtos);
         }
 
-        public bool UpdateUser(User user)
+        public UserView UpdateUser(Guid guid, User user)
         {
-            // var userDto = _mapper.Map<UserDto>(user);
-            // _userRepository.AddUser(userDto);
-            // return _mapper.Map<UserView>(userDto);
-            return false;
+            var userDto = _mapper.Map<UserDto>(user);
+            _userRepository.UpdateUser(guid, userDto);
+            return _mapper.Map<UserView>(userDto);
         }
     }
 }

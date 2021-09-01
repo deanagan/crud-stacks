@@ -87,9 +87,10 @@ namespace TodoBackend.Api.Controllers
             {
                 try
                 {
-                    if (_userService.UpdateUser(user))
+                    var updatedUser = _userService.UpdateUser(guid, user);
+                    if (updatedUser != null)
                     {
-                        return NoContent();
+                        return Ok(updatedUser);
                     }
                     else
                     {

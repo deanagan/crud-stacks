@@ -85,7 +85,8 @@ namespace TodoBackend.Api.Tests
             // Arrange
             var controller = new UsersController(_fakeLogger, _userService);
             var fakeUser = A.Fake<User>();
-            A.CallTo(() => _userService.UpdateUser(fakeUser)).Returns(true);
+            // var fakeGuid = new Guid();
+            //A.CallTo(() => _userService.UpdateUser(fakeGuid, fakeUser)).Returns(true);
 
             // Act
             // var result = controller.UpdateUser(fakeUser.Id, fakeUser) as NoContentResult;
@@ -105,7 +106,7 @@ namespace TodoBackend.Api.Tests
             var controller = new UsersController(_fakeLogger, _userService);
             var fakeUser = A.Fake<User>();
             fakeUser.Id = 23;
-            A.CallTo(() => _userService.UpdateUser(fakeUser)).Returns(false);
+            //A.CallTo(() => _userService.UpdateUser(fakeUser)).Returns(false);
 
             // Act
             // var result = controller.UpdateUser(17, fakeUser) as BadRequestObjectResult;
