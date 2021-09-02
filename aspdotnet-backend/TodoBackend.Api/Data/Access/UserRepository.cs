@@ -157,68 +157,82 @@ namespace TodoBackend.Api.Data.Access
         public UserDto UpdateUser(Guid userGuid, UserDto userDto)
         {
             var sql = @"
-                        declare @NewValues table
+                        if object_id('tempdb.#NewValues') is not null
+                        begin
+                            drop table #NewValues
+                        end
+                        create table #NewValues
                         (
-                            UniqueId uniqueidentifier default (@UniqueId)
-                            FirstName nvarchar(100) default (@FirstName),
-                            LastName nvarchar(100) default (@LastName),
-                            Email nvarchar(150) default (@Email),
-                            Hash nvarchar(150) default (@Hash),
-                            Updated datetime default (GETUTCDATE()),
-                            RoleId int default (@RoleId)
+                            UniqueId uniqueidentifier,
+                            FirstName nvarchar(100),
+                            LastName nvarchar(100),
+                            Email nvarchar(150),
+                            [Hash] nvarchar(150),
+                            Updated datetime,
+                            RoleId int
                         )
 
-                        declare @Outcome table
+                        insert into #NewValues
+                            (UniqueId, FirstName, LastName, Email, Hash, Updated, RoleId)
+                        Select @UniqueId, @FirstName, @LastName, @Email, @Hash, @Updated, @RoleId
+
+                        if object_id('tempdb.#Outcome') is not null
+                        begin
+                            drop table #Outcome
+                        end
+
+                        create table #Outcome
                         (
                             UserId int,
                             UserCreated datetime,
                             UserUpdated datetime,
-                            RoleUniqueId int,
+                            RoleUniqueId uniqueidentifier,
                             RoleKind nvarchar(150),
                             RoleDescription nvarchar(max),
                             RoleCreated datetime,
                             RoleUpdated datetime
+                        );
+
+                        update u
+                            set u.FirstName = @FirstName,
+                                u.LastName = @LastName,
+                                u.Email = @Email,
+                                u.Hash = @Hash,
+                                u.Updated = getutcdate(),
+                                u.RoleId = @RoleId
+                            from dbo.Users u
+                            where u.UniqueId = @UniqueId
+                            and exists
+                        (
+                                select u.FirstName,
+                                    u.LastName,
+                                    u.Email,
+                                    u.Hash,
+                                    u.Updated,
+                                    u.RoleId
+                                except
+                                select nv.FirstName,
+                                    nv.LastName,
+                                    nv.Email,
+                                    nv.Hash,
+                                    nv.Updated,
+                                    nv.RoleId
+                                from #NewValues nv
+                                where nv.UniqueId = u.UniqueId
                         )
 
-                        update dbo.Users u
-                        set u.FirstName = @FirstName,
-                            u.LastName = @LastName,
-                            u.Email = @Email,
-                            u.Hash = @Hash,
-                            u.Updated = @NewValues.Updated,
-                            u.RoleId = @RoleId
-                        where u.UniqueId = @UniqueId
-                        and exists
-                            (
-                            select u.FirstName,
-                                   u.LastName,
-                                   u.Email,
-                                   u.Hash,
-                                   u.Updated,
-                                   u.RoleId
-                            except
-                            select nv.FirstName,
-                                   nv.LastName,
-                                   nv.Email,
-                                   nv.Hash,
-                                   nv.Updated
-                                   nv.RoleId
-                            from @NewValues nv
-                            where nv.UniqueId = u.UniqueId
-                            )
-
+                        insert into #Outcome(UserId, UserCreated, UserUpdated, RoleUniqueId, RoleKind, RoleDescription, RoleCreated, RoleUpdated)
                         select u.Id,
-                               u.Created,
-                               u.Updated,
-                               r.UniqueId,
-                               r.RoleKind,
-                               r.Description,
-                               r.Created,
-                               r.Updated
-                        into @Outcome
-                        from dbo.Users with (nolock) as u
-                            inner join dbo.Roles with (nolock) as r on u.RoleId = r.Id
-                        where r.Id = @RoleId;
+                            u.Created,
+                            u.Updated,
+                            r.UniqueId,
+                            r.Kind,
+                            r.Description,
+                            r.Created as RoleCreated,
+                            r.Updated as RoleUpdated
+                        from dbo.Users as u with (nolock)
+                            inner join dbo.Roles as r with (nolock) on u.RoleId = r.Id
+                        where u.UniqueId = @UniqueId;
                         ";
 
             using (var conn = new SqlConnection(_connectionString))
