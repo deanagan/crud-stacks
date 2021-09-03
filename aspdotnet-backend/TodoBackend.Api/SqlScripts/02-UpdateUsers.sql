@@ -1,24 +1,15 @@
-
-BEGIN TRANSACTION Test
-declare @UniqueId uniqueidentifier;
-set @UniqueId = 'c5c9fd97-0af2-4e46-8d89-074648faac25';
-declare @FirstName nvarchar(100);
-set @FirstName = 'Bobby';
-declare @LastName nvarchar(100);
-set @LastName = 'Builder';
-declare @Email nvarchar(150);
-set @Email = 'hello_world@gmail.com';
-declare @Hash nvarchar(150);
-set @Hash = '343533';
-declare @Updated datetime;
-set @Updated = GETUTCDATE()
-declare @RoleId int;
-set @RoleId = 2
-
-select *
-from Users u
-    inner join Roles r on u.RoleId = r.Id
-where u.UniqueId = 'c5c9fd97-0af2-4e46-8d89-074648faac25';
+create proc dbo.UpdateUsers
+	(
+	@UniqueId uniqueidentifier,
+    @FirstName nvarchar(100),
+    @LastName nvarchar(100),
+    @Email nvarchar(150),
+    @Hash nvarchar(150),
+    @Updated datetime,
+    @RoleId int
+)
+as
+begin
 
 if object_id('tempdb.#NewValues') is not null
 begin
@@ -98,11 +89,10 @@ from dbo.Users as u with (nolock)
     inner join dbo.Roles as r with (nolock) on u.RoleId = r.Id
 where u.UniqueId = @UniqueId;
 
-select *
-from Users u
-    inner join Roles r on u.RoleId = r.Id
-where u.UniqueId = 'c5c9fd97-0af2-4e46-8d89-074648faac25';
+set nocount on
 
 select *
-from #Outcome;
-ROLLBACK TRANSACTION Test
+from #Outcome
+
+end
+go
