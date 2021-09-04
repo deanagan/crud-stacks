@@ -149,11 +149,6 @@ namespace TodoBackend.Api.Data.Access
             }
         }
 
-        void IUserRepository.AddUsers(IEnumerable<UserDto> userGuids)
-        {
-            throw new NotImplementedException();
-        }
-
         public UserDto UpdateUser(Guid userGuid, UserDto userDto)
         {
             var sql = @"
@@ -255,9 +250,21 @@ namespace TodoBackend.Api.Data.Access
             }
         }
 
-        void IUserRepository.DeleteUser(Guid userGuid)
+        public bool DeleteUser(Guid userGuid)
         {
-            throw new NotImplementedException();
+            var sql = @"
+						delete u
+                        from dbo.Users u
+                        where u.UniqueId = @UniqueId;
+                        ";
+
+            using (var conn = new SqlConnection(_connectionString))
+            {
+                var parameter = new DynamicParameters();
+                parameter.Add("@UniqueId", userGuid);
+
+                return conn.Execute(sql, parameter) != 0;
+            }
         }
     }
 }

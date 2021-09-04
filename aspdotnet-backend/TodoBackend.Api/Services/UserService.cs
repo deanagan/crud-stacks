@@ -27,9 +27,9 @@ namespace TodoBackend.Api.Services
             return _mapper.Map<UserView>(newUserDto);
         }
 
-        bool IUserService.DeleteUser(Guid guid)
+        public bool DeleteUser(Guid guid)
         {
-            throw new NotImplementedException();
+            return _userRepository.DeleteUser(guid);
         }
 
         public async Task<IEnumerable<UserView>> GetAllUsers()
