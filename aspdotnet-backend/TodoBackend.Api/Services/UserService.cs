@@ -47,8 +47,8 @@ namespace TodoBackend.Api.Services
         public UserView UpdateUser(Guid guid, User user)
         {
             var userDto = _mapper.Map<UserDto>(user);
-            _userRepository.UpdateUser(guid, userDto);
-            return _mapper.Map<UserView>(userDto);
+            var newUserDto = _userRepository.UpdateUser(guid, userDto);
+            return _mapper.Map<UserView>(newUserDto);
         }
     }
 }

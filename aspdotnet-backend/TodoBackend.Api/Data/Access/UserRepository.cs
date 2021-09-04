@@ -156,7 +156,64 @@ namespace TodoBackend.Api.Data.Access
 
         public UserDto UpdateUser(Guid userGuid, UserDto userDto)
         {
-            var sql = @"EXEC dbo.UpdateUsers";
+            var sql = @"
+						IF object_id('tempdb.#NewValues') is not null
+						BEGIN
+						   DROP TABLE #NewValues
+						END
+						create table #NewValues
+                        (
+                            UniqueId uniqueidentifier,
+                            FirstName nvarchar(100),
+                            LastName nvarchar(100),
+                            Email nvarchar(150),
+                            [Hash] nvarchar(150),
+                            Updated datetime,
+                            RoleId int
+                        )
+
+						insert into #NewValues(UniqueId, FirstName, LastName, Email, Hash, Updated, RoleId)
+						Select @UniqueId, @FirstName, @LastName, @Email, @Hash, @UserUpdated, @RoleId
+
+                        update u
+                        set u.FirstName = @FirstName,
+                            u.LastName = @LastName,
+                            u.Email = @Email,
+                            u.Hash = @Hash,
+                            u.Updated = getutcdate(),
+                            u.RoleId = @RoleId
+						from dbo.Users u
+                        where u.UniqueId = @UniqueId
+                        and exists
+                            (
+                            select u.FirstName,
+                                   u.LastName,
+                                   u.Email,
+                                   u.Hash,
+                                   u.Updated,
+                                   u.RoleId
+                            except
+                            select nv.FirstName,
+                                   nv.LastName,
+                                   nv.Email,
+                                   nv.Hash,
+                                   nv.Updated,
+                                   nv.RoleId
+                            from #NewValues nv
+                            where nv.UniqueId = u.UniqueId
+                            )
+
+                        select @UserId = u.Id,
+                               @UserCreated = u.Created,
+                               @UserUpdated = u.Updated,
+                               @RoleUniqueId = r.UniqueId,
+                               @RoleKind = r.Kind,
+                               @RoleDescription = r.Description,
+                               @RoleCreated = r.Created,
+                               @RoleUpdated = r.Updated
+                        from dbo.Users as u with (nolock)
+                            inner join dbo.Roles as r with (nolock) on u.RoleId = r.Id
+                        where u.UniqueId = @UniqueId;";
 
             using (var conn = new SqlConnection(_connectionString))
             {
@@ -165,7 +222,7 @@ namespace TodoBackend.Api.Data.Access
                 parameter.Add("@FirstName", userDto.FirstName);
                 parameter.Add("@LastName", userDto.LastName);
                 parameter.Add("@Email", userDto.Email);
-                parameter.Add("@Hash", userDto.Hash);
+                parameter.Add("@Hash", userDto.Hash ?? "123456");
                 parameter.Add("@RoleId", userDto.RoleId);
 
                 parameter.Add("@UserId", null, DbType.Int32, ParameterDirection.Output);
@@ -180,20 +237,20 @@ namespace TodoBackend.Api.Data.Access
                 conn.Execute(sql, parameter);
 
                 return new UserDto {
-                    Id = userDto.Id,
+                    Id = parameter.Get<int>("@UserId"),
                     UniqueId = userGuid,
                     FirstName = userDto.FirstName,
                     LastName = userDto.LastName,
                     Email = userDto.Email,
-                    Hash = userDto.Hash,
-                    Created = userDto.Created,
-                    Updated = userDto.Updated,
+                    Hash = userDto.Hash ?? "123456",
+                    Created = parameter.Get<DateTime>("@UserCreated"),
+                    Updated = parameter.Get<DateTime>("@UserUpdated"),
                     RoleId = userDto.RoleId,
-                    RoleUniqueId = parameter.Get<Guid>("RoleUniqueId"),
+                    RoleUniqueId = parameter.Get<Guid>("@RoleUniqueId"),
                     RoleKind = parameter.Get<string>("@RoleKind"),
                     RoleDescription = parameter.Get<string>("@RoleDescription"),
                     RoleCreated = parameter.Get<DateTime>("@RoleCreated"),
-                    RoleUpdated = parameter.Get<DateTime>("@RoleUpdate")
+                    RoleUpdated = parameter.Get<DateTime>("@RoleUpdated")
                 };
             }
         }
