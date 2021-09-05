@@ -32,6 +32,7 @@ namespace TodoBackend.Api
             services.AddControllers();
             services.AddHealthChecks();
             ConfigureDBContext(services);
+            services.AddScoped(typeof(IRolesRepository), typeof(RolesRepository));
             services.AddScoped(typeof(IUserRepository), typeof(UserRepository));
             services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
             services.AddSwaggerGen(c =>
@@ -40,6 +41,7 @@ namespace TodoBackend.Api
             });
 
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IRolesService, RolesService>();
         }
 
         public virtual void ConfigureDBContext(IServiceCollection services)

@@ -21,6 +21,7 @@ namespace TodoBackend.Api.Bindings
             CreateMap<User, UserDto>()
                 .ForMember(dest => dest.RoleId, opt => opt.MapFrom(src => src.Role.Id));
 
+            CreateMap<Role, RoleDto>().ReverseMap();
         }
     }
 }
