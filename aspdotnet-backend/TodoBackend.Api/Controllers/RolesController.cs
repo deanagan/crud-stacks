@@ -67,8 +67,8 @@ namespace TodoBackend.Api.Controllers
             {
                 try
                 {
-                    _rolesService.CreateRole(role);
-                    return CreatedAtAction(nameof(GetRoles), new { Id = role.Id }, role);
+                    var newRole = _rolesService.CreateRole(role);
+                    return CreatedAtAction(nameof(GetRoles), new { Id = newRole.Id }, newRole);
                 }
                 catch (Exception ex)
                 {

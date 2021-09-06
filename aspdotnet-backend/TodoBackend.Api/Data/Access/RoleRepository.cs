@@ -60,9 +60,47 @@ namespace TodoBackend.Api.Data.Access
             }
         }
 
-        RoleDto IRolesRepository.AddRole(RoleDto parameter)
+        public RoleDto AddRole(RoleDto roleDto)
         {
-            throw new NotImplementedException();
+            var sql = @"
+                        declare @Outcome table (
+                            Id int,
+                            UniqueId uniqueidentifier,
+                            Created datetime,
+                            Updated datetime
+                        );
+                        insert into dbo.Roles (UniqueId, Kind, Description)
+                        output inserted.Id, inserted.UniqueId, inserted.Created, inserted.Updated into @Outcome
+                        values (NEWID(), @Kind, @Description);
+
+                        select @Id = Id,
+                               @UniqueId = UniqueId,
+                               @Created = Created,
+                               @Updated = Updated
+                        from @Outcome;
+                        ";
+
+
+            using (var conn = new SqlConnection(_connectionString))
+            {
+                var parameter = new DynamicParameters();
+                parameter.Add("@Id", null, DbType.Int32, ParameterDirection.Output);
+                parameter.Add("@UniqueId", null, DbType.Guid, ParameterDirection.Output);
+                parameter.Add("@Created", null, DbType.DateTime, ParameterDirection.Output);
+                parameter.Add("@Updated", null, DbType.DateTime, ParameterDirection.Output);
+                parameter.Add("@Kind", roleDto.Kind);
+                parameter.Add("@Description", roleDto.Description);
+
+                conn.Execute(sql, parameter);
+
+                var newRoleDto = roleDto.Clone();
+                newRoleDto.Id = parameter.Get<int>("@Id");
+                newRoleDto.UniqueId = parameter.Get<Guid>("@UniqueId");
+                newRoleDto.Created = parameter.Get<DateTime>("@Created");
+                newRoleDto.Updated = parameter.Get<DateTime>("@Updated");
+
+                return newRoleDto;
+            }
         }
 
         RoleDto IRolesRepository.UpdateRole(Guid guid, RoleDto RoleDto)

@@ -20,9 +20,11 @@ namespace TodoBackend.Api.Services
             _mapper = mapper;
         }
 
-        Role IRolesService.CreateRole(Role role)
+        public Role CreateRole(Role role)
         {
-            throw new NotImplementedException();
+            var roleDto = _mapper.Map<RoleDto>(role);
+            var newRole = _rolesRepository.AddRole(roleDto);
+            return _mapper.Map<Role>(newRole);
         }
 
         bool IRolesService.DeleteRole(Guid guid)
