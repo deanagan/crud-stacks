@@ -152,10 +152,10 @@ namespace TodoBackend.Api.Data.Access
         public UserDto UpdateUser(Guid userGuid, UserDto userDto)
         {
             var sql = @"
-						IF object_id('tempdb.#NewValues') is not null
-						BEGIN
-						   DROP TABLE #NewValues
-						END
+						if object_id('tempdb.#NewValues') is not null
+						begin
+						   drop table #NewValues
+						end
 						create table #NewValues
                         (
                             UniqueId uniqueidentifier,
@@ -164,11 +164,11 @@ namespace TodoBackend.Api.Data.Access
                             Email nvarchar(150),
                             [Hash] nvarchar(150),
                             Updated datetime,
-                            RoleId int
+                            RoleUniqueId uniqueidentifier
                         )
 
-						insert into #NewValues(UniqueId, FirstName, LastName, Email, Hash, Updated, RoleId)
-						Select @UniqueId, @FirstName, @LastName, @Email, @Hash, @UserUpdated, @RoleId
+						insert into #NewValues(UniqueId, FirstName, LastName, Email, Hash, Updated, RoleUniqueId)
+						Select @UniqueId, @FirstName, @LastName, @Email, @Hash, @UserUpdated, @RoleUniqueId
 
                         update u
                         set u.FirstName = @FirstName,
@@ -176,8 +176,9 @@ namespace TodoBackend.Api.Data.Access
                             u.Email = @Email,
                             u.Hash = @Hash,
                             u.Updated = getutcdate(),
-                            u.RoleId = @RoleId
+                            u.RoleId = r.Id
 						from dbo.Users u
+                            inner join dbo.Roles r on r.UniqueId = @RoleUniqueId
                         where u.UniqueId = @UniqueId
                         and exists
                             (
@@ -186,14 +187,14 @@ namespace TodoBackend.Api.Data.Access
                                    u.Email,
                                    u.Hash,
                                    u.Updated,
-                                   u.RoleId
+                                   r.UniqueId
                             except
                             select nv.FirstName,
                                    nv.LastName,
                                    nv.Email,
                                    nv.Hash,
                                    nv.Updated,
-                                   nv.RoleId
+                                   nv.RoleUniqueId
                             from #NewValues nv
                             where nv.UniqueId = u.UniqueId
                             )
@@ -202,6 +203,7 @@ namespace TodoBackend.Api.Data.Access
                                @UserCreated = u.Created,
                                @UserUpdated = u.Updated,
                                @RoleUniqueId = r.UniqueId,
+                               @RoleId = r.Id,
                                @RoleKind = r.Kind,
                                @RoleDescription = r.Description,
                                @RoleCreated = r.Created,
@@ -218,12 +220,12 @@ namespace TodoBackend.Api.Data.Access
                 parameter.Add("@LastName", userDto.LastName);
                 parameter.Add("@Email", userDto.Email);
                 parameter.Add("@Hash", userDto.Hash ?? "123456");
-                parameter.Add("@RoleId", userDto.RoleId);
+                parameter.Add("@RoleUniqueId", userDto.RoleUniqueId);
 
                 parameter.Add("@UserId", null, DbType.Int32, ParameterDirection.Output);
                 parameter.Add("@UserCreated", null, DbType.DateTime, ParameterDirection.Output);
                 parameter.Add("@UserUpdated", null, DbType.DateTime, ParameterDirection.Output);
-                parameter.Add("@RoleUniqueId", null, DbType.Guid, ParameterDirection.Output);
+                parameter.Add("@RoleId", null, DbType.Int32, ParameterDirection.Output);
                 parameter.Add("@RoleKind", null, DbType.String, ParameterDirection.Output, 150);
                 parameter.Add("@RoleDescription", null, DbType.String, ParameterDirection.Output, -1);
                 parameter.Add("@RoleCreated", null, DbType.DateTime, ParameterDirection.Output);
@@ -240,7 +242,7 @@ namespace TodoBackend.Api.Data.Access
                     Hash = userDto.Hash ?? "123456",
                     Created = parameter.Get<DateTime>("@UserCreated"),
                     Updated = parameter.Get<DateTime>("@UserUpdated"),
-                    RoleId = userDto.RoleId,
+                    RoleId = parameter.Get<int>("@RoleId"),
                     RoleUniqueId = parameter.Get<Guid>("@RoleUniqueId"),
                     RoleKind = parameter.Get<string>("@RoleKind"),
                     RoleDescription = parameter.Get<string>("@RoleDescription"),
