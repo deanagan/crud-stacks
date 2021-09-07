@@ -46,7 +46,9 @@ namespace TodoBackend.Api.Services
 
         Role IRolesService.UpdateRole(Guid guid, Role role)
         {
-            throw new NotImplementedException();
+            var roleDto = _mapper.Map<RoleDto>(role);
+            var newRoleDto = _rolesRepository.UpdateRole(guid, roleDto);
+            return _mapper.Map<Role>(newRoleDto);
         }
     }
 }

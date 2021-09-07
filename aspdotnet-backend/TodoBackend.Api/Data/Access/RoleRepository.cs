@@ -103,9 +103,50 @@ namespace TodoBackend.Api.Data.Access
             }
         }
 
-        RoleDto IRolesRepository.UpdateRole(Guid guid, RoleDto RoleDto)
+        RoleDto IRolesRepository.UpdateRole(Guid guid, RoleDto roleDto)
         {
-            throw new NotImplementedException();
+            var sql = @"
+                        declare @Outcome table (
+                            Id int,
+                            Created datetime,
+                            Updated datetime
+                        );
+
+                        update r
+                        set r.Kind = @Kind,
+                            r.Description = @Description,
+                            r.Updated = getutcdate()
+						from dbo.Roles r
+                            where r.UniqueId = @UniqueId
+
+                        select @Id = Id,
+                               @Created = Created,
+                               @Updated = Updated
+                        from @Outcome;
+                        ";
+
+
+            using (var conn = new SqlConnection(_connectionString))
+            {
+                var parameter = new DynamicParameters();
+                parameter.Add("@Id", null, DbType.Int32, ParameterDirection.Output);
+                parameter.Add("@Created", null, DbType.DateTime, ParameterDirection.Output);
+                parameter.Add("@Updated", null, DbType.DateTime, ParameterDirection.Output);
+
+                parameter.Add("@UniqueId", guid);
+                parameter.Add("@Kind", roleDto.Kind);
+                parameter.Add("@Description", roleDto.Description);
+
+                conn.Execute(sql, parameter);
+
+                var updatedRoleDto = roleDto.Clone();
+                updatedRoleDto.Id = parameter.Get<int>("@Id");
+                updatedRoleDto.UniqueId = guid;
+                updatedRoleDto.Created = parameter.Get<DateTime>("@Created");
+                updatedRoleDto.Updated = parameter.Get<DateTime>("@Updated");
+
+                return updatedRoleDto;
+            }
         }
 
         bool IRolesRepository.DeleteRole(Guid guid)
