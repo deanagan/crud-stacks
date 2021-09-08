@@ -105,7 +105,7 @@ namespace TodoBackend.Api.Controllers
             return BadRequest("Role is null");
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{guid}")]
         public IActionResult DeleteRole(Guid guid)
         {
             try

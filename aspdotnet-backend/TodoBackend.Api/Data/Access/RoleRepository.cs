@@ -116,7 +116,7 @@ namespace TodoBackend.Api.Data.Access
                         set r.Kind = @Kind,
                             r.Description = @Description,
                             r.Updated = getutcdate()
-						from dbo.Roles r
+                        from dbo.Roles r
                             where r.UniqueId = @UniqueId
 
                         select @Id = Id,
@@ -149,9 +149,22 @@ namespace TodoBackend.Api.Data.Access
             }
         }
 
-        bool IRolesRepository.DeleteRole(Guid guid)
+        public bool DeleteRole(Guid guid)
         {
-            throw new NotImplementedException();
+            var sql = @"
+                        delete r
+                        from dbo.Roles r
+                        where r.UniqueId = @UniqueId;
+                        ";
+
+            using (var conn = new SqlConnection(_connectionString))
+            {
+                var parameter = new DynamicParameters();
+                parameter.Add("@UniqueId", guid);
+
+                var s = conn.Execute(sql, parameter) != 0;
+                return s;
+            }
         }
     }
 }

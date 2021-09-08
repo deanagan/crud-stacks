@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using TodoBackend.Api.Data.Models;
 using TodoBackend.Api.Interfaces;
 using TodoBackend.Api.Data.Dtos;
@@ -29,7 +28,7 @@ namespace TodoBackend.Api.Services
 
         bool IRolesService.DeleteRole(Guid guid)
         {
-            throw new NotImplementedException();
+            return _rolesRepository.DeleteRole(guid);
         }
 
         public async Task<IEnumerable<Role>> GetAllRoles()
