@@ -1,10 +1,10 @@
 CREATE TABLE [dbo].[Roles](
   [Id] INT IDENTITY(1,1) NOT NULL,
   [UniqueId] UNIQUEIDENTIFIER NOT NULL,
-  [Kind] nvarchar(150) NOT NULL,
-  [Description] nvarchar(max) NOT NULL,
-  [Created] datetime DEFAULT GETUTCDATE(),
-  [Updated] datetime DEFAULT GETUTCDATE(),
+  [Kind] NVARCHAR(150) NOT NULL,
+  [Description] NVARCHAR(max) NOT NULL,
+  [Created] DATETIME DEFAULT GETUTCDATE(),
+  [Updated] DATETIME DEFAULT GETUTCDATE(),
   CONSTRAINT PK_Roles PRIMARY KEY CLUSTERED([Id] ASC)
 )
 GO
@@ -12,12 +12,12 @@ GO
 CREATE TABLE [dbo].[Users](
   [Id] INT IDENTITY(1,1) NOT NULL,
   [UniqueId] UNIQUEIDENTIFIER NOT NULL,
-  [FirstName] nvarchar(100) NOT NULL,
-  [LastName] nvarchar(100) NOT NULL,
-  [Email] nvarchar(150) NOT NULL,
-  [Hash] nvarchar(150) NOT NULL,
-  [Created] datetime DEFAULT GETUTCDATE(),
-  [Updated] datetime DEFAULT GETUTCDATE(),
+  [FirstName] NVARCHAR(100) NOT NULL,
+  [LastName] NVARCHAR(100) NOT NULL,
+  [Email] NVARCHAR(150) NOT NULL,
+  [Hash] NVARCHAR(150) NOT NULL,
+  [Created] DATETIME DEFAULT GETUTCDATE(),
+  [Updated] DATETIME DEFAULT GETUTCDATE(),
   [RoleId] INT NOT NULL,
   CONSTRAINT PK_Users PRIMARY KEY CLUSTERED ( [Id] ASC ),
   CONSTRAINT FK_Roles FOREIGN KEY ([RoleId]) REFERENCES [dbo].[Roles] ([Id]),
@@ -27,14 +27,14 @@ GO
 CREATE TABLE [dbo].[Todo](
   [Id] INT IDENTITY(1,1) NOT NULL,
   [UniqueId] UNIQUEIDENTIFIER NOT NULL,
-  [Summary] nvarchar(100) NOT NULL,
-  [Detail] nvarchar(max) NOT NULL,
-  [IsDone] bit DEFAULT 0,
-  [Created] datetime DEFAULT GETUTCDATE(),
-  [Updated] datetime DEFAULT GETUTCDATE(),
-  [UserId] INT,
+  [Summary] NVARCHAR(100) NOT NULL,
+  [Detail] NVARCHAR(max) NOT NULL,
+  [IsDone] BIT DEFAULT 0,
+  [Created] DATETIME DEFAULT GETUTCDATE(),
+  [Updated] DATETIME DEFAULT GETUTCDATE(),
+  [AssigneeId] INT,
   CONSTRAINT PK_Todo PRIMARY KEY CLUSTERED ( [Id] ASC ),
-  CONSTRAINT FK_Users FOREIGN KEY ([UserId]) REFERENCES [dbo].[Users] ([Id]),
+  CONSTRAINT FK_Users FOREIGN KEY ([AssigneeId]) REFERENCES [dbo].[Users] ([Id]),
  )
 GO
 
