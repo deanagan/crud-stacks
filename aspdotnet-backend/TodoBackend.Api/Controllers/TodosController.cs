@@ -27,7 +27,7 @@ namespace TodoBackend.Api.Controllers
         {
             try
             {
-                var result = await _todoService.GetTodosAsync();
+                var result = await _todoService.GetTodos();
                 if (result == null)
                 {
                     return NoContent();
@@ -42,12 +42,12 @@ namespace TodoBackend.Api.Controllers
 
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetTodo(int id)
+        [HttpGet("{guid}")]
+        public async Task<IActionResult> GetTodo(Guid guid)
         {
             try
             {
-                var result = await _todoService.GetTodo(id);
+                var result = await _todoService.GetTodo(guid);
                 if (result == null)
                 {
                     return NoContent();
@@ -79,21 +79,21 @@ namespace TodoBackend.Api.Controllers
             return BadRequest("todo creation failed.");
         }
 
-        [HttpPut("{id}")]
-        public IActionResult UpdateTodo(int id, Todo todo)
+        [HttpPut("{guid}")]
+        public IActionResult UpdateTodo(Guid guid, Todo todo)
         {
             if (todo != null)
             {
                 try
                 {
-                    todo.Id = id;
-                    if (_todoService.UpdateTodo(todo))
+                    var updatedTodo = _todoService.UpdateTodo(guid, todo);
+                    if (updatedTodo != null)
                     {
-                        return NoContent();
+                        return Ok(updatedTodo);
                     }
                     else
                     {
-                        return BadRequest($"Todo with {id} not found.");
+                        return BadRequest($"Todo with {guid} not found.");
                     }
                 }
                 catch (Exception ex)
@@ -106,11 +106,11 @@ namespace TodoBackend.Api.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteTodo(int id)
+        public IActionResult DeleteTodo(Guid guid)
         {
             try
             {
-                if (_todoService.DeleteTodo(id))
+                if (_todoService.DeleteTodo(guid))
                 {
                     return NoContent();
                 }
