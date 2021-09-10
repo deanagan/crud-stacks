@@ -79,5 +79,10 @@ VALUES(2, '35F6A946-DEAD-BEEF-B59E-CF04AA63FBDD',
 'Car Service', 'Get car serviced, change oil',	0, 2)
 GO
 
+INSERT INTO [dbo].Todo([Id], [UniqueId], [Summary], [Detail], [IsDone])
+VALUES(3, '75F4A986-FEAD-AEFA-B59E-EF12BE85CAAC',
+'Mow Garden', 'Mow garden, do the hedge',	0)
+GO
+
 SET IDENTITY_INSERT [dbo].Todo OFF
 GO
