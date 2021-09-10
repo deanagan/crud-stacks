@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using TodoBackend.Api.Data.Models;
 using TodoBackend.Api.Interfaces;
 using TodoBackend.Api.Data.Dtos;
@@ -7,6 +6,7 @@ using TodoBackend.Api.Data.Dtos;
 using System.Threading.Tasks;
 using AutoMapper;
 using System;
+using TodoBackend.Api.Data.ViewModels;
 
 namespace TodoBackend.Api.Services
 {

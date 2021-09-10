@@ -1,6 +1,7 @@
 using AutoMapper;
 using TodoBackend.Api.Data.Dtos;
 using TodoBackend.Api.Data.Models;
+using TodoBackend.Api.Data.ViewModels;
 
 namespace TodoBackend.Api.Bindings
 {

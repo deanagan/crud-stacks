@@ -13,7 +13,7 @@ using Xunit;
 using TodoBackend.Api.Interfaces;
 using TodoBackend.Api.Controllers;
 using TodoBackend.Api.Data.Models;
-
+using TodoBackend.Api.Data.ViewModels;
 
 namespace TodoBackend.Api.Tests
 {
