@@ -72,16 +72,16 @@ SET IDENTITY_INSERT [dbo].Todo ON
 GO
 INSERT INTO [dbo].Todo([Id], [UniqueId], [Summary], [Detail], [IsDone], [AssigneeId])
 VALUES(1, '7BE021BD-EBAC-4858-35E2-24ABB9EC79C9',
-'Buy Groceries',	'Buy some bananas, mangos, apple',	0, 1)
+'Implement clock animation',	'Clock must show on lower right',	0, 1)
 
 INSERT INTO [dbo].Todo([Id], [UniqueId], [Summary], [Detail], [IsDone], [AssigneeId])
 VALUES(2, '35F6A946-DEAD-BEEF-B59E-CF04AA63FBDD',
-'Car Service', 'Get car serviced, change oil',	0, 2)
+'Test case 1232', 'Test case 1232 involves E2E tests',	0, 2)
 GO
 
 INSERT INTO [dbo].Todo([Id], [UniqueId], [Summary], [Detail], [IsDone])
 VALUES(3, '75F4A986-FEAD-AEFA-B59E-EF12BE85CAAC',
-'Mow Garden', 'Mow garden, do the hedge',	0)
+'Chase up hardware engineer', 'Get equipment fixed',	0)
 GO
 
 SET IDENTITY_INSERT [dbo].Todo OFF
