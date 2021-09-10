@@ -1,6 +1,7 @@
 using System;
+using TodoBackend.Api.Data.Models;
 
-namespace TodoBackend.Api.Data.Models
+namespace TodoBackend.Api.Data.ViewModels
 {
     public class UserView
     {
