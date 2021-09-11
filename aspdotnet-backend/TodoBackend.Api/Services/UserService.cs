@@ -33,21 +33,21 @@ namespace TodoBackend.Api.Services
 
         public async Task<IEnumerable<UserView>> GetAllUsers()
         {
-            var userDtos = await _userRepository.GetAllUsers();
-            return _mapper.Map<IEnumerable<UserView>>(userDtos);
+            var users = await _userRepository.GetAllUsers();
+            return _mapper.Map<IEnumerable<UserView>>(users);
         }
 
         public async Task<UserView> GetUserByGuid(Guid guid)
         {
-            var userDtos = await _userRepository.GetUserByGuid(guid);
-            return _mapper.Map<UserView>(userDtos);
+            var user = await _userRepository.GetUserByGuid(guid);
+            return _mapper.Map<UserView>(user);
         }
 
         public UserView UpdateUser(Guid guid, UserView userView)
         {
             var user = _mapper.Map<User>(userView);
-            var newUserDto = _userRepository.UpdateUser(guid, user);
-            return _mapper.Map<UserView>(newUserDto);
+            var updatedUser = _userRepository.UpdateUser(guid, user);
+            return _mapper.Map<UserView>(updatedUser);
         }
     }
 }
