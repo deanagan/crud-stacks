@@ -152,8 +152,8 @@ namespace TodoBackend.Api.Data.Access
 
                 var result = conn.Execute(sql, parameter);
 
-                var newUser = new User() {
-
+                var newUser = new User()
+                {
                     Id = parameter.Get<int>("@Id"),
                     UniqueId = parameter.Get<Guid>("@UniqueId"),
                     FirstName = user.FirstName,
@@ -183,6 +183,7 @@ namespace TodoBackend.Api.Data.Access
 						begin
 						   drop table #NewValues
 						end
+
 						create table #NewValues
                         (
                             UniqueId uniqueidentifier,
@@ -247,7 +248,7 @@ namespace TodoBackend.Api.Data.Access
                 parameter.Add("@LastName", user.LastName);
                 parameter.Add("@Email", user.Email);
                 parameter.Add("@Hash", user.Hash ?? "123456");
-                //parameter.Add("@RoleUniqueId", user.RoleUniqueId);
+                parameter.Add("@RoleUniqueId", user.Role.UniqueId);
 
                 parameter.Add("@UserId", null, DbType.Int32, ParameterDirection.Output);
                 parameter.Add("@UserCreated", null, DbType.DateTime, ParameterDirection.Output);
@@ -260,22 +261,25 @@ namespace TodoBackend.Api.Data.Access
 
                 conn.Execute(sql, parameter);
 
-                return new User
+                return new User()
                 {
                     Id = parameter.Get<int>("@UserId"),
                     UniqueId = userGuid,
-                    // FirstName = User.FirstName,
-                    // LastName = User.LastName,
-                    // Email = User.Email,
-                    // Hash = User.Hash ?? "123456",
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Email = user.Email,
+                    Hash = user.Hash ?? "123456",
                     Created = parameter.Get<DateTime>("@UserCreated"),
                     Updated = parameter.Get<DateTime>("@UserUpdated"),
-                    // RoleId = parameter.Get<int>("@RoleId"),
-                    // RoleUniqueId = parameter.Get<Guid>("@RoleUniqueId"),
-                    // RoleKind = parameter.Get<string>("@RoleKind"),
-                    // RoleDescription = parameter.Get<string>("@RoleDescription"),
-                    // RoleCreated = parameter.Get<DateTime>("@RoleCreated"),
-                    // RoleUpdated = parameter.Get<DateTime>("@RoleUpdated")
+                    Role = new Role()
+                    {
+                        Id = parameter.Get<int>("@RoleId"),
+                        UniqueId = user.Role.UniqueId,
+                        Kind = parameter.Get<string>("@RoleKind"),
+                        Description = parameter.Get<string>("@RoleDescription"),
+                        Created = parameter.Get<DateTime>("@RoleCreated"),
+                        Updated = parameter.Get<DateTime>("@RoleUpdated")
+                    }
                 };
             }
         }
