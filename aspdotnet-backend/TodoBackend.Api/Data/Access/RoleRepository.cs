@@ -4,12 +4,8 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
-
-
 using Microsoft.Extensions.Configuration;
-
 using Dapper;
-
 using TodoBackend.Api.Interfaces;
 using TodoBackend.Api.Data.Models;
 
@@ -144,11 +140,15 @@ namespace TodoBackend.Api.Data.Access
 
                 conn.Execute(sql, parameter);
 
-                var updatedRole = new Role();//Role.Clone();
-                // updatedRole.Id = parameter.Get<int>("@Id");
-                // updatedRole.UniqueId = guid;
-                // updatedRole.Created = parameter.Get<DateTime>("@Created");
-                // updatedRole.Updated = parameter.Get<DateTime>("@Updated");
+                var updatedRole = new Role()
+                {
+                    Id = parameter.Get<int>("@Id"),
+                    UniqueId = guid,
+                    Kind = role.Kind,
+                    Description = role.Description,
+                    Created = parameter.Get<DateTime>("@Created"),
+                    Updated = parameter.Get<DateTime>("@Updated")
+                };
 
                 return updatedRole;
             }

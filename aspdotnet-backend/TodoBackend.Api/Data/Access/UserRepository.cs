@@ -300,5 +300,10 @@ namespace TodoBackend.Api.Data.Access
                 return conn.Execute(sql, parameter) != 0;
             }
         }
+
+        Task<IEnumerable<User>> IUserRepository.GetUsersByUniqueId()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

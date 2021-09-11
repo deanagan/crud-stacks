@@ -5,14 +5,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
-
-using TodoBackend.Api.Data.Access;
-
 using DbUp;
-
+using TodoBackend.Api.Data.Access;
 using TodoBackend.Api.Services;
 using TodoBackend.Api.Interfaces;
-using TodoBackend.Api.Data.Dtos;
 using TodoBackend.Api.Bindings;
 
 namespace TodoBackend.Api
@@ -34,6 +30,7 @@ namespace TodoBackend.Api
             ConfigureDBContext(services);
             services.AddScoped(typeof(IRolesRepository), typeof(RolesRepository));
             services.AddScoped(typeof(IUserRepository), typeof(UserRepository));
+            services.AddScoped(typeof(ITodoRepository), typeof(TodoRepository));
             services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
             services.AddSwaggerGen(c =>
             {
@@ -42,6 +39,7 @@ namespace TodoBackend.Api
 
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IRolesService, RolesService>();
+            services.AddScoped<ITodoService, TodoService>();
         }
 
         public virtual void ConfigureDBContext(IServiceCollection services)

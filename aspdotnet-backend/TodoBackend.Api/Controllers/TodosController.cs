@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using TodoBackend.Api.Interfaces;
-using TodoBackend.Api.Data.Models;
+using TodoBackend.Api.Data.ViewModels;
 
 
 namespace TodoBackend.Api.Controllers
@@ -61,14 +61,14 @@ namespace TodoBackend.Api.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateTodo(Todo todo)
+        public IActionResult CreateTodo(TodoView todoView)
         {
-            if (todo != null)
+            if (todoView != null)
             {
                 try
                 {
-                    _todoService.CreateTodo(todo);
-                    return CreatedAtAction(nameof(GetTodos), new { Id = todo.Id }, todo);
+                    _todoService.CreateTodo(todoView);
+                    return CreatedAtAction(nameof(GetTodos), new { Id = todoView.UniqueId }, todoView);
                 }
                 catch (Exception ex)
                 {
@@ -80,13 +80,13 @@ namespace TodoBackend.Api.Controllers
         }
 
         [HttpPut("{guid}")]
-        public IActionResult UpdateTodo(Guid guid, Todo todo)
+        public IActionResult UpdateTodo(Guid guid, TodoView todoView)
         {
-            if (todo != null)
+            if (todoView != null)
             {
                 try
                 {
-                    var updatedTodo = _todoService.UpdateTodo(guid, todo);
+                    var updatedTodo = _todoService.UpdateTodo(guid, todoView);
                     if (updatedTodo != null)
                     {
                         return Ok(updatedTodo);

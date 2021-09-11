@@ -1,25 +1,28 @@
+using System;
 using System.Collections.Generic;
-using TodoBackend.Api.Data.Models;
-using TodoBackend.Api.Interfaces;
-using TodoBackend.Api.Data.Dtos;
-
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using System;
+using TodoBackend.Api.Data.Models;
+using TodoBackend.Api.Data.ViewModels;
+using TodoBackend.Api.Interfaces;
+
 
 namespace TodoBackend.Api.Services
 {
     public class TodoService : ITodoService
     {
         private readonly ITodoRepository _todoRepository;
+        private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
-        public TodoService(ITodoRepository todoRepository, IMapper mapper)
+        public TodoService(ITodoRepository todoRepository, IUserRepository userRepository, IMapper mapper)
         {
             _todoRepository = todoRepository;
+            _userRepository = userRepository;
             _mapper = mapper;
         }
 
-        Todo ITodoService.CreateTodo(Todo Todo)
+        TodoView ITodoService.CreateTodo(TodoView todoView)
         {
             throw new NotImplementedException();
         }
@@ -29,17 +32,36 @@ namespace TodoBackend.Api.Services
             throw new NotImplementedException();
         }
 
-        Task<Todo> ITodoService.GetTodo(Guid guid)
+        Task<TodoView> ITodoService.GetTodo(Guid guid)
         {
             throw new NotImplementedException();
         }
 
-        Task<IEnumerable<Todo>> ITodoService.GetTodos()
+        public async Task<IEnumerable<TodoView>> GetTodos()
         {
-            throw new NotImplementedException();
+            var todos = await _todoRepository.GetAllTodos();
+            var users = await _userRepository.GetAllUsers();
+
+            var userIdLookup = users.ToDictionary(key => key.Id, value => value);
+
+            var todoViews = todos.Select(todo => new TodoView() {
+                UniqueId = todo.UniqueId,
+                Summary = todo.Summary,
+                Detail = todo.Detail,
+                IsDone = todo.IsDone,
+                Created = todo.Created,
+                Updated = todo.Updated,
+                Assignee = todo.AssigneeId != null ? new AssigneeView() {
+                    UniqueId = userIdLookup[todo.AssigneeId.Value].UniqueId,
+                    FirstName = userIdLookup[todo.AssigneeId.Value].FirstName,
+                    LastName = userIdLookup[todo.AssigneeId.Value].LastName
+                } : null
+            });
+
+            return todoViews;
         }
 
-        Todo ITodoService.UpdateTodo(Guid gud, Todo Todo)
+        TodoView ITodoService.UpdateTodo(Guid guid, TodoView todoView)
         {
             throw new NotImplementedException();
         }
