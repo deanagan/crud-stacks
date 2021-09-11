@@ -1,12 +1,11 @@
+using System;
 using System.Collections.Generic;
-using TodoBackend.Api.Data.Models;
-using TodoBackend.Api.Interfaces;
-using TodoBackend.Api.Data.Dtos;
-
 using System.Threading.Tasks;
 using AutoMapper;
-using System;
+using TodoBackend.Api.Data.Models;
 using TodoBackend.Api.Data.ViewModels;
+using TodoBackend.Api.Interfaces;
+
 
 namespace TodoBackend.Api.Services
 {
@@ -20,11 +19,11 @@ namespace TodoBackend.Api.Services
             _mapper = mapper;
         }
 
-        public UserView CreateUser(User user)
+        public UserView CreateUser(UserView userView)
         {
-            var userDto = _mapper.Map<UserDto>(user);
-            var newUserDto = _userRepository.AddUser(userDto);
-            return _mapper.Map<UserView>(newUserDto);
+            var user = _mapper.Map<User>(userView);
+            var newUser = _userRepository.AddUser(user);
+            return _mapper.Map<UserView>(newUser);
         }
 
         public bool DeleteUser(Guid guid)
@@ -44,10 +43,10 @@ namespace TodoBackend.Api.Services
             return _mapper.Map<UserView>(userDtos);
         }
 
-        public UserView UpdateUser(Guid guid, User user)
+        public UserView UpdateUser(Guid guid, UserView userView)
         {
-            var userDto = _mapper.Map<UserDto>(user);
-            var newUserDto = _userRepository.UpdateUser(guid, userDto);
+            var user = _mapper.Map<User>(userView);
+            var newUserDto = _userRepository.UpdateUser(guid, user);
             return _mapper.Map<UserView>(newUserDto);
         }
     }

@@ -67,7 +67,7 @@ namespace TodoBackend.Api.Tests
         {
             // Arrange
             var controller = new UsersController(_fakeLogger, _userService);
-            var fakeUser = A.Fake<User>();
+            var fakeUser = A.Fake<UserView>();
 
             // Act
             var result = controller.CreateUser(fakeUser) as ObjectResult;

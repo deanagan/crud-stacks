@@ -4,10 +4,6 @@ namespace TodoBackend.Api.Data.Models
 {
     public class Role
     {
-        public Role Clone()
-        {
-            return (Role) MemberwiseClone();
-        }
         public int Id { get; set; }
         public Guid UniqueId { get; set; }
         public string Kind { get; set; }

@@ -10,7 +10,7 @@ namespace TodoBackend.Api.Interfaces
         Task<IEnumerable<TodoDto>> GetAllTodos();
         Task<TodoDto> GetTodoByGuid(Guid userGuid);
         TodoDto AddUser(TodoDto parameter);
-        TodoDto UpdateUser(Guid userGuid, TodoDto userDto);
+        TodoDto UpdateUser(Guid userGuid, TodoDto todoDto);
         bool DeleteUser(Guid userGuid);
     }
 }

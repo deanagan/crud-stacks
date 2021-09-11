@@ -60,7 +60,7 @@ namespace TodoBackend.Api.Data.Access
             }
         }
 
-        public Role AddRole(Role Role)
+        public Role AddRole(Role role)
         {
             var sql = @"
                         declare @Outcome table (
@@ -88,22 +88,26 @@ namespace TodoBackend.Api.Data.Access
                 parameter.Add("@UniqueId", null, DbType.Guid, ParameterDirection.Output);
                 parameter.Add("@Created", null, DbType.DateTime, ParameterDirection.Output);
                 parameter.Add("@Updated", null, DbType.DateTime, ParameterDirection.Output);
-                parameter.Add("@Kind", Role.Kind);
-                parameter.Add("@Description", Role.Description);
+                parameter.Add("@Kind", role.Kind);
+                parameter.Add("@Description", role.Description);
 
                 conn.Execute(sql, parameter);
 
-                var newRole = Role.Clone();
-                newRole.Id = parameter.Get<int>("@Id");
-                newRole.UniqueId = parameter.Get<Guid>("@UniqueId");
-                newRole.Created = parameter.Get<DateTime>("@Created");
-                newRole.Updated = parameter.Get<DateTime>("@Updated");
+                var newRole = new Role()
+                {
+                    Id = parameter.Get<int>("@Id"),
+                    UniqueId = role.UniqueId,
+                    Kind = role.Kind,
+                    Description = role.Description,
+                    Created = parameter.Get<DateTime>("@Created"),
+                    Updated = parameter.Get<DateTime>("@Updated")
+                };
 
                 return newRole;
             }
         }
 
-        Role IRolesRepository.UpdateRole(Guid guid, Role Role)
+        Role IRolesRepository.UpdateRole(Guid guid, Role role)
         {
             var sql = @"
                         declare @Outcome table (
@@ -135,16 +139,16 @@ namespace TodoBackend.Api.Data.Access
                 parameter.Add("@Updated", null, DbType.DateTime, ParameterDirection.Output);
 
                 parameter.Add("@UniqueId", guid);
-                parameter.Add("@Kind", Role.Kind);
-                parameter.Add("@Description", Role.Description);
+                parameter.Add("@Kind", role.Kind);
+                parameter.Add("@Description", role.Description);
 
                 conn.Execute(sql, parameter);
 
-                var updatedRole = Role.Clone();
-                updatedRole.Id = parameter.Get<int>("@Id");
-                updatedRole.UniqueId = guid;
-                updatedRole.Created = parameter.Get<DateTime>("@Created");
-                updatedRole.Updated = parameter.Get<DateTime>("@Updated");
+                var updatedRole = new Role();//Role.Clone();
+                // updatedRole.Id = parameter.Get<int>("@Id");
+                // updatedRole.UniqueId = guid;
+                // updatedRole.Created = parameter.Get<DateTime>("@Created");
+                // updatedRole.Updated = parameter.Get<DateTime>("@Updated");
 
                 return updatedRole;
             }

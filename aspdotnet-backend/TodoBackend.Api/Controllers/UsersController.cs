@@ -3,9 +3,8 @@ using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Http;
 using TodoBackend.Api.Interfaces;
-using TodoBackend.Api.Data.Models;
+using TodoBackend.Api.Data.ViewModels;
 
 
 namespace TodoBackend.Api.Controllers
@@ -62,7 +61,7 @@ namespace TodoBackend.Api.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateUser(User user)
+        public IActionResult CreateUser(UserView user)
         {
             if (user != null)
             {
@@ -81,7 +80,7 @@ namespace TodoBackend.Api.Controllers
         }
 
         [HttpPut("{guid}")]
-        public IActionResult UpdateUser(Guid guid, User user)
+        public IActionResult UpdateUser(Guid guid, UserView user)
         {
             if (user != null)
             {

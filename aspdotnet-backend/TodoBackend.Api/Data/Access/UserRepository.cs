@@ -4,15 +4,10 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
-
-
 using Microsoft.Extensions.Configuration;
-
 using Dapper;
-
 using TodoBackend.Api.Interfaces;
-using TodoBackend.Api.Data.Dtos;
-
+using TodoBackend.Api.Data.Models;
 
 namespace TodoBackend.Api.Data.Access
 {
@@ -24,7 +19,7 @@ namespace TodoBackend.Api.Data.Access
             _connectionString = configuration["ConnectionStrings:DefaultConnection"];
         }
 
-        public async Task<IEnumerable<UserDto>> GetAllUsers()
+        public async Task<IEnumerable<User>> GetAllUsers()
         {
             var sql = @"
                     select u.Id,
@@ -35,22 +30,29 @@ namespace TodoBackend.Api.Data.Access
                            u.Hash,
                            u.Created,
                            u.Updated,
-                           r.Id as RoleId,
-                           r.UniqueId as RoleUniqueId,
-                           r.Kind as RoleKind,
-                           r.Description as RoleDescription,
-                           r.Created as RoleCreated,
-                           r.Updated as RoleUpdated
+                           r.Id,
+                           r.UniqueId,
+                           r.Kind,
+                           r.Description,
+                           r.Created,
+                           r.Updated
                     from dbo.Users as u with (nolock)
                         inner join dbo.Roles as r with (nolock) on u.RoleId = r.Id";
 
             using (var conn = new SqlConnection(_connectionString))
             {
-                return await conn.QueryAsync<UserDto>(sql);
+                var users = await conn.QueryAsync<User, Role, User>(sql,
+                (user, role) =>
+                {
+                    user.Role = role;
+                    return user;
+                });
+
+                return users;
             }
         }
 
-        public async Task<UserDto> GetUserByGuid(Guid userGuid)
+        public async Task<User> GetUserByGuid(Guid userGuid)
         {
             var sql = @"
                     select u.Id,
@@ -61,31 +63,43 @@ namespace TodoBackend.Api.Data.Access
                            u.Hash,
                            u.Created,
                            u.Updated,
-                           r.Id as RoleId,
-                           r.UniqueId as RoleUniqueId,
-                           r.Kind as RoleKind,
-                           r.Description as RoleDescription,
-                           r.Created as RoleCreated,
-                           r.Updated as RoleUpdated
+                           r.Id,
+                           r.UniqueId,
+                           r.Kind,
+                           r.Description,
+                           r.Created,
+                           r.Updated
                     from dbo.Users as u with (nolock)
                         inner join dbo.Roles as r with (nolock) on u.RoleId = r.Id
                     where u.UniqueId = @UserGuid";
 
             using (var conn = new SqlConnection(_connectionString))
             {
-                var result = await conn.QueryAsync<UserDto>(sql, new { UserGuid = userGuid });
+                var result = await conn.QueryAsync<User, Role, User>(sql,
+                (user, role) =>
+                {
+                    user.Role = role;
+                    return user;
+                }, new { UserGuid = userGuid });
+
                 return result.FirstOrDefault();
             }
         }
 
-        public UserDto AddUser(UserDto userDto)
+        public User AddUser(User user)
         {
             var sql = @"
                         declare @Outcome table (
+                            Id int,
                             UniqueId uniqueidentifier,
                             Created datetime,
                             Updated datetime
                         );
+
+                        select @RoleId = r.Id
+                        from Roles as r with (nolock)
+                        where r.UniqueId = @RoleUniqueId;
+
                         insert into dbo.Users (
                             [UniqueId],
                             [FirstName],
@@ -94,7 +108,7 @@ namespace TodoBackend.Api.Data.Access
                             [Hash],
                             [RoleId]
                         )
-                        output inserted.UniqueId, inserted.Created, inserted.Updated into @Outcome
+                        output inserted.Id, inserted.UniqueId, inserted.Created, inserted.Updated into @Outcome
                         values (
                             NEWID(),
                             @FirstName,
@@ -103,13 +117,13 @@ namespace TodoBackend.Api.Data.Access
                             @Hash,
                             @RoleId
                             );
-                        select @UniqueId = UniqueId,
+                        select @Id = Id,
+                               @UniqueId = UniqueId,
                                @UserCreated = Created,
                                @UserUpdated = Updated
                         from @Outcome;
 
-                        select @RoleUniqueId = r.UniqueId,
-                               @Kind = r.Kind,
+                        select @Kind = r.Kind,
                                @Description = r.Description,
                                @RoleCreated = r.Created,
                                @RoleUpdated = r.Updated
@@ -120,36 +134,49 @@ namespace TodoBackend.Api.Data.Access
             using (var conn = new SqlConnection(_connectionString))
             {
                 var parameter = new DynamicParameters();
+                parameter.Add("@FirstName", user.FirstName);
+                parameter.Add("@LastName", user.LastName);
+                parameter.Add("@Email", user.Email);
+                parameter.Add("@Hash", user.Hash ?? "123456");
+                parameter.Add("@RoleUniqueId", user.Role.UniqueId);
+
+                parameter.Add("@Id", null, DbType.Int32, ParameterDirection.Output);
                 parameter.Add("@UniqueId", null, DbType.Guid, ParameterDirection.Output);
-                parameter.Add("@FirstName", userDto.FirstName);
-                parameter.Add("@LastName", userDto.LastName);
-                parameter.Add("@Email", userDto.Email);
-                parameter.Add("@Hash", userDto.Hash ?? "123456");
-                parameter.Add("@RoleId", userDto.RoleId);
-                parameter.Add("@RoleUniqueId", null, DbType.Guid, ParameterDirection.Output);
                 parameter.Add("@Kind", null, DbType.String, ParameterDirection.Output, 150);
                 parameter.Add("@Description", null, DbType.String, ParameterDirection.Output, -1);
+                parameter.Add("@RoleId", null, DbType.Int32, ParameterDirection.Output);
                 parameter.Add("@RoleCreated", null, DbType.DateTime, ParameterDirection.Output);
                 parameter.Add("@RoleUpdated", null, DbType.DateTime, ParameterDirection.Output);
                 parameter.Add("@UserCreated", null, DbType.DateTime, ParameterDirection.Output);
                 parameter.Add("@UserUpdated", null, DbType.DateTime, ParameterDirection.Output);
-                conn.Execute(sql, parameter);
 
-                var newUserDto = userDto.Clone();
-                newUserDto.UniqueId = parameter.Get<Guid>("@UniqueId");
-                newUserDto.RoleUniqueId = parameter.Get<Guid>("@RoleUniqueId");
-                newUserDto.RoleKind = parameter.Get<string>("@Kind");
-                newUserDto.RoleDescription = parameter.Get<string>("@Description");
-                newUserDto.RoleCreated = parameter.Get<DateTime>("@RoleCreated");
-                newUserDto.RoleUpdated = parameter.Get<DateTime>("@RoleUpdated");
-                newUserDto.Created = parameter.Get<DateTime>("@UserCreated");
-                newUserDto.Updated = parameter.Get<DateTime>("@UserUpdated");
+                var result = conn.Execute(sql, parameter);
 
-                return newUserDto;
+                var newUser = new User() {
+
+                    Id = parameter.Get<int>("@Id"),
+                    UniqueId = parameter.Get<Guid>("@UniqueId"),
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Email = user.Email,
+                    Hash = user.Hash ?? "123456",
+                    Created = parameter.Get<DateTime>("@UserCreated"),
+                    Updated = parameter.Get<DateTime>("@UserUpdated"),
+                    Role = new Role() {
+                        Id = parameter.Get<int>("@RoleId"),
+                        UniqueId = user.Role.UniqueId,
+                        Kind = parameter.Get<string>("@Kind"),
+                        Description = parameter.Get<string>("@Description"),
+                        Created = parameter.Get<DateTime>("@RoleCreated"),
+                        Updated = parameter.Get<DateTime>("@RoleUpdated")
+                    }
+                };
+
+                return newUser;
             }
         }
 
-        public UserDto UpdateUser(Guid userGuid, UserDto userDto)
+        public User UpdateUser(Guid userGuid, User user)
         {
             var sql = @"
 						if object_id('tempdb.#NewValues') is not null
@@ -216,11 +243,11 @@ namespace TodoBackend.Api.Data.Access
             {
                 var parameter = new DynamicParameters();
                 parameter.Add("@UniqueId", userGuid);
-                parameter.Add("@FirstName", userDto.FirstName);
-                parameter.Add("@LastName", userDto.LastName);
-                parameter.Add("@Email", userDto.Email);
-                parameter.Add("@Hash", userDto.Hash ?? "123456");
-                parameter.Add("@RoleUniqueId", userDto.RoleUniqueId);
+                parameter.Add("@FirstName", user.FirstName);
+                parameter.Add("@LastName", user.LastName);
+                parameter.Add("@Email", user.Email);
+                parameter.Add("@Hash", user.Hash ?? "123456");
+                //parameter.Add("@RoleUniqueId", user.RoleUniqueId);
 
                 parameter.Add("@UserId", null, DbType.Int32, ParameterDirection.Output);
                 parameter.Add("@UserCreated", null, DbType.DateTime, ParameterDirection.Output);
@@ -233,21 +260,22 @@ namespace TodoBackend.Api.Data.Access
 
                 conn.Execute(sql, parameter);
 
-                return new UserDto {
+                return new User
+                {
                     Id = parameter.Get<int>("@UserId"),
                     UniqueId = userGuid,
-                    FirstName = userDto.FirstName,
-                    LastName = userDto.LastName,
-                    Email = userDto.Email,
-                    Hash = userDto.Hash ?? "123456",
+                    // FirstName = User.FirstName,
+                    // LastName = User.LastName,
+                    // Email = User.Email,
+                    // Hash = User.Hash ?? "123456",
                     Created = parameter.Get<DateTime>("@UserCreated"),
                     Updated = parameter.Get<DateTime>("@UserUpdated"),
-                    RoleId = parameter.Get<int>("@RoleId"),
-                    RoleUniqueId = parameter.Get<Guid>("@RoleUniqueId"),
-                    RoleKind = parameter.Get<string>("@RoleKind"),
-                    RoleDescription = parameter.Get<string>("@RoleDescription"),
-                    RoleCreated = parameter.Get<DateTime>("@RoleCreated"),
-                    RoleUpdated = parameter.Get<DateTime>("@RoleUpdated")
+                    // RoleId = parameter.Get<int>("@RoleId"),
+                    // RoleUniqueId = parameter.Get<Guid>("@RoleUniqueId"),
+                    // RoleKind = parameter.Get<string>("@RoleKind"),
+                    // RoleDescription = parameter.Get<string>("@RoleDescription"),
+                    // RoleCreated = parameter.Get<DateTime>("@RoleCreated"),
+                    // RoleUpdated = parameter.Get<DateTime>("@RoleUpdated")
                 };
             }
         }
