@@ -1,11 +1,11 @@
-using System.Collections.Generic;
-using TodoBackend.Api.Data.Models;
-using TodoBackend.Api.Interfaces;
-using TodoBackend.Api.Data.Dtos;
-
-using System.Threading.Tasks;
-using AutoMapper;
 using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using TodoBackend.Api.Data.Models;
+using TodoBackend.Api.Data.ViewModels;
+using TodoBackend.Api.Interfaces;
+using AutoMapper;
+
 
 namespace TodoBackend.Api.Services
 {
@@ -19,11 +19,11 @@ namespace TodoBackend.Api.Services
             _mapper = mapper;
         }
 
-        public Role CreateRole(Role role)
+        public RoleView CreateRole(RoleView roleView)
         {
-            var roleDto = _mapper.Map<RoleDto>(role);
-            var newRole = _rolesRepository.AddRole(roleDto);
-            return _mapper.Map<Role>(newRole);
+            var role = _mapper.Map<Role>(roleView);
+            var newRole = _rolesRepository.AddRole(role);
+            return _mapper.Map<RoleView>(newRole);
         }
 
         bool IRolesService.DeleteRole(Guid guid)
@@ -31,23 +31,23 @@ namespace TodoBackend.Api.Services
             return _rolesRepository.DeleteRole(guid);
         }
 
-        public async Task<IEnumerable<Role>> GetAllRoles()
+        public async Task<IEnumerable<RoleView>> GetAllRoles()
         {
-            var rolesDto = await _rolesRepository.GetAllRoles();
-            return _mapper.Map<IEnumerable<Role>>(rolesDto);
+            var roles = await _rolesRepository.GetAllRoles();
+            return _mapper.Map<IEnumerable<RoleView>>(roles);
         }
 
-        public async Task<Role> GetRoleByGuid(Guid guid)
+        public async Task<RoleView> GetRoleByGuid(Guid guid)
         {
-            var roleDto = await _rolesRepository.GetRoleByGuid(guid);
-            return _mapper.Map<Role>(roleDto);
+            var role = await _rolesRepository.GetRoleByGuid(guid);
+            return _mapper.Map<RoleView>(role);
         }
 
-        Role IRolesService.UpdateRole(Guid guid, Role role)
+        public RoleView UpdateRole(Guid guid, RoleView roleView)
         {
-            var roleDto = _mapper.Map<RoleDto>(role);
-            var newRoleDto = _rolesRepository.UpdateRole(guid, roleDto);
-            return _mapper.Map<Role>(newRoleDto);
+            var role = _mapper.Map<Role>(roleView);
+            var updatedRole = _rolesRepository.UpdateRole(guid, role);
+            return _mapper.Map<RoleView>(updatedRole);
         }
     }
 }

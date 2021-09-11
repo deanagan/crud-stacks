@@ -11,7 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Dapper;
 
 using TodoBackend.Api.Interfaces;
-using TodoBackend.Api.Data.Dtos;
+using TodoBackend.Api.Data.Models;
 
 
 namespace TodoBackend.Api.Data.Access
@@ -24,7 +24,7 @@ namespace TodoBackend.Api.Data.Access
             _connectionString = configuration["ConnectionStrings:DefaultConnection"];
         }
 
-        public async Task<IEnumerable<RoleDto>> GetAllRoles()
+        public async Task<IEnumerable<Role>> GetAllRoles()
         {
              var sql = @"
                     select r.Id,
@@ -37,11 +37,11 @@ namespace TodoBackend.Api.Data.Access
 
             using (var conn = new SqlConnection(_connectionString))
             {
-                return await conn.QueryAsync<RoleDto>(sql);
+                return await conn.QueryAsync<Role>(sql);
             }
         }
 
-        public async Task<RoleDto> GetRoleByGuid(Guid guid)
+        public async Task<Role> GetRoleByGuid(Guid guid)
         {
             var sql = @"
                     select r.Id,
@@ -55,12 +55,12 @@ namespace TodoBackend.Api.Data.Access
 
             using (var conn = new SqlConnection(_connectionString))
             {
-                var roleDto = await conn.QueryAsync<RoleDto>(sql, new { UniqueId = guid });
-                return roleDto.FirstOrDefault();
+                var Role = await conn.QueryAsync<Role>(sql, new { UniqueId = guid });
+                return Role.FirstOrDefault();
             }
         }
 
-        public RoleDto AddRole(RoleDto roleDto)
+        public Role AddRole(Role Role)
         {
             var sql = @"
                         declare @Outcome table (
@@ -88,22 +88,22 @@ namespace TodoBackend.Api.Data.Access
                 parameter.Add("@UniqueId", null, DbType.Guid, ParameterDirection.Output);
                 parameter.Add("@Created", null, DbType.DateTime, ParameterDirection.Output);
                 parameter.Add("@Updated", null, DbType.DateTime, ParameterDirection.Output);
-                parameter.Add("@Kind", roleDto.Kind);
-                parameter.Add("@Description", roleDto.Description);
+                parameter.Add("@Kind", Role.Kind);
+                parameter.Add("@Description", Role.Description);
 
                 conn.Execute(sql, parameter);
 
-                var newRoleDto = roleDto.Clone();
-                newRoleDto.Id = parameter.Get<int>("@Id");
-                newRoleDto.UniqueId = parameter.Get<Guid>("@UniqueId");
-                newRoleDto.Created = parameter.Get<DateTime>("@Created");
-                newRoleDto.Updated = parameter.Get<DateTime>("@Updated");
+                var newRole = Role.Clone();
+                newRole.Id = parameter.Get<int>("@Id");
+                newRole.UniqueId = parameter.Get<Guid>("@UniqueId");
+                newRole.Created = parameter.Get<DateTime>("@Created");
+                newRole.Updated = parameter.Get<DateTime>("@Updated");
 
-                return newRoleDto;
+                return newRole;
             }
         }
 
-        RoleDto IRolesRepository.UpdateRole(Guid guid, RoleDto roleDto)
+        Role IRolesRepository.UpdateRole(Guid guid, Role Role)
         {
             var sql = @"
                         declare @Outcome table (
@@ -116,6 +116,7 @@ namespace TodoBackend.Api.Data.Access
                         set r.Kind = @Kind,
                             r.Description = @Description,
                             r.Updated = getutcdate()
+                        output inserted.Id, inserted.Created, inserted.Updated into @Outcome
                         from dbo.Roles r
                             where r.UniqueId = @UniqueId
 
@@ -134,18 +135,18 @@ namespace TodoBackend.Api.Data.Access
                 parameter.Add("@Updated", null, DbType.DateTime, ParameterDirection.Output);
 
                 parameter.Add("@UniqueId", guid);
-                parameter.Add("@Kind", roleDto.Kind);
-                parameter.Add("@Description", roleDto.Description);
+                parameter.Add("@Kind", Role.Kind);
+                parameter.Add("@Description", Role.Description);
 
                 conn.Execute(sql, parameter);
 
-                var updatedRoleDto = roleDto.Clone();
-                updatedRoleDto.Id = parameter.Get<int>("@Id");
-                updatedRoleDto.UniqueId = guid;
-                updatedRoleDto.Created = parameter.Get<DateTime>("@Created");
-                updatedRoleDto.Updated = parameter.Get<DateTime>("@Updated");
+                var updatedRole = Role.Clone();
+                updatedRole.Id = parameter.Get<int>("@Id");
+                updatedRole.UniqueId = guid;
+                updatedRole.Created = parameter.Get<DateTime>("@Created");
+                updatedRole.Updated = parameter.Get<DateTime>("@Updated");
 
-                return updatedRoleDto;
+                return updatedRole;
             }
         }
 

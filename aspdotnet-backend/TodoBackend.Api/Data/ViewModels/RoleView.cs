@@ -1,15 +1,13 @@
 using System;
 
-namespace TodoBackend.Api.Data.Dtos
+namespace TodoBackend.Api.Data.ViewModels
 {
-    public class RoleDto
+    public class RoleView
     {
-        public RoleDto Clone()
+        public RoleView Clone()
         {
-            return (RoleDto) MemberwiseClone();
+            return (RoleView) MemberwiseClone();
         }
-
-        public int Id { get; set; }
         public Guid UniqueId { get; set; }
         public string Kind { get; set; }
         public string Description { get; set; }

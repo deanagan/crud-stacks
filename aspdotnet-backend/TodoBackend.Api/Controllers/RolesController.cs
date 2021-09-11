@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using TodoBackend.Api.Interfaces;
-using TodoBackend.Api.Data.Models;
+using TodoBackend.Api.Data.ViewModels;
 
 
 namespace TodoBackend.Api.Controllers
@@ -61,14 +61,14 @@ namespace TodoBackend.Api.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateRole(Role role)
+        public IActionResult CreateRole(RoleView roleView)
         {
-            if (role != null)
+            if (roleView != null)
             {
                 try
                 {
-                    var newRole = _rolesService.CreateRole(role);
-                    return CreatedAtAction(nameof(GetRoles), new { Id = newRole.Id }, newRole);
+                    var newRole = _rolesService.CreateRole(roleView);
+                    return CreatedAtAction(nameof(GetRoles), new { UniqueId = newRole.UniqueId }, newRole);
                 }
                 catch (Exception ex)
                 {
@@ -79,14 +79,14 @@ namespace TodoBackend.Api.Controllers
             return BadRequest("Role creation failed.");
         }
 
-        [HttpPut("{id}")]
-        public IActionResult UpdateRole(Guid guid, Role role)
+        [HttpPut("{guid}")]
+        public IActionResult UpdateRole(Guid guid, RoleView roleView)
         {
-            if (role != null)
+            if (roleView != null)
             {
                 try
                 {
-                    var updatedRole = _rolesService.UpdateRole(guid, role);
+                    var updatedRole = _rolesService.UpdateRole(guid, roleView);
                     if (updatedRole != null)
                     {
                         return Ok(updatedRole);

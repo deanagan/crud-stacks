@@ -1,16 +1,16 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using TodoBackend.Api.Data.Models;
+using TodoBackend.Api.Data.ViewModels;
 
 namespace TodoBackend.Api.Interfaces
 {
     public interface IRolesService
     {
-        Task<IEnumerable<Role>> GetAllRoles();
-        Task<Role> GetRoleByGuid(Guid guid);
-        Role CreateRole(Role role);
-        Role UpdateRole(Guid guid, Role role);
+        Task<IEnumerable<RoleView>> GetAllRoles();
+        Task<RoleView> GetRoleByGuid(Guid guid);
+        RoleView CreateRole(RoleView role);
+        RoleView UpdateRole(Guid guid, RoleView role);
         bool DeleteRole(Guid guid);
     }
 
