@@ -10,7 +10,7 @@ namespace TodoBackend.Api.Interfaces
     {
         Task<IEnumerable<TodoView>> GetTodos();
         Task<TodoView> GetTodo(Guid guid);
-        TodoView CreateTodo(TodoView todoView);
+        Task<TodoView> CreateTodo(TodoView todoView);
         TodoView UpdateTodo(Guid guid, TodoView todoView);
         bool DeleteTodo(Guid guid);
     }

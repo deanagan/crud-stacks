@@ -10,6 +10,6 @@ namespace TodoBackend.Api.Data.Models
         public bool IsDone { get; set; }
         public DateTime Created { get; set; }
         public DateTime Updated { get; set; }
-        public int? AssigneeId { get; set; }
+        public Guid AssigneeGuid { get; set; }
     }
 }

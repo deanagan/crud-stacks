@@ -8,9 +8,9 @@ namespace TodoBackend.Api.Interfaces
     public interface ITodoRepository
     {
         Task<IEnumerable<Todo>> GetAllTodos();
-        Task<Todo> GetTodoByGuid(Guid userGuid);
-        Todo AddUser(Todo todo);
-        Todo UpdateUser(Guid userGuid, Todo todo);
-        bool DeleteUser(Guid userGuid);
+        Task<Todo> GetTodoByGuid(Guid guid);
+        Todo AddTodo(Todo todo);
+        Todo UpdateTodo(Guid guid, Todo todo);
+        bool DeleteTodo(Guid guid);
     }
 }

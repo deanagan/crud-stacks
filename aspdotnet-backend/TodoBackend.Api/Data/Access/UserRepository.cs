@@ -52,7 +52,7 @@ namespace TodoBackend.Api.Data.Access
             }
         }
 
-        public async Task<User> GetUserByGuid(Guid userGuid)
+        public async Task<User> GetUserByGuid(Guid guid)
         {
             var sql = @"
                     select u.Id,
@@ -80,7 +80,7 @@ namespace TodoBackend.Api.Data.Access
                 {
                     user.Role = role;
                     return user;
-                }, new { UserGuid = userGuid });
+                }, new { UserGuid = guid });
 
                 return result.FirstOrDefault();
             }
@@ -176,7 +176,7 @@ namespace TodoBackend.Api.Data.Access
             }
         }
 
-        public User UpdateUser(Guid userGuid, User user)
+        public User UpdateUser(Guid guid, User user)
         {
             var sql = @"
 						if object_id('tempdb.#NewValues') is not null
@@ -243,7 +243,7 @@ namespace TodoBackend.Api.Data.Access
             using (var conn = new SqlConnection(_connectionString))
             {
                 var parameter = new DynamicParameters();
-                parameter.Add("@UniqueId", userGuid);
+                parameter.Add("@UniqueId", guid);
                 parameter.Add("@FirstName", user.FirstName);
                 parameter.Add("@LastName", user.LastName);
                 parameter.Add("@Email", user.Email);
@@ -264,7 +264,7 @@ namespace TodoBackend.Api.Data.Access
                 return new User()
                 {
                     Id = parameter.Get<int>("@UserId"),
-                    UniqueId = userGuid,
+                    UniqueId = guid,
                     FirstName = user.FirstName,
                     LastName = user.LastName,
                     Email = user.Email,
@@ -301,9 +301,39 @@ namespace TodoBackend.Api.Data.Access
             }
         }
 
-        Task<IEnumerable<User>> IUserRepository.GetUsersByUniqueId()
+        public async Task<IEnumerable<User>> GetUsersByGuids(IEnumerable<Guid> guids)
         {
-            throw new NotImplementedException();
+            var sql = @"
+                    select u.Id,
+                           u.UniqueId,
+                           u.FirstName,
+                           u.LastName,
+                           u.Email,
+                           u.Hash,
+                           u.Created,
+                           u.Updated,
+                           r.Id,
+                           r.UniqueId,
+                           r.Kind,
+                           r.Description,
+                           r.Created,
+                           r.Updated
+                    from dbo.Users as u with (nolock)
+                        inner join dbo.Roles as r with (nolock) on u.RoleId = r.Id
+                    where u.UniqueId in @UniqueIds";
+
+            using (var conn = new SqlConnection(_connectionString))
+            {
+                var users = await conn.QueryAsync<User, Role, User>(sql,
+                (user, role) =>
+                {
+                    user.Role = role;
+                    return user;
+                }, new { UniqueIds = guids });
+
+                return users;
+            }
         }
+
     }
 }

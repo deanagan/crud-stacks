@@ -61,14 +61,14 @@ namespace TodoBackend.Api.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateTodo(TodoView todoView)
+        public async Task<IActionResult> CreateTodo(TodoView todoView)
         {
             if (todoView != null)
             {
                 try
                 {
-                    _todoService.CreateTodo(todoView);
-                    return CreatedAtAction(nameof(GetTodos), new { Id = todoView.UniqueId }, todoView);
+                    var newTodoView = await _todoService.CreateTodo(todoView);
+                    return CreatedAtAction(nameof(GetTodos), new { Id = newTodoView.UniqueId }, newTodoView);
                 }
                 catch (Exception ex)
                 {

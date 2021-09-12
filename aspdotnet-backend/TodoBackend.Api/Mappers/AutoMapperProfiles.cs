@@ -10,6 +10,7 @@ namespace TodoBackend.Api.Bindings
         {
             CreateMap<User, UserView>().ReverseMap();
             CreateMap<Role, RoleView>().ReverseMap();
+            CreateMap<TodoView, Todo>().ForMember(dest => dest.AssigneeGuid,  opt => opt.MapFrom(src => src.Assignee.UniqueId));
         }
     }
 }

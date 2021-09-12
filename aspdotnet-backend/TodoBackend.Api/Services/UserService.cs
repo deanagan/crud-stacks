@@ -49,5 +49,11 @@ namespace TodoBackend.Api.Services
             var updatedUser = _userRepository.UpdateUser(guid, user);
             return _mapper.Map<UserView>(updatedUser);
         }
+
+        public async Task<IEnumerable<UserView>> GetUsersByGuids(IEnumerable<Guid> guids)
+        {
+            var users = await _userRepository.GetUsersByGuids(guids);
+            return _mapper.Map<IEnumerable<UserView>>(users);
+        }
     }
 }
