@@ -11,7 +11,7 @@ GO
 
 CREATE TABLE [dbo].[Users](
   [Id] INT IDENTITY(1,1) NOT NULL,
-  [UniqueId] UNIQUEIDENTIFIER NOT NULL,
+  [UniqueId] UNIQUEIDENTIFIER UNIQUE NOT NULL,
   [FirstName] NVARCHAR(100) NOT NULL,
   [LastName] NVARCHAR(100) NOT NULL,
   [Email] NVARCHAR(150) NOT NULL,
@@ -32,9 +32,9 @@ CREATE TABLE [dbo].[Todo](
   [IsDone] BIT DEFAULT 0,
   [Created] DATETIME DEFAULT GETUTCDATE(),
   [Updated] DATETIME DEFAULT GETUTCDATE(),
-  [AssigneeId] INT,
+  [AssigneeGuid] UNIQUEIDENTIFIER,
   CONSTRAINT PK_Todo PRIMARY KEY CLUSTERED ( [Id] ASC ),
-  CONSTRAINT FK_Users FOREIGN KEY ([AssigneeId]) REFERENCES [dbo].[Users] ([Id]),
+  CONSTRAINT FK_Users FOREIGN KEY ([AssigneeGuid]) REFERENCES [dbo].[Users] ([UniqueId]),
  )
 GO
 
@@ -70,13 +70,13 @@ GO
 
 SET IDENTITY_INSERT [dbo].Todo ON
 GO
-INSERT INTO [dbo].Todo([Id], [UniqueId], [Summary], [Detail], [IsDone], [AssigneeId])
+INSERT INTO [dbo].Todo([Id], [UniqueId], [Summary], [Detail], [IsDone], [AssigneeGuid])
 VALUES(1, '7BE021BD-EBAC-4858-35E2-24ABB9EC79C9',
-'Implement clock animation',	'Clock must show on lower right',	0, 1)
+'Implement clock animation',	'Clock must show on lower right',	0, '3BD023BD-EB19-4858-92E2-24ABB9EC79C9')
 
-INSERT INTO [dbo].Todo([Id], [UniqueId], [Summary], [Detail], [IsDone], [AssigneeId])
+INSERT INTO [dbo].Todo([Id], [UniqueId], [Summary], [Detail], [IsDone], [AssigneeGuid])
 VALUES(2, '35F6A946-DEAD-BEEF-B59E-CF04AA63FBDD',
-'Test case 1232', 'Test case 1232 involves E2E tests',	0, 2)
+'Test case 1232', 'Test case 1232 involves E2E tests',	0, '1526A845-40B6-4311-B39F-FC04EA638B9A')
 GO
 
 INSERT INTO [dbo].Todo([Id], [UniqueId], [Summary], [Detail], [IsDone])
