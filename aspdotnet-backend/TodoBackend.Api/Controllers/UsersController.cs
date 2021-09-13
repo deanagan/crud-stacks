@@ -61,13 +61,13 @@ namespace TodoBackend.Api.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateUser(UserView user)
+        public async Task<IActionResult> CreateUser(UserView user)
         {
             if (user != null)
             {
                 try
                 {
-                    var newUser = _userService.CreateUser(user);
+                    var newUser = await _userService.CreateUser(user);
                     return CreatedAtAction(nameof(GetUsers), new { UniqueId = newUser.UniqueId }, newUser);
                 }
                 catch (Exception ex)

@@ -131,9 +131,103 @@ namespace TodoBackend.Api.Data.Access
             throw new NotImplementedException();
         }
 
-        Todo ITodoRepository.UpdateTodo(Guid guid, Todo todo)
+        public Todo UpdateTodo(Guid guid, Todo todo)
         {
-            throw new NotImplementedException();
+             var sql = @"
+						if object_id('tempdb.#NewValues') is not null
+						begin
+						   drop table #NewValues
+						end
+
+						create table #NewValues
+                        (
+                            UniqueId uniqueidentifier,
+                            Summary nvarchar(100),
+                            Detail nvarchar(max),
+                            IsDone bit,
+                            Updated datetime,
+                            AssigneeGuid uniqueidentifier
+                        )
+
+                        declare @Outcome table (
+                            Id int,
+                            Summary nvarchar(100),
+                            Detail nvarchar(max),
+                            IsDone bit,
+                            Updated datetime,
+                            Created datetime,
+                            AssigneeGuid uniqueidentifier
+                        )
+
+						insert into #NewValues(UniqueId, Summary, Detail, IsDone, AssigneeGuid)
+						Select @UniqueId, @Summary, @Detail, @IsDone, @AssigneeGuid
+
+                        update t
+                        set t.Summary = @Summary,
+                            t.Detail = @Detail,
+                            t.IsDone = @IsDone,
+                            t.Updated = getutcdate(),
+                            t.AssigneeGuid = @AssigneeGuid
+                        output inserted.Id,
+                               inserted.Summary,
+                               inserted.Detail,
+                               inserted.IsDone,
+                               inserted.Created,
+                               inserted.Updated,
+                               inserted.AssigneeGuid
+                            into @Outcome
+						from dbo.Todo t
+                        where t.UniqueId = @UniqueId
+                        and exists
+                            (
+                            select t.Summary,
+                                   t.Detail,
+                                   t.IsDone,
+                                   t.Updated,
+                                   t.AssigneeGuid
+                            except
+                            select nv.Summary,
+                                   nv.Detail,
+                                   nv.IsDone,
+                                   nv.Updated,
+                                   nv.AssigneeGuid
+                            from #NewValues nv
+                            where nv.UniqueId = t.UniqueId
+                            )
+
+                        select @Id = Id,
+                               @Created = Created,
+                               @Updated = Updated
+                        from @Outcome;
+                            ";
+
+            using (var conn = new SqlConnection(_connectionString))
+            {
+                var parameter = new DynamicParameters();
+                parameter.Add("@UniqueId", guid);
+                parameter.Add("@Summary", todo.Summary);
+                parameter.Add("@Detail", todo.Detail);
+                parameter.Add("@IsDone", todo.IsDone);
+                parameter.Add("@AssigneeGuid", todo.AssigneeGuid == Guid.Empty ? null : todo.AssigneeGuid);
+
+                parameter.Add("@Id", null, DbType.Int32, ParameterDirection.Output);
+                parameter.Add("@Created", null, DbType.DateTime, ParameterDirection.Output);
+                parameter.Add("@Updated", null, DbType.DateTime, ParameterDirection.Output);
+
+                conn.Execute(sql, parameter);
+
+                return new Todo()
+                {
+                    Id = parameter.Get<int>("@Id"),
+                    UniqueId = guid,
+                    Summary = todo.Summary,
+                    Detail = todo.Detail,
+                    IsDone = todo.IsDone,
+                    Created = parameter.Get<DateTime>("@Created"),
+                    Updated = parameter.Get<DateTime>("@Updated"),
+                    AssigneeGuid = todo.AssigneeGuid
+                };
+            }
         }
     }
 }

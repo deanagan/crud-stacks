@@ -63,14 +63,14 @@ namespace TodoBackend.Api.Tests
         }
 
         [Fact]
-        public void ReturnContentCreated_WhenOneUserAdded()
+        public async void ReturnContentCreated_WhenOneUserAdded()
         {
             // Arrange
             var controller = new UsersController(_fakeLogger, _userService);
             var fakeUser = A.Fake<UserView>();
 
             // Act
-            var result = controller.CreateUser(fakeUser) as ObjectResult;
+            var result = await controller.CreateUser(fakeUser) as ObjectResult;
 
             // Assert
             using (new AssertionScope())

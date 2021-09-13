@@ -1,3 +1,4 @@
+using System;
 using AutoMapper;
 using TodoBackend.Api.Data.Models;
 using TodoBackend.Api.Data.ViewModels;
@@ -10,7 +11,8 @@ namespace TodoBackend.Api.Bindings
         {
             CreateMap<User, UserView>().ReverseMap();
             CreateMap<Role, RoleView>().ReverseMap();
-            CreateMap<TodoView, Todo>().ForMember(dest => dest.AssigneeGuid,  opt => opt.MapFrom(src => src.Assignee.UniqueId));
+            CreateMap<TodoView, Todo>().ForMember(dest => dest.AssigneeGuid,
+                opt => opt.MapFrom(src => src.Assignee != null ? src.Assignee.UniqueId : Guid.Empty));
         }
     }
 }

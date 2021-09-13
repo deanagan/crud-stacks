@@ -93,9 +93,28 @@ namespace TodoBackend.Api.Services
             return todoViews;
         }
 
-        TodoView ITodoService.UpdateTodo(Guid guid, TodoView todoView)
+        public async Task<TodoView> UpdateTodo(Guid guid, TodoView todoView)
         {
-            throw new NotImplementedException();
+            var todo = _mapper.Map<Todo>(todoView);
+            var updatedTodo = _todoRepository.UpdateTodo(guid, todo);
+            var user = (updatedTodo.AssigneeGuid != Guid.Empty) ?
+                await _userRepository.GetUserByGuid(updatedTodo.AssigneeGuid) : null;
+
+            return new TodoView()
+            {
+                UniqueId = updatedTodo.UniqueId,
+                Summary = updatedTodo.Summary,
+                Detail = updatedTodo.Detail,
+                IsDone = updatedTodo.IsDone,
+                Created = updatedTodo.Created,
+                Updated = updatedTodo.Updated,
+                Assignee = user != null ? new AssigneeView()
+                {
+                    UniqueId = user.UniqueId,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName
+                } : null
+            };
         }
     }
 }

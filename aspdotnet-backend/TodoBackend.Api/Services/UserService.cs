@@ -12,17 +12,30 @@ namespace TodoBackend.Api.Services
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
+        private readonly IRolesRepository _roleRepository;
         private readonly IMapper _mapper;
-        public UserService(IUserRepository userRepository, IMapper mapper)
+        public UserService(IUserRepository userRepository, IRolesRepository roleRepository, IMapper mapper)
         {
             _userRepository = userRepository;
+            _roleRepository = roleRepository;
             _mapper = mapper;
         }
 
-        public UserView CreateUser(UserView userView)
+        public async Task<UserView> CreateUser(UserView userView)
         {
             var user = _mapper.Map<User>(userView);
             var newUser = _userRepository.AddUser(user);
+            var role = await _roleRepository.GetRoleByGuid(user.Role.UniqueId);
+
+            newUser.Role = new Role()
+            {
+                Id = role.Id,
+                UniqueId = role.UniqueId,
+                Kind = role.Kind,
+                Description = role.Description,
+                Created = role.Created,
+                Updated = role.Updated
+            };
             return _mapper.Map<UserView>(newUser);
         }
 

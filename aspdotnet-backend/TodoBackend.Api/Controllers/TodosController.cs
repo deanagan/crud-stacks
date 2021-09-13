@@ -80,13 +80,13 @@ namespace TodoBackend.Api.Controllers
         }
 
         [HttpPut("{guid}")]
-        public IActionResult UpdateTodo(Guid guid, TodoView todoView)
+        public async Task<IActionResult> UpdateTodo(Guid guid, TodoView todoView)
         {
             if (todoView != null)
             {
                 try
                 {
-                    var updatedTodo = _todoService.UpdateTodo(guid, todoView);
+                    var updatedTodo = await _todoService.UpdateTodo(guid, todoView);
                     if (updatedTodo != null)
                     {
                         return Ok(updatedTodo);

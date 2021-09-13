@@ -92,7 +92,7 @@ namespace TodoBackend.Api.Data.Access
                 var newRole = new Role()
                 {
                     Id = parameter.Get<int>("@Id"),
-                    UniqueId = role.UniqueId,
+                    UniqueId = parameter.Get<Guid>("@UniqueId"),
                     Kind = role.Kind,
                     Description = role.Description,
                     Created = parameter.Get<DateTime>("@Created"),

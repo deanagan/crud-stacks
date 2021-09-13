@@ -37,7 +37,7 @@ namespace TodoBackend.Api.Data.Access
                            r.Created,
                            r.Updated
                     from dbo.Users as u with (nolock)
-                        inner join dbo.Roles as r with (nolock) on u.RoleId = r.Id";
+                        inner join dbo.Roles as r with (nolock) on u.RoleUniqueId = r.UniqueId";
 
             using (var conn = new SqlConnection(_connectionString))
             {
@@ -70,7 +70,7 @@ namespace TodoBackend.Api.Data.Access
                            r.Created,
                            r.Updated
                     from dbo.Users as u with (nolock)
-                        inner join dbo.Roles as r with (nolock) on u.RoleId = r.Id
+                        inner join dbo.Roles as r with (nolock) on u.RoleUniqueId = r.UniqueId
                     where u.UniqueId = @UserGuid";
 
             using (var conn = new SqlConnection(_connectionString))
@@ -96,17 +96,13 @@ namespace TodoBackend.Api.Data.Access
                             Updated datetime
                         );
 
-                        select @RoleId = r.Id
-                        from Roles as r with (nolock)
-                        where r.UniqueId = @RoleUniqueId;
-
                         insert into dbo.Users (
                             [UniqueId],
                             [FirstName],
                             [LastName],
                             [Email],
                             [Hash],
-                            [RoleId]
+                            [RoleUniqueId]
                         )
                         output inserted.Id, inserted.UniqueId, inserted.Created, inserted.Updated into @Outcome
                         values (
@@ -115,20 +111,13 @@ namespace TodoBackend.Api.Data.Access
                             @LastName,
                             @Email,
                             @Hash,
-                            @RoleId
+                            @RoleUniqueId
                             );
                         select @Id = Id,
                                @UniqueId = UniqueId,
                                @UserCreated = Created,
                                @UserUpdated = Updated
                         from @Outcome;
-
-                        select @Kind = r.Kind,
-                               @Description = r.Description,
-                               @RoleCreated = r.Created,
-                               @RoleUpdated = r.Updated
-                        from dbo.Roles as r
-                        where r.Id = @RoleId;
                         ";
 
             using (var conn = new SqlConnection(_connectionString))
@@ -142,11 +131,6 @@ namespace TodoBackend.Api.Data.Access
 
                 parameter.Add("@Id", null, DbType.Int32, ParameterDirection.Output);
                 parameter.Add("@UniqueId", null, DbType.Guid, ParameterDirection.Output);
-                parameter.Add("@Kind", null, DbType.String, ParameterDirection.Output, 150);
-                parameter.Add("@Description", null, DbType.String, ParameterDirection.Output, -1);
-                parameter.Add("@RoleId", null, DbType.Int32, ParameterDirection.Output);
-                parameter.Add("@RoleCreated", null, DbType.DateTime, ParameterDirection.Output);
-                parameter.Add("@RoleUpdated", null, DbType.DateTime, ParameterDirection.Output);
                 parameter.Add("@UserCreated", null, DbType.DateTime, ParameterDirection.Output);
                 parameter.Add("@UserUpdated", null, DbType.DateTime, ParameterDirection.Output);
 
@@ -162,14 +146,6 @@ namespace TodoBackend.Api.Data.Access
                     Hash = user.Hash ?? "123456",
                     Created = parameter.Get<DateTime>("@UserCreated"),
                     Updated = parameter.Get<DateTime>("@UserUpdated"),
-                    Role = new Role() {
-                        Id = parameter.Get<int>("@RoleId"),
-                        UniqueId = user.Role.UniqueId,
-                        Kind = parameter.Get<string>("@Kind"),
-                        Description = parameter.Get<string>("@Description"),
-                        Created = parameter.Get<DateTime>("@RoleCreated"),
-                        Updated = parameter.Get<DateTime>("@RoleUpdated")
-                    }
                 };
 
                 return newUser;
@@ -204,7 +180,7 @@ namespace TodoBackend.Api.Data.Access
                             u.Email = @Email,
                             u.Hash = @Hash,
                             u.Updated = getutcdate(),
-                            u.RoleId = r.Id
+                            u.RoleUniqueId = @RoleUniqueId
 						from dbo.Users u
                             inner join dbo.Roles r on r.UniqueId = @RoleUniqueId
                         where u.UniqueId = @UniqueId
@@ -237,7 +213,7 @@ namespace TodoBackend.Api.Data.Access
                                @RoleCreated = r.Created,
                                @RoleUpdated = r.Updated
                         from dbo.Users as u with (nolock)
-                            inner join dbo.Roles as r with (nolock) on u.RoleId = r.Id
+                            inner join dbo.Roles as r with (nolock) on u.RoleUniqueId = r.UniqueId
                         where u.UniqueId = @UniqueId;";
 
             using (var conn = new SqlConnection(_connectionString))
@@ -319,7 +295,7 @@ namespace TodoBackend.Api.Data.Access
                            r.Created,
                            r.Updated
                     from dbo.Users as u with (nolock)
-                        inner join dbo.Roles as r with (nolock) on u.RoleId = r.Id
+                        inner join dbo.Roles as r with (nolock) on u.RoleUniqueId = r.UniqueId
                     where u.UniqueId in @UniqueIds";
 
             using (var conn = new SqlConnection(_connectionString))
