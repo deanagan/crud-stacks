@@ -229,5 +229,22 @@ namespace TodoBackend.Api.Data.Access
                 };
             }
         }
+
+        public bool DeleteTodo(Guid guid)
+        {
+            var sql = @"
+                        delete t
+                        from dbo.Todo t
+                        where t.UniqueId = @UniqueId;
+                        ";
+
+            using (var conn = new SqlConnection(_connectionString))
+            {
+                var parameter = new DynamicParameters();
+                parameter.Add("@UniqueId", guid);
+
+                return conn.Execute(sql, parameter) != 0;
+            }
+        }
     }
 }

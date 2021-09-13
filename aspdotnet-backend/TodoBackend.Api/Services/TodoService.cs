@@ -116,5 +116,10 @@ namespace TodoBackend.Api.Services
                 } : null
             };
         }
+
+        public bool DeleteTodo(Guid guid)
+        {
+            return _todoRepository.DeleteTodo(guid);
+        }
     }
 }
