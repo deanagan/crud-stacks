@@ -105,7 +105,7 @@ namespace TodoBackend.Api.Controllers
             return BadRequest("Todo is null");
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{guid}")]
         public IActionResult DeleteTodo(Guid guid)
         {
             try
