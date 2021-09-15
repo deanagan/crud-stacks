@@ -4,9 +4,13 @@ import { Todo } from "../../types";
 import { TodoAction } from "../actions/todoActions";
 import { HttpClient } from "../action-apis/commonActionApi";
 
+const backendBaseUrl = process.env.REACT_APP_BACKEND_BASE_URL;
+const apiVersion = process.env.REACT_APP_BACKEND_API_VERSION;
+const backendType = process.env.REACT_APP_BACKEND_TYPE;
+
 export const addTodo = (todo: Todo) => {
   return (dispatch: Dispatch<TodoAction>) => {
-    new HttpClient().post<Todo>( {url: 'http://localhost:1337/todos', requiresToken: false, payload: todo})
+    new HttpClient().post<Todo>( {url: `${backendBaseUrl}/${apiVersion}/${backendType}/todos`, requiresToken: false, payload: todo})
       .then((todo) => {
         dispatch({
           type: TodoActionTypes.ADD_TODO_ENTRY,
@@ -22,7 +26,7 @@ export const addTodo = (todo: Todo) => {
 export const updateTodoState = (id: number, isDone: boolean) => {
   const isDoneState = { isDone: isDone };
   return (dispatch: Dispatch<TodoAction>) => {
-    new HttpClient().put<Todo | typeof isDoneState>({url: `http://localhost:1337/todos/${id}`, requiresToken: false, payload: isDoneState} )
+    new HttpClient().put<Todo | typeof isDoneState>({url: `${backendBaseUrl}/${apiVersion}/${backendType}/todos/${id}`, requiresToken: false, payload: isDoneState} )
     .then((data) => {
       const todo = data as Todo;
       dispatch({
@@ -36,7 +40,7 @@ export const updateTodoState = (id: number, isDone: boolean) => {
 
 export const deleteTodo = (id: number) => {
   return (dispatch: Dispatch<TodoAction>) => {
-    new HttpClient().delete<Todo | number>({url: `http://localhost:1337/todos/${id}`, requiresToken: false, payload: id} )
+    new HttpClient().delete<Todo | number>({url: `${backendBaseUrl}/${apiVersion}/${backendType}/todos/${id}`, requiresToken: false, payload: id} )
     .then((data) => {
       const todo = data as Todo;
       dispatch({
@@ -50,7 +54,7 @@ export const deleteTodo = (id: number) => {
 
 export const getTodos = () => {
   return (dispatch: Dispatch<TodoAction>) => {
-    new HttpClient().get<Todo[]>( {url: 'http://localhost:1337/todos', requiresToken: false})
+    new HttpClient().get<Todo[]>( {url: `${backendBaseUrl}/${apiVersion}/${backendType}/todos`, requiresToken: false})
     .then((todos) => {
       dispatch({
         type: TodoActionTypes.GET_TODO_ENTRIES,
