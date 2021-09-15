@@ -23,3 +23,7 @@ This project was not originally typescript but was converted into typescript via
     ```
     npm install @types/redux
     ```
+
+## Running to connect to backend
+
+From the command line run "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" --disable-web-security on windows
