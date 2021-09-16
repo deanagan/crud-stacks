@@ -23,7 +23,7 @@ export const Home = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [idForDeletion, setIdForDeletion] = useState<number | null>(null);
 
-  const [newName, setNewName] = useState("");
+  const [newSummary, setNewSummary] = useState("");
   const [newDetail, setNewDetail] = useState("");
 
   const { addTodo, deleteTodo } = bindActionCreators(actionCreators, dispatch);
@@ -40,9 +40,9 @@ export const Home = () => {
   }
 
   const addEntryFormProp = {
-    name: newName,
+    summary: newSummary,
     detail: newDetail,
-    changeName: setNewName,
+    changeSummary: setNewSummary,
     changeDetail: setNewDetail,
   }
 
@@ -51,20 +51,20 @@ export const Home = () => {
   }, [dispatch]);
 
   return (
-    <Wrapper w={600} h={600}>
+    <Wrapper w={800} h={1200}>
       <Table
         rowData={todos.map((todo) => (
             {
                 id: todo.id as number,
-                name: todo.name,
+                summary: todo.summary,
                 detail: todo.detail,
                 isDone: todo.isDone ? "True" : "False",
                 switch: (<ToggleSwitch switchId={todo.id as number} isDone={todo.isDone}/>),
                 deleter: (<ActionLink color='red' message='delete' deleteFn={() => deleteEntry(todo.id as number)}/>)
             }
           ))}
-        columnLabels={['Name', 'Detail', 'Completed', 'Update', 'Remove Todo']}
-        rowFields={['name', 'detail', 'isDone', 'switch', 'deleter']}
+        columnLabels={['Summary', 'Detail', 'Completed', 'Update', 'Remove Todo']}
+        rowFields={['summary', 'detail', 'isDone', 'switch', 'deleter']}
       />
 
       <Button onClick={() => setShowAddModal(true)}>Add Request</Button>
@@ -72,18 +72,18 @@ export const Home = () => {
         onCancel={() => {
           setShowAddModal(false);
           setNewDetail("");
-          setNewName("");
+          setNewSummary("");
         }}
         onOk={() => {
           setShowAddModal(false);
-          addTodo({name: newName, detail: newDetail, isDone: false});
+          addTodo({summary: newSummary, detail: newDetail, isDone: false});
         }}
         show={showAddModal}
         title="Add New Request"
         okText="Ok"
         cancelText="Cancel"
         children={<AddEntryForm {...addEntryFormProp} />}
-        showFooter={!!(newName && newDetail)}
+        showFooter={!!(newSummary && newDetail)}
         showClose
        />
        <Modal

@@ -61,7 +61,7 @@ export const getTodos = () => {
         todos: todos.map((todo: Todo) => {
           return {
             id: todo.id,
-            name: todo.name,
+            summary: todo.summary,
             detail: todo.detail,
             isDone: todo.isDone,
           };

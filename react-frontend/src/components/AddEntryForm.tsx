@@ -32,16 +32,16 @@ export const Message = styled.label`
 `;
 
 export interface AddEntryFormProp {
-  name: string;
+  summary: string;
   detail: string;
-  changeName: (arg: string) => void;
+  changeSummary: (arg: string) => void;
   changeDetail: (arg: string) => void;
 }
 
 export const AddEntryForm: FC<AddEntryFormProp> = ({
-    name,
+    summary,
     detail,
-    changeName,
+    changeSummary,
     changeDetail
   }) => {
 
@@ -49,13 +49,13 @@ export const AddEntryForm: FC<AddEntryFormProp> = ({
   return (
     <>
       <FormGroup>
-        <Label htmlFor="name">Name</Label>
+        <Label htmlFor="summary">Summary</Label>
         <Input
-          placeholder="Enter name of todo"
-          value={name}
-          id="name"
+          placeholder="Enter summary of todo"
+          value={summary}
+          id="summary"
           onChange={(e: ChangeEvent<HTMLInputElement>) =>
-            changeName(e.target.value)
+            changeSummary(e.target.value)
           }
         />
       </FormGroup>
