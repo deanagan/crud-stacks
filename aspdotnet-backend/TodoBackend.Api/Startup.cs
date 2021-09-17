@@ -32,7 +32,7 @@ namespace TodoBackend.Api
                 options.AddPolicy(name: AllowSpecificOrigins,
                               builder =>
                               {
-                                  builder.WithOrigins("*").AllowAnyHeader();
+                                  builder.WithOrigins("*").AllowAnyHeader().AllowAnyMethod();
                               });
             });
 
