@@ -18,7 +18,7 @@ const reducer = (state: TodoState = initialState, action: TodoAction) => {
         case TodoActionTypes.UPDATE_TODO_STATE:
             return {
                 ...state,
-                todos: state.todos.map(e => e.id === action.id ?
+                todos: state.todos.map(e => e.uniqueId === action.uniqueId ?
                     { ...e, isDone: action.isDone } : e)
             }
         case TodoActionTypes.GET_TODO_ENTRIES:
@@ -29,7 +29,7 @@ const reducer = (state: TodoState = initialState, action: TodoAction) => {
         case TodoActionTypes.DELETE_TODO_ENTRY:
             return {
                 ...state,
-                todos: state.todos.filter(e => e.id !== action.id)
+                todos: state.todos.filter(e => e.uniqueId !== action.uniqueId)
             }
         default:
             return state;

@@ -33,6 +33,7 @@ interface TableProp<T extends TableRowBase> {
   columnLabels: string[];
   rowFields: string[];
   rowData: T[];
+  excludedColumnName: string[];
 }
 
 export function Table<T>(props: PropsWithChildren<TableProp<T>>) {
@@ -50,7 +51,7 @@ export function Table<T>(props: PropsWithChildren<TableProp<T>>) {
           <tbody>
             {props.rowData.map((singleRow) => {
               const row = singleRow as TableRowBase;
-              const fields = Object.entries(singleRow).filter(v => v[0] !== 'id');
+              const fields = Object.entries(singleRow).filter(v => !props.excludedColumnName.includes(v[0]));
 
               return (
                 <tr key={row.id}>

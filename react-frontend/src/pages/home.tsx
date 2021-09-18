@@ -9,6 +9,7 @@ import { ToggleSwitch } from "../components/ToggleSwitch";
 import { Table } from "../components/Table";
 import { Modal } from "../components/Modal";
 import { AddEntryForm } from "../components/AddEntryForm";
+import { uuidv4 } from "../types";
 
 const Wrapper = styled(ViewBox)`
   justify-content: center;
@@ -21,7 +22,7 @@ export const Home = () => {
   const { todos } = useSelector((state: State) => state.todo);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [idForDeletion, setIdForDeletion] = useState<number | null>(null);
+  const [idForDeletion, setIdForDeletion] = useState<uuidv4 | null>(null);
 
   const [newSummary, setNewSummary] = useState("");
   const [newDetail, setNewDetail] = useState("");
@@ -29,8 +30,8 @@ export const Home = () => {
   const { addTodo, deleteTodo } = bindActionCreators(actionCreators, dispatch);
 
 
-  const deleteEntry = (id: number) => {
-    setIdForDeletion(id);
+  const deleteEntry = (uniqueId: uuidv4) => {
+    setIdForDeletion(uniqueId);
     setShowDeleteModal(true);
   }
 
@@ -51,20 +52,21 @@ export const Home = () => {
   }, [dispatch]);
 
   return (
-    <Wrapper w={800} h={1200}>
+    <Wrapper w={80} h={100}>
       <Table
         rowData={todos.map((todo) => (
             {
-                id: todo.id as number,
+                uniqueId: todo.uniqueId,
                 summary: todo.summary,
                 detail: todo.detail,
                 isDone: todo.isDone ? "True" : "False",
-                switch: (<ToggleSwitch switchId={todo.id as number} isDone={todo.isDone}/>),
-                deleter: (<ActionLink color='red' message='delete' deleteFn={() => deleteEntry(todo.id as number)}/>)
+                switch: (<ToggleSwitch switchUniqueId={todo.uniqueId as uuidv4} isDone={todo.isDone}/>),
+                deleter: (<ActionLink color='red' message='delete' deleteFn={() => deleteEntry(todo.uniqueId as uuidv4)}/>)
             }
           ))}
         columnLabels={['Summary', 'Detail', 'Completed', 'Update', 'Remove Todo']}
         rowFields={['summary', 'detail', 'isDone', 'switch', 'deleter']}
+        excludedColumnName={['uniqueId']}
       />
 
       <Button onClick={() => setShowAddModal(true)}>Add Request</Button>

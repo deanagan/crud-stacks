@@ -8,8 +8,8 @@ export interface IElement {
 }
 
 export const Element = styled.div<IElement>`
-    ${({ w }) => (w ? `width: ${w}px;` : null)}
-    ${({ h }) => (h ? `height: ${h}px;` : null)}
+    ${({ w }) => (w ? `width: ${w}%;` : null)}
+    ${({ h }) => (h ? `height: ${h}%;` : null)}
     ${({ backgroundColor }) => (backgroundColor ? `background-color: ${backgroundColor};` : null)}
     ${({ color }) => (color ? `color: ${color};` : null)}
 `;

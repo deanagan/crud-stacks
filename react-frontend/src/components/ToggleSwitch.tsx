@@ -3,6 +3,7 @@ import { FC, useState } from "react";
 import { useDispatch } from "react-redux";
 import { bindActionCreators } from "redux";
 import { actionCreators } from "../store";
+import { uuidv4 } from "../types";
 
 const ToggleSwitchDivWrapper = styled.div`
   position: relative;
@@ -55,29 +56,29 @@ const ToggleSwitchWrapper = styled.input.attrs({ type: 'checkbox' })`
 
 
 interface ToggleSwitchProp {
-  switchId: number;
+  switchUniqueId: uuidv4;
   isDone: boolean;
 }
 
-export const ToggleSwitch: FC<ToggleSwitchProp> = ({ switchId, isDone }) => {
+export const ToggleSwitch: FC<ToggleSwitchProp> = ({ switchUniqueId, isDone }) => {
   const dispatch = useDispatch();
 
   const { updateTodoState } = bindActionCreators(actionCreators, dispatch);
   const [switchState, setSwitchState] = useState(isDone);
 
   const onSwitchChanged = (isDone: boolean) => {
-    updateTodoState(switchId, isDone);
+    updateTodoState(switchUniqueId, isDone);
     setSwitchState(isDone);
   };
 
   return (
     <ToggleSwitchDivWrapper>
       <ToggleSwitchWrapper
-        id={`switch${switchId}`}
+        id={`switch${switchUniqueId}`}
         onChange={(e) => onSwitchChanged(e.target.checked)}
         checked={switchState}
       />
-      <ToggleSwitchLabel htmlFor={`switch${switchId}`} />
+      <ToggleSwitchLabel htmlFor={`switch${switchUniqueId}`} />
     </ToggleSwitchDivWrapper>
   );
 };

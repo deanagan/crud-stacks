@@ -1,6 +1,6 @@
 import { TodoActionTypes } from "../action-types/todoActionTypes";
 import { Dispatch } from "redux";
-import { Todo } from "../../types";
+import { Todo, uuidv4 } from "../../types";
 import { TodoAction } from "../actions/todoActions";
 import { HttpClient } from "../action-apis/commonActionApi";
 
@@ -14,7 +14,7 @@ export const addTodo = (todo: Todo) => {
       .then((todo) => {
         dispatch({
           type: TodoActionTypes.ADD_TODO_ENTRY,
-          todo: { ...todo, id: todo.id }
+          todo: { ...todo, uniqueId: todo.uniqueId }
         });
       })
       .catch((e) => {
@@ -23,29 +23,29 @@ export const addTodo = (todo: Todo) => {
   };
 };
 
-export const updateTodoState = (id: number, isDone: boolean) => {
+export const updateTodoState = (uniqueId: uuidv4, isDone: boolean) => {
   const isDoneState = { isDone: isDone };
   return (dispatch: Dispatch<TodoAction>) => {
-    new HttpClient().put<Todo | typeof isDoneState>({url: `${backendBaseUrl}/${apiVersion}/${backendType}/todos/${id}`, requiresToken: false, payload: isDoneState} )
+    new HttpClient().put<Todo | typeof isDoneState>({url: `${backendBaseUrl}/${apiVersion}/${backendType}/todos/${uniqueId}`, requiresToken: false, payload: isDoneState} )
     .then((data) => {
       const todo = data as Todo;
       dispatch({
         type: TodoActionTypes.UPDATE_TODO_STATE,
-        id: todo.id as number,
+        uniqueId: todo.uniqueId as uuidv4,
         isDone: todo.isDone,
       });
     });
   };
 };
 
-export const deleteTodo = (id: number) => {
+export const deleteTodo = (uniqueId: uuidv4) => {
   return (dispatch: Dispatch<TodoAction>) => {
-    new HttpClient().delete<Todo | number>({url: `${backendBaseUrl}/${apiVersion}/${backendType}/todos/${id}`, requiresToken: false, payload: id} )
+    new HttpClient().delete<Todo | uuidv4>({url: `${backendBaseUrl}/${apiVersion}/${backendType}/todos/${uniqueId}`, requiresToken: false, payload: uniqueId} )
     .then((data) => {
       const todo = data as Todo;
       dispatch({
         type: TodoActionTypes.DELETE_TODO_ENTRY,
-        id: todo.id as number,
+        uniqueId: todo.uniqueId as uuidv4,
         isDone: todo.isDone,
       });
     });
@@ -60,7 +60,7 @@ export const getTodos = () => {
         type: TodoActionTypes.GET_TODO_ENTRIES,
         todos: todos.map((todo: Todo) => {
           return {
-            id: todo.id,
+            uniqueId: todo.uniqueId,
             summary: todo.summary,
             detail: todo.detail,
             isDone: todo.isDone,

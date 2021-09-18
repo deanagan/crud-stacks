@@ -1,6 +1,5 @@
-
 import { TodoActionTypes } from '../action-types/todoActionTypes';
-import { Todo } from '../../types';
+import { Todo, uuidv4 } from '../../types';
 
 
 interface AddTodoAction {
@@ -10,7 +9,7 @@ interface AddTodoAction {
 
 interface UpdateTodoAction {
     type: TodoActionTypes.UPDATE_TODO_STATE;
-    id: number;
+    uniqueId: uuidv4;
     isDone: boolean;
 }
 
@@ -21,7 +20,7 @@ interface GetTodoEntriesAction {
 
 interface deleteTodoAction {
     type: TodoActionTypes.DELETE_TODO_ENTRY;
-    id: number;
+    uniqueId: uuidv4;
 }
 
 export type TodoAction = AddTodoAction | UpdateTodoAction | GetTodoEntriesAction | deleteTodoAction;

@@ -1,6 +1,8 @@
+import { v4 as uuid } from "uuid";
 
+export type uuidv4 = typeof uuid;
 export interface Todo {
-    id?: number;
+    uniqueId?: uuidv4;
     summary: string;
     detail: string;
     isDone: boolean;

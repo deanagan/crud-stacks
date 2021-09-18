@@ -10,6 +10,6 @@ const Wrapper = styled(ViewBox)`
 
 export const Contact = () => {
     return (
-        <Wrapper w={600} h={600}>Contact</Wrapper>
+        <Wrapper w={60} h={60}>Contact</Wrapper>
     );
 };
