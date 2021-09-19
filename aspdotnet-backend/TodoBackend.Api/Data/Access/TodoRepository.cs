@@ -151,12 +151,8 @@ namespace TodoBackend.Api.Data.Access
 
                         declare @Outcome table (
                             Id int,
-                            Summary nvarchar(100),
-                            Detail nvarchar(max),
-                            IsDone bit,
                             Updated datetime,
-                            Created datetime,
-                            AssigneeGuid uniqueidentifier
+                            Created datetime
                         )
 
                         insert into #NewValues(UniqueId, Summary, Detail, IsDone, AssigneeGuid)
@@ -168,6 +164,7 @@ namespace TodoBackend.Api.Data.Access
                             t.IsDone = coalesce(nv.IsDone, t.IsDone),
                             t.Updated = getutcdate(),
                             t.AssigneeGuid = nv.AssigneeGuid
+                        output inserted.Id, inserted.Created, inserted.Updated into @Outcome
                         from dbo.Todo t
                             left join #NewValues nv
                             on nv.UniqueId = t.UniqueId
