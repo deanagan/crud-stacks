@@ -26,7 +26,7 @@ export const StyledTable = styled.table`
 `;
 
 export interface TableRowBase {
-  id?: number;
+  id?: number | string;
 }
 
 interface TableProp<T extends TableRowBase> {
