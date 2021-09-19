@@ -134,12 +134,12 @@ namespace TodoBackend.Api.Data.Access
         public Todo UpdateTodo(Guid guid, Todo todo)
         {
              var sql = @"
-						if object_id('tempdb.#NewValues') is not null
-						begin
-						   drop table #NewValues
-						end
+                        if object_id('tempdb.#NewValues') is not null
+                        begin
+                           drop table #NewValues
+                        end
 
-						create table #NewValues
+                        create table #NewValues
                         (
                             UniqueId uniqueidentifier,
                             Summary nvarchar(100),
@@ -159,41 +159,19 @@ namespace TodoBackend.Api.Data.Access
                             AssigneeGuid uniqueidentifier
                         )
 
-						insert into #NewValues(UniqueId, Summary, Detail, IsDone, AssigneeGuid)
-						Select @UniqueId, @Summary, @Detail, @IsDone, @AssigneeGuid
+                        insert into #NewValues(UniqueId, Summary, Detail, IsDone, AssigneeGuid)
+                        Select @UniqueId, @Summary, @Detail, @IsDone, @AssigneeGuid
 
                         update t
-                        set t.Summary = @Summary,
-                            t.Detail = @Detail,
-                            t.IsDone = @IsDone,
+                        set t.Summary = coalesce(nv.Summary, t.Summary),
+                            t.Detail = coalesce(nv.Detail, t.Detail),
+                            t.IsDone = coalesce(nv.IsDone, t.IsDone),
                             t.Updated = getutcdate(),
-                            t.AssigneeGuid = @AssigneeGuid
-                        output inserted.Id,
-                               inserted.Summary,
-                               inserted.Detail,
-                               inserted.IsDone,
-                               inserted.Created,
-                               inserted.Updated,
-                               inserted.AssigneeGuid
-                            into @Outcome
-						from dbo.Todo t
-                        where t.UniqueId = @UniqueId
-                        and exists
-                            (
-                            select t.Summary,
-                                   t.Detail,
-                                   t.IsDone,
-                                   t.Updated,
-                                   t.AssigneeGuid
-                            except
-                            select nv.Summary,
-                                   nv.Detail,
-                                   nv.IsDone,
-                                   nv.Updated,
-                                   nv.AssigneeGuid
-                            from #NewValues nv
-                            where nv.UniqueId = t.UniqueId
-                            )
+                            t.AssigneeGuid = nv.AssigneeGuid
+                        from dbo.Todo t
+                            left join #NewValues nv
+                            on nv.UniqueId = t.UniqueId
+                            where t.UniqueId = @UniqueId
 
                         select @Id = Id,
                                @Created = Created,
