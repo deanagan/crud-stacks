@@ -56,7 +56,7 @@ export const Home = () => {
       <Table
         rowData={todos.map((todo) => (
             {
-                uniqueId: todo.uniqueId,
+                id: todo.uniqueId,
                 summary: todo.summary,
                 detail: todo.detail,
                 isDone: todo.isDone ? "True" : "False",
@@ -66,7 +66,6 @@ export const Home = () => {
           ))}
         columnLabels={['Summary', 'Detail', 'Completed', 'Update', 'Remove Todo']}
         rowFields={['summary', 'detail', 'isDone', 'switch', 'deleter']}
-        excludedColumnName={['uniqueId']}
       />
 
       <Button onClick={() => setShowAddModal(true)}>Add Request</Button>
