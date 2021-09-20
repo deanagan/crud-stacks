@@ -103,7 +103,7 @@ namespace TodoBackend.Api.Data.Access
                 parameter.Add("@Summary", todo.Summary);
                 parameter.Add("@Detail", todo.Detail);
                 parameter.Add("@IsDone", todo.IsDone);
-                parameter.Add("@AssigneeGuid", todo.AssigneeGuid);
+                parameter.Add("@AssigneeGuid", todo.AssigneeGuid == Guid.Empty ? null : todo.AssigneeGuid);
 
                 parameter.Add("@Id", null, DbType.Int32, ParameterDirection.Output);
                 parameter.Add("@UniqueId", null, DbType.Guid, ParameterDirection.Output);
