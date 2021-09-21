@@ -1,3 +1,3 @@
 sut:
   build: .
-  command: dotnet test -l:"console;verbosity=detailed"
+  command: dotnet test"
