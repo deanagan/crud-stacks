@@ -5,7 +5,7 @@ WORKDIR /app
 COPY *.sln .
 COPY TodoBackend.Api/*.csproj ./TodoBackend.Api/
 COPY TodoBackend.Api.UnitTests/*.csproj ./TodoBackend.Api.UnitTests/
-COPY TodoBackend.Api.IntegrationTests/*.csproj ./TodoBackend.Api.IntegrationTests/
+
 
 RUN dotnet restore
 

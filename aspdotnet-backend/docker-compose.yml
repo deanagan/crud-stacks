@@ -10,24 +10,6 @@ services:
       - "8090:80"
     depends_on:
       - db
-      - integration-test
-  integration-test:
-    image: todo
-    build:
-      context: .
-      dockerfile: Dockerfile
-    volumes:
-      - .:/src
-      - ../test:/test
-    working_dir: /src
-    command:
-      [
-        "ls"
-      ]
-    ports:
-      - "8091:80"
-    depends_on:
-      - db
   db:
     image: mcr.microsoft.com/mssql/server:2019-latest
     user: root
