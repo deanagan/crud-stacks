@@ -30,37 +30,6 @@ or
 # To run sql server as a container (note password may vary)
 `docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=1Secure*Password1" -p 14331:1433 -d mcr.microsoft.com/mssql/server:2019-latest`
 
-# EFCore Notes
-For tool updates, e.g. _The Entity Framework tools version '3.1.6' is older than that of the runtime '5.0.4'. Update the tools for the latest features and bug fixes._:
-    `dotnet tool update --global dotnet-ef`
-
-Sometimes, dotnet-ef isn't in the path. Check here ->  %USERPROFILE%\.dotnet\tools to make sure it is there. Otherwise, add to environment variable -> PATH
-After updating the environment variable path, you can use `refreshenv`, which comes with chocolatey.
-
-## Dropping Database
-
-To dry-run which database will be dropped:
-  `dotnet ef database drop --dry-run --project TodoBackend.Api`
-
-
-
-## Add migration
-    `dotnet ef migrations add [migration name] [options]`
-    Options can be -o <PATH> and -n <NAMESPACE>
-
-    For this project's initial migration, I did(note this was done from TodoBackend.Api folder):
-    ```
-    dotnet ef migrations add Initial -o ./Data/Migrations -n Data.Migrations
-    ```
-To remove migration:
-    `dotnet ef migrations remove`
-
-To apply to database:
-    `To do efcore migration, run:
-    `dotnet ef database update`
-
-** Note that migrations need to be done where program.cs is.
-
 # Testing Notes
 To run tests with verbosity enabled:
 `dotnet test -l:"console;verbosity=detailed"`
