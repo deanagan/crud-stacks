@@ -42,6 +42,9 @@ jobs:
     needs: test
 
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./aspdotnet-backend
     if: github.event_name == 'push'
 
     steps:
