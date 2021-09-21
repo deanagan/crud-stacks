@@ -26,7 +26,7 @@ This project was not originally typescript but was converted into typescript via
 
 ## Running to connect to backend
 
-Once upon a time I stumbled upon Scott Hanselman's old post:
+At some point in development, I was disabling cert errors when I launch the browser. But then I stumbled upon Scott Hanselman's old post:
 https://www.hanselman.com/blog/developing-locally-with-aspnet-core-under-https-ssl-and-selfsigned-certs
 
 This made me run the command: dotnet dev-certs https --trust
