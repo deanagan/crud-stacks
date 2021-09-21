@@ -26,4 +26,10 @@ This project was not originally typescript but was converted into typescript via
 
 ## Running to connect to backend
 
-From the command line run "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" --disable-web-security on windows
+Once upon a time I stumbled upon Scott Hanselman's old post:
+https://www.hanselman.com/blog/developing-locally-with-aspnet-core-under-https-ssl-and-selfsigned-certs
+
+This made me run the command: dotnet dev-certs https --trust
+
+This post was is old and was on dotnet 2.1. I've since moved on to 3.1 and later,
+and I think useHsts may be enough.
