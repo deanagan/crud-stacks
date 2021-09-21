@@ -20,29 +20,27 @@ env:
 jobs:
   # Run tests.
   # See also https://docs.docker.com/docker-hub/builds/automated-testing/
-  # test:
-  #   runs-on: ubuntu-latest
-  #   defaults:
-  #     run:
-  #       working-directory: ./aspdotnet-backend
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./aspdotnet-backend
 
-  #   steps:
-  #     - uses: actions/checkout@v2
+    steps:
+      - uses: actions/checkout@v2
 
-  #     - name: Run tests
-  #       run: |
-  #         if [ -f docker-compose.test.yml ]; then
-  #           docker-compose --file docker-compose.test.yml build
-  #           docker-compose --file docker-compose.test.yml run sut
-  #         else
-  #           docker-compose -f docker-compose-integration.yml up --build --abort-on-container-exit
-  #         fi
+      - name: Run tests
+        run: |
+          if [ -f docker-compose.test.aspdotnet-backend.yml ]; then
+            docker-compose --file docker-compose.test.aspdotnet-backend.yml build
+            docker-compose --file docker-compose.test.aspdotnet-backend.yml run sut
+          fi
 
   # Push image to GitHub Packages.
   # See also https://docs.docker.com/docker-hub/builds/
   push:
     # Ensure test job passes before pushing image.
-    # needs: test
+    needs: test
 
     runs-on: ubuntu-latest
     defaults:
