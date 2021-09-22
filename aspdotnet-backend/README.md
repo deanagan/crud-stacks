@@ -1,5 +1,3 @@
-[![.NET](https://github.com/deanagan/planning-board-backend/actions/workflows/dotnet.yml/badge.svg)](https://github.com/deanagan/planning-board-backend/actions/workflows/dotnet.yml)
-[![Docker](https://github.com/deanagan/planning-board-backend/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/deanagan/planning-board-backend/actions/workflows/docker-publish.yml)
 # Docker image created with:
 docker build --pull -t todo .
 
@@ -41,7 +39,7 @@ version: '3.4'
 
 services:
   todo:
-    image: docker.pkg.github.com/deanagan/planning-board-backend/todo:latest
+    image: docker.pkg.github.com/deanagan/todo-aspdotnet-backend/todo:latest
     ports:
       - "8090:80"
     depends_on:
