@@ -3,33 +3,25 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: Test Publish
+name: React Frontend
 
 on:
-  push:
-    branches: ['main']
-
-env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}/react-frontend
+  release:
+    types: [published]
 
 jobs:
-  build-and-push-image:
+  push_to_registry:
+    name: React Frontend Todo App
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-
     steps:
-      - name: Checkout repository
+      - name: Check out the repo
         uses: actions/checkout@v2
 
-      - name: Log in to the Container registry
+      - name: Log in to Docker Hub
         uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
         with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Extract metadata (tags, labels) for Docker
         id: meta
