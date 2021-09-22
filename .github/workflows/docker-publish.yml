@@ -16,9 +16,6 @@ env:
 jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./react-frontend
     permissions:
       contents: read
       packages: write
@@ -47,4 +44,4 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          file: ./react-frontend
+          file: ./react-frontend/Dockerfile
