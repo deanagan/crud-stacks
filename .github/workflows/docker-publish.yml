@@ -3,7 +3,7 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: React Frontend
+name: React Frontend Docker Hub
 
 on:
   release:
