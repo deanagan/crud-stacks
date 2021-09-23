@@ -1,3 +1,4 @@
+using System.Reflection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -58,10 +59,11 @@ namespace TodoBackend.Api
             var connectionString = Configuration["ConnectionStrings:DefaultConnection"];
 
             EnsureDatabase.For.SqlDatabase(connectionString);
+
             var upgrader = DeployChanges.To
                 .SqlDatabase(connectionString)
-                .WithScriptsFromFileSystem(@"./SqlScripts")
-                .WithTransactionPerScript()
+                .WithScriptsEmbeddedInAssembly(Assembly.GetExecutingAssembly())
+                .WithTransaction()
                 .LogToConsole()
                 .Build();
 
