@@ -10,6 +10,8 @@ import { Table } from "../components/Table";
 import { Modal } from "../components/Modal";
 import { AddEntryForm } from "../components/AddEntryForm";
 import { uuidv4 } from "../types";
+import { Dropdown } from "../components";
+
 
 const Wrapper = styled(ViewBox)`
   justify-content: center;
@@ -61,11 +63,12 @@ export const Home = () => {
                 detail: todo.detail,
                 isDone: todo.isDone ? "True" : "False",
                 switch: (<ToggleSwitch switchUniqueId={todo.uniqueId as uuidv4} isDone={todo.isDone}/>),
-                deleter: (<ActionLink color='red' message='delete' deleteFn={() => deleteEntry(todo.uniqueId as uuidv4)}/>)
+                deleter: (<ActionLink color='red' message='delete' deleteFn={() => deleteEntry(todo.uniqueId as uuidv4)}/>),
+                assignee: (<Dropdown itemUniqueId={todo.uniqueId as uuidv4} />)
             }
           ))}
-        columnLabels={['Summary', 'Detail', 'Completed', 'Update', 'Remove Todo']}
-        rowFields={['summary', 'detail', 'isDone', 'switch', 'deleter']}
+        columnLabels={['Summary', 'Detail', 'Completed', 'Update', 'Remove Todo', 'Assignee']}
+        rowFields={['summary', 'detail', 'isDone', 'switch', 'deleter', 'assignee']}
       />
 
       <Button onClick={() => setShowAddModal(true)}>Add Request</Button>
