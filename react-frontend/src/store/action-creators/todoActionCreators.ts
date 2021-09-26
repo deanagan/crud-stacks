@@ -3,10 +3,10 @@ import { Dispatch } from "redux";
 import { Todo, uuidv4 } from "../../types";
 import { TodoAction } from "../actions/todoActions";
 import { HttpClient } from "../action-apis/commonActionApi";
+import { apiVersion, server } from "../../Appsettings";
 
-const backendBaseUrl = process.env.REACT_APP_BACKEND_BASE_URL;
-const apiVersion = process.env.REACT_APP_BACKEND_API_VERSION;
-const backendType = process.env.REACT_APP_BACKEND_TYPE;
+const backendBaseUrl = server;
+const backendType = 'api';
 
 export const addTodo = (todo: Todo) => {
   return (dispatch: Dispatch<TodoAction>) => {

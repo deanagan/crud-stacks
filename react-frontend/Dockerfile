@@ -1,6 +1,8 @@
 # pull base image
 FROM node
 
+ENV REACT_APP_ENV dockerprod
+
 # set working directory
 WORKDIR /app
 
@@ -9,7 +11,7 @@ ENV PATH /app/node_modules/.bin:$PATH
 
 # install app dependencies
 COPY package.json ./
-COPY .env.prod ./.env
+COPY .env ./.env
 RUN npm install
 
 # add app

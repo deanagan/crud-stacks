@@ -33,3 +33,8 @@ This made me run the command: dotnet dev-certs https --trust
 
 This post was is old and was on dotnet 2.1. I've since moved on to 3.1 and later,
 and I think useHsts may be enough.
+
+
+## To build for production
+
+Enter `npm run build:production`
