@@ -41,12 +41,10 @@ export const updateTodoState = (uniqueId: uuidv4, isDone: boolean) => {
 export const deleteTodo = (uniqueId: uuidv4) => {
   return (dispatch: Dispatch<TodoAction>) => {
     new HttpClient().delete<Todo | uuidv4>({url: `${backendBaseUrl}/${apiVersion}/${backendType}/todos/${uniqueId}`, requiresToken: false, payload: uniqueId} )
-    .then((data) => {
-      const todo = data as Todo;
+    .then(() => {
       dispatch({
         type: TodoActionTypes.DELETE_TODO_ENTRY,
-        uniqueId: todo.uniqueId as uuidv4,
-        isDone: todo.isDone,
+        uniqueId: uniqueId,
       });
     });
   };
