@@ -126,11 +126,6 @@ namespace TodoBackend.Api.Data.Access
             }
         }
 
-        bool ITodoRepository.DeleteTodo(Guid guid)
-        {
-            throw new NotImplementedException();
-        }
-
         public Todo UpdateTodo(Guid guid, Todo todo)
         {
              var sql = @"

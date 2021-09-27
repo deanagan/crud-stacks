@@ -45,11 +45,6 @@ namespace TodoBackend.Api.Services
             };
         }
 
-        bool ITodoService.DeleteTodo(Guid guid)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<TodoView> GetTodo(Guid guid)
         {
             var todo = await _todoRepository.GetTodoByGuid(guid);
