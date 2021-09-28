@@ -5,7 +5,8 @@ WORKDIR /app
 COPY *.sln .
 COPY TodoBackend.Api/*.csproj ./TodoBackend.Api/
 COPY TodoBackend.Api.UnitTests/*.csproj ./TodoBackend.Api.UnitTests/
-
+COPY ./wait-for-it.sh ./wait-for-it.sh
+RUN chmod +x wait-for-it.sh
 
 RUN dotnet restore
 
