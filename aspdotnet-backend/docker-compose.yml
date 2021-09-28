@@ -3,14 +3,15 @@ version: '3.4'
 services:
   todo:
     image: todo-aspdotnet-backend
+    restart: unless-stopped
     build:
       context: .
       dockerfile: Dockerfile
     ports:
       - "8090:80"
     depends_on:
-      - db
-  db:
+      - database
+  database:
     image: mcr.microsoft.com/mssql/server:2019-latest
     user: root
     environment:

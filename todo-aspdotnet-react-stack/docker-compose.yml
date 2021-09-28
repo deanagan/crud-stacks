@@ -7,11 +7,12 @@ services:
       - 3001:3000
   todo-aspdotnet-backend:
     image: ghcr.io/deanagan/crud-stacks/todo-aspdotnet-backend:latest
+    restart: unless-stopped
     ports:
       - 8090:80
     depends_on:
-      - db
-  db:
+      - database
+  database:
     image: mcr.microsoft.com/mssql/server:2019-latest
     user: root
     environment:
