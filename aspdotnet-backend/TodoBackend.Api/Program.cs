@@ -25,6 +25,7 @@ namespace TodoBackend.Api
                 .ConfigureAppConfiguration((hostingContext, config) =>
                 {
                     var env = hostingContext.HostingEnvironment.EnvironmentName;
+                    Console.WriteLine($"Connecting to {env} environment!!!!!!!!!!!!!!!>>>>>>>>>>>!!!!!!!!!");
                     config.AddJsonFile($"appsettings.{env}.json", optional: true, reloadOnChange: true);
                 });
     }
