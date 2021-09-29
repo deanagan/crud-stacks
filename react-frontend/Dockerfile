@@ -11,11 +11,15 @@ ENV PATH /app/node_modules/.bin:$PATH
 
 # install app dependencies
 COPY package.json ./
-COPY .env.prod ./.env
+COPY package-lock.json ./
+COPY .env.prod /app/.env
+
 RUN npm install
 
 # add app
 COPY . ./
+
+RUN rm .env.prod
 
 # expose port
 EXPOSE 3001

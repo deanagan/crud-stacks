@@ -9,7 +9,7 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8090:80"
-    entrypoint: ["./wait-for-it.sh", "database:14331", "-t", "120", "--", "dotnet", "TodoBackend.Api.dll"]
+    entrypoint: ["/app/wait-for-it.sh", "database:14331", "-t", "120", "--", "dotnet", "TodoBackend.Api.dll"]
     depends_on:
       - database
   database:

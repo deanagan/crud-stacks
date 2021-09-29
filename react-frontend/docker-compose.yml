@@ -2,10 +2,9 @@ version: '3.7'
 
 services:
   react-frontend:
-    image: todo-react-frontend
+    container_name: todo-react-frontend
     build:
       context: .
-      dockerfile: Dockerfile
     volumes:
       - '.:/app'
       - '/app/node_modules'
