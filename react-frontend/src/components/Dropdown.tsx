@@ -1,7 +1,7 @@
 
 import React, { FC } from "react";
 import styled from "styled-components";
-import { uuidv4 } from "../types";
+import { uuidv4Type } from "../types";
 
 
 const Dropbtn = styled.div`
@@ -43,23 +43,26 @@ const DropDownLi = styled.li`
   }
 `;
 
+interface Entries {
+  uniqueId: string | number;
+  name: string;
+}
 interface DropdownProp {
-  itemUniqueId: uuidv4;
+  itemUniqueId: uuidv4Type;
+  currentEntry: string;
+  possibleEntries: Entries[];
 }
 
-export const Dropdown: FC<DropdownProp> = ({ itemUniqueId }) => {
+export const Dropdown: FC<DropdownProp> = ({ itemUniqueId, currentEntry, possibleEntries }) => {
 
 
   return (
     <DropDownLi>
       <Dropbtn onClick={() => {}}>
-        DropDown
+      {currentEntry}
       </Dropbtn>
       <DropDownContent>
-        {" "}
-        <SubA onClick={() => {}}>Link 1</SubA>
-        <SubA onClick={() => {}}>Link 2</SubA>
-        <SubA onClick={() => {}}>Link 3</SubA>
+        {possibleEntries.map((pe) => (<SubA key={pe.uniqueId.toString()} onClick={() => {}}>{pe.name}</SubA>))}
       </DropDownContent>
     </DropDownLi>
   );

@@ -1,12 +1,21 @@
-import { v4 as uuid } from "uuid";
+import { v4 as uuidv4 } from "uuid";
 
-export type uuidv4 = typeof uuid;
+export type uuidv4Type = typeof uuidv4;
+export const newUuidV4 = () => uuidv4();
+
+export interface Assignee {
+    uniqueId: uuidv4Type;
+    firstName: string;
+    lastName: string;
+}
 export interface Todo {
-    uniqueId?: uuidv4;
+    uniqueId?: uuidv4Type;
     summary: string;
     detail: string;
     isDone: boolean;
+    assignee?: Assignee;
 }
+
 
 export interface TodoState {
     readonly loading: boolean;

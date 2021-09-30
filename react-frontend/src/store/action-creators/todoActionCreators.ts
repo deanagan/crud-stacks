@@ -1,6 +1,6 @@
 import { TodoActionTypes } from "../action-types/todoActionTypes";
 import { Dispatch } from "redux";
-import { Todo, uuidv4 } from "../../types";
+import { Todo, uuidv4Type } from "../../types";
 import { TodoAction } from "../actions/todoActions";
 import { HttpClient } from "../action-apis/commonActionApi";
 import { apiVersion, server } from "../../Appsettings";
@@ -23,7 +23,7 @@ export const addTodo = (todo: Todo) => {
   };
 };
 
-export const updateTodoState = (uniqueId: uuidv4, isDone: boolean) => {
+export const updateTodoState = (uniqueId: uuidv4Type, isDone: boolean) => {
   const isDoneState = { isDone: isDone };
   return (dispatch: Dispatch<TodoAction>) => {
     new HttpClient().put<Todo | typeof isDoneState>({url: `${backendBaseUrl}/${apiVersion}/${backendType}/todos/${uniqueId}`, requiresToken: false, payload: isDoneState} )
@@ -31,16 +31,16 @@ export const updateTodoState = (uniqueId: uuidv4, isDone: boolean) => {
       const todo = data as Todo;
       dispatch({
         type: TodoActionTypes.UPDATE_TODO_STATE,
-        uniqueId: todo.uniqueId as uuidv4,
+        uniqueId: todo.uniqueId as uuidv4Type,
         isDone: todo.isDone,
       });
     });
   };
 };
 
-export const deleteTodo = (uniqueId: uuidv4) => {
+export const deleteTodo = (uniqueId: uuidv4Type) => {
   return (dispatch: Dispatch<TodoAction>) => {
-    new HttpClient().delete<Todo | uuidv4>({url: `${backendBaseUrl}/${apiVersion}/${backendType}/todos/${uniqueId}`, requiresToken: false, payload: uniqueId} )
+    new HttpClient().delete<Todo | uuidv4Type>({url: `${backendBaseUrl}/${apiVersion}/${backendType}/todos/${uniqueId}`, requiresToken: false, payload: uniqueId} )
     .then(() => {
       dispatch({
         type: TodoActionTypes.DELETE_TODO_ENTRY,
@@ -62,6 +62,7 @@ export const getTodos = () => {
             summary: todo.summary,
             detail: todo.detail,
             isDone: todo.isDone,
+            assignee: todo.assignee
           };
         }),
       });

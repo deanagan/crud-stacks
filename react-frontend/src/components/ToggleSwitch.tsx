@@ -3,7 +3,7 @@ import { FC, useState } from "react";
 import { useDispatch } from "react-redux";
 import { bindActionCreators } from "redux";
 import { actionCreators } from "../store";
-import { uuidv4 } from "../types";
+import { uuidv4Type } from "../types";
 
 const ToggleSwitchDivWrapper = styled.div`
   position: relative;
@@ -56,7 +56,7 @@ const ToggleSwitchWrapper = styled.input.attrs({ type: 'checkbox' })`
 
 
 interface ToggleSwitchProp {
-  switchUniqueId: uuidv4;
+  switchUniqueId: uuidv4Type;
   isDone: boolean;
 }
 

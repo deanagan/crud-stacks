@@ -9,7 +9,7 @@ import { ToggleSwitch } from "../components/ToggleSwitch";
 import { Table } from "../components/Table";
 import { Modal } from "../components/Modal";
 import { AddEntryForm } from "../components/AddEntryForm";
-import { uuidv4 } from "../types";
+import { newUuidV4, uuidv4Type } from "../types";
 import { Dropdown } from "../components";
 
 
@@ -24,7 +24,7 @@ export const Home = () => {
   const { todos } = useSelector((state: State) => state.todo);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [idForDeletion, setIdForDeletion] = useState<uuidv4 | null>(null);
+  const [idForDeletion, setIdForDeletion] = useState<uuidv4Type | null>(null);
 
   const [newSummary, setNewSummary] = useState("");
   const [newDetail, setNewDetail] = useState("");
@@ -32,7 +32,7 @@ export const Home = () => {
   const { addTodo, deleteTodo } = bindActionCreators(actionCreators, dispatch);
 
 
-  const deleteEntry = (uniqueId: uuidv4) => {
+  const deleteEntry = (uniqueId: uuidv4Type) => {
     setIdForDeletion(uniqueId);
     setShowDeleteModal(true);
   }
@@ -62,9 +62,16 @@ export const Home = () => {
                 summary: todo.summary,
                 detail: todo.detail,
                 isDone: todo.isDone ? "True" : "False",
-                switch: (<ToggleSwitch switchUniqueId={todo.uniqueId as uuidv4} isDone={todo.isDone}/>),
-                deleter: (<ActionLink color='red' message='delete' deleteFn={() => deleteEntry(todo.uniqueId as uuidv4)}/>),
-                assignee: (<Dropdown itemUniqueId={todo.uniqueId as uuidv4} />)
+                switch: (<ToggleSwitch switchUniqueId={todo.uniqueId as uuidv4Type} isDone={todo.isDone}/>),
+                deleter: (<ActionLink color='red' message='delete' deleteFn={() => deleteEntry(todo.uniqueId as uuidv4Type)}/>),
+                assignee: (<Dropdown itemUniqueId={todo.uniqueId as uuidv4Type}
+                                     currentEntry="gel"
+                                     possibleEntries={[
+                                       {
+                                         uniqueId: newUuidV4(),
+                                         name: "a"
+                                       }
+                                      ]} />)
             }
           ))}
         columnLabels={['Summary', 'Detail', 'Completed', 'Update', 'Remove Todo', 'Assignee']}
