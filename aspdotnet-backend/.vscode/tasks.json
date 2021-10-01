@@ -32,7 +32,7 @@
             "args": [
                 "watch",
                 "run",
-                "${workspaceFolder}/TodoBackend.Api.csproj",
+                "${workspaceFolder}/TodoBackend.Api/TodoBackend.Api.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
