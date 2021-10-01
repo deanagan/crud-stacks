@@ -1,15 +1,18 @@
+# Please refer https://aka.ms/HTTPSinContainer on how to setup an https developer certificate for your ASP .NET Core service.
+
 version: '3.4'
 
 services:
-  todo:
-    image: todo-aspdotnet-backend
-    restart: unless-stopped
+  todobackendapi:
+    image: todobackendapi
+    restart: always
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Release
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: TodoBackend.Api/Dockerfile
     ports:
-      - "8090:80"
-    entrypoint: ["/app/wait-for-it.sh", "database:14331", "-t", "120", "--", "dotnet", "TodoBackend.Api.dll"]
+      - 8090:5000
     depends_on:
       - database
   database:
@@ -24,4 +27,4 @@ services:
       - ./sqlvolume/log:/var/opt/mssql/log
       - ./sqlvolume/secrets:/var/opt/mssql/secrets
     ports:
-    - "14331:1433"
+    - 14331:1433
