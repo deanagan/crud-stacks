@@ -3,8 +3,8 @@
 version: '3.4'
 
 services:
-  todobackendapi:
-    image: todobackendapi
+  todo-aspdotnet-backend:
+    image: todo-aspdotnet-backend
     restart: always
     environment:
       - ASPNETCORE_ENVIRONMENT=Release
