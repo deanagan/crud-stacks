@@ -16,7 +16,9 @@ services:
     depends_on:
       - database
   database:
-    image: mcr.microsoft.com/mssql/server:2019-latest
+    build:
+      context: .
+      dockerfile: TodoBackend.Api.Database/Dockerfile
     user: root
     environment:
       SA_PASSWORD: "1Secure*Password1"

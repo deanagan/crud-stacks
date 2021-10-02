@@ -12,7 +12,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="5.0.5" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
 
-    <EmbeddedResource Include="SqlScripts\01-Create.sql" />
+    <EmbeddedResource Include="..\TodoBackend.Api.Database\SqlScripts\01-Create.sql" />
   </ItemGroup>
 
 
