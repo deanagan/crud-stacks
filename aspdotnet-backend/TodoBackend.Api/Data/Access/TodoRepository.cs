@@ -8,7 +8,6 @@ using Microsoft.Extensions.Configuration;
 using Dapper;
 using TodoBackend.Api.Interfaces;
 using TodoBackend.Api.Data.Models;
-using TodoBackend.Api.Data.ViewModels;
 
 namespace TodoBackend.Api.Data.Access
 {

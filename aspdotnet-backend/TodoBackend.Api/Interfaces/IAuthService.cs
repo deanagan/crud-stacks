@@ -1,13 +1,14 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using System;
 using TodoBackend.Api.Data.ViewModels;
 
 namespace TodoBackend.Api.Interfaces
 {
     public interface IAuthService
     {
-        UserView UpdatePassword(UserView user, string newPassword, string oldPassword);
-        bool VerifyPassword(UserView user, string password);
+        UserView UpdatePassword(UserView userView, string newPassword, string oldPassword);
+        bool VerifyPassword(UserView userView, string password);
+        UserView RegisterUser(RegisterView registerView);
+        AuthDataView CreateAuthData(Guid guid);
     }
 
 }

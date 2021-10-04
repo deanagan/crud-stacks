@@ -1,4 +1,6 @@
+using System;
 using System.Reflection;
+using System.Text;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -6,11 +8,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using DbUp;
 using TodoBackend.Api.Data.Access;
 using TodoBackend.Api.Services;
 using TodoBackend.Api.Interfaces;
 using TodoBackend.Api.Bindings;
+using System.Threading.Tasks;
 
 namespace TodoBackend.Api
 {
@@ -39,6 +44,28 @@ namespace TodoBackend.Api
 
             services.AddControllers();
             services.AddHealthChecks();
+
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(options =>
+            {
+                options.SaveToken = true;
+                options.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration["Auth:JWTSecretKey"])),
+                    ValidateIssuer = true,
+                    ValidIssuer = Configuration["Auth:Issuer"],
+                    ValidateAudience = true,
+                    ValidAudience = Configuration["Auth:Audience"],
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero
+                };
+            });
+
             ConfigureDBContext(services);
             services.AddScoped(typeof(IRolesRepository), typeof(RolesRepository));
             services.AddScoped(typeof(IUserRepository), typeof(UserRepository));
@@ -52,6 +79,8 @@ namespace TodoBackend.Api
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IRolesService, RolesService>();
             services.AddScoped<ITodoService, TodoService>();
+
+            services.AddSingleton<IAuthService, AuthService>();
         }
 
         public virtual void ConfigureDBContext(IServiceCollection services)
