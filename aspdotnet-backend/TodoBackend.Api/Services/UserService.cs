@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -24,6 +25,18 @@ namespace TodoBackend.Api.Services
         public async Task<UserView> CreateUser(UserView userView)
         {
             var user = _mapper.Map<User>(userView);
+
+            if (user.Role == null)
+            {
+                var availableRoles = await _roleRepository.GetAllRoles();
+
+                if (availableRoles == null)
+                {
+                    throw new FormatException("There are no available roles registered and the user has not specified a role.");
+                }
+
+                user.Role = availableRoles.Where(roles => roles.Kind == "Default").Select(r => r).FirstOrDefault();
+            }
             var newUser = _userRepository.AddUser(user);
             var role = await _roleRepository.GetRoleByGuid(user.Role.UniqueId);
 

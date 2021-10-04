@@ -41,10 +41,10 @@ GO
 SET IDENTITY_INSERT [dbo].[Roles] ON
 GO
 INSERT INTO [dbo].[Roles]([Id], [UniqueId], [Kind], [Description])
-VALUES(1, 'B7D50830-622B-443C-8BC8-AAB6D1C6C3C4', 'Scrum Master', 'A scrum master has more administration rights.')
+VALUES(1, 'B7D50830-622B-443C-8BC8-AAB6D1C6C3C4', 'Super Admin', 'A super admin is a default role.')
 
 INSERT INTO [dbo].[Roles]([Id], [UniqueId], [Kind], [Description])
-VALUES(2, '804F7003-5777-4471-B1D4-B793D3FB643C', 'Developer', 'A developer can do basic operations.')
+VALUES(2, '804F7003-5777-4471-B1D4-B793D3FB643C', 'Default', 'A default role is assigned to a user who registers without a role.')
 GO
 SET IDENTITY_INSERT [dbo].[Roles] OFF
 GO
