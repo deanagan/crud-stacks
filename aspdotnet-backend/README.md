@@ -59,3 +59,16 @@ services:
     - "14331:1433"
 
 ```
+
+# Secrets
+
+This project uses secrets for the token. See (here)[https://docs.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-5.0&tabs=windows]
+
+You'll need to setup the following secrets:
+
+```shell
+dotnet user-secrets set "Auth:JWTSecretKey" "my-secret-key"
+dotnet user-secrets set "Auth:JWTLifespan" 7200
+dotnet user-secrets set "Auth:Audience" "user"
+dotnet user-secrets set "Auth:Issuer" "https://localhost:5001"
+```
