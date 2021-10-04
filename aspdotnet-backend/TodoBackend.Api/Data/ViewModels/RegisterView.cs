@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace TodoBackend.Api.Data.ViewModels
 {
-    public class RegisterViewModel
+    public class RegisterView
     {
         [Required]
         [StringLength(60, MinimumLength = 2)]
