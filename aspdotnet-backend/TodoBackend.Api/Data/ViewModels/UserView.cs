@@ -1,6 +1,5 @@
 using System;
 using System.ComponentModel.DataAnnotations;
-using TodoBackend.Api.Data.Models;
 
 namespace TodoBackend.Api.Data.ViewModels
 {
