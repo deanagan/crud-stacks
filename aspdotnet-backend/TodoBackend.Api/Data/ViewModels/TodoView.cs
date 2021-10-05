@@ -11,6 +11,6 @@ namespace TodoBackend.Api.Data.ViewModels
         public bool IsDone { get; set; }
         public DateTime Created { get; set; }
         public DateTime Updated { get; set; }
-        public AssigneeView Assignee { get; set; }
+        public AssigneeViewModel Assignee { get; set; }
     }
 }

@@ -36,7 +36,7 @@ namespace TodoBackend.Api.Services
                 IsDone = newTodo.IsDone,
                 Created = newTodo.Created,
                 Updated = newTodo.Updated,
-                Assignee = assignedUser != null ? new AssigneeView()
+                Assignee = assignedUser != null ? new AssigneeViewModel()
                 {
                     UniqueId = assignedUser.UniqueId,
                     FirstName = assignedUser.FirstName,
@@ -57,7 +57,7 @@ namespace TodoBackend.Api.Services
                 IsDone = todo.IsDone,
                 Created = todo.Created,
                 Updated = todo.Updated,
-                Assignee = user != null ? new AssigneeView() {
+                Assignee = user != null ? new AssigneeViewModel() {
                     UniqueId = user.UniqueId,
                     FirstName = user.FirstName,
                     LastName = user.LastName
@@ -78,7 +78,7 @@ namespace TodoBackend.Api.Services
                 IsDone = todo.IsDone,
                 Created = todo.Created,
                 Updated = todo.Updated,
-                Assignee = todo.AssigneeGuid != Guid.Empty ? new AssigneeView() {
+                Assignee = todo.AssigneeGuid != Guid.Empty ? new AssigneeViewModel() {
                     UniqueId = userIdLookup[todo.AssigneeGuid].UniqueId,
                     FirstName = userIdLookup[todo.AssigneeGuid].FirstName,
                     LastName = userIdLookup[todo.AssigneeGuid].LastName
@@ -103,7 +103,7 @@ namespace TodoBackend.Api.Services
                 IsDone = updatedTodo.IsDone,
                 Created = updatedTodo.Created,
                 Updated = updatedTodo.Updated,
-                Assignee = user != null ? new AssigneeView()
+                Assignee = user != null ? new AssigneeViewModel()
                 {
                     UniqueId = user.UniqueId,
                     FirstName = user.FirstName,
