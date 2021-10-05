@@ -13,5 +13,6 @@ namespace TodoBackend.Api.Data.Models
         public DateTime Created { get; set; }
         public DateTime Updated { get; set; }
         public Role Role { get; set; }
+        public bool Active { get; set; }
     }
 }

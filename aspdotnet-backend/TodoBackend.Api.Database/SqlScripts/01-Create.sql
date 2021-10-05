@@ -16,6 +16,7 @@ CREATE TABLE [dbo].[Users](
   [LastName] NVARCHAR(100) NOT NULL,
   [Email] NVARCHAR(150) NOT NULL,
   [Hash] NVARCHAR(150) NOT NULL,
+  [Active] BIT DEFAULT 0,
   [Created] DATETIME DEFAULT GETUTCDATE(),
   [Updated] DATETIME DEFAULT GETUTCDATE(),
   [RoleUniqueId] UNIQUEIDENTIFIER NOT NULL,
@@ -41,7 +42,7 @@ GO
 SET IDENTITY_INSERT [dbo].[Roles] ON
 GO
 INSERT INTO [dbo].[Roles]([Id], [UniqueId], [Kind], [Description])
-VALUES(1, 'B7D50830-622B-443C-8BC8-AAB6D1C6C3C4', 'Super Admin', 'A super admin is a default role.')
+VALUES(1, 'B7D50830-622B-443C-8BC8-AAB6D1C6C3C4', 'Super Admin', 'A super admin has extra authorisation.')
 
 INSERT INTO [dbo].[Roles]([Id], [UniqueId], [Kind], [Description])
 VALUES(2, '804F7003-5777-4471-B1D4-B793D3FB643C', 'Default', 'A default role is assigned to a user who registers without a role.')
@@ -51,18 +52,18 @@ GO
 
 SET IDENTITY_INSERT [dbo].[Users] ON
 GO
-INSERT INTO [dbo].[Users]([Id], [UniqueId], [FirstName], [LastName], [Email], [Hash], [RoleUniqueId])
+INSERT INTO [dbo].[Users]([Id], [UniqueId], [FirstName], [LastName], [Email], [Hash], [Active], [RoleUniqueId])
 VALUES(1, '3BD023BD-EB19-4858-92E2-24ABB9EC79C9',
-'Jack', 'Black',	'jack.black@todo.io',	'123456', 'B7D50830-622B-443C-8BC8-AAB6D1C6C3C4')
+'Jack', 'Black',	'jack.black@todo.io',	'123456', 1, 'B7D50830-622B-443C-8BC8-AAB6D1C6C3C4')
 
-INSERT INTO [dbo].[Users]([Id], [UniqueId], [FirstName], [LastName], [Email], [Hash], [RoleUniqueId])
+INSERT INTO [dbo].[Users]([Id], [UniqueId], [FirstName], [LastName], [Email], [Hash], [Active], [RoleUniqueId])
 VALUES(2, '1526A845-40B6-4311-B39F-FC04EA638B9A',
- 'John', 'Smith', 'john.smith@todo.io',	'12345678', '804F7003-5777-4471-B1D4-B793D3FB643C')
+ 'John', 'Smith', 'john.smith@todo.io',	'12345678', 1, '804F7003-5777-4471-B1D4-B793D3FB643C')
 GO
 
-INSERT INTO [dbo].[Users]([Id], [UniqueId], [FirstName], [LastName], [Email], [Hash], [RoleUniqueId])
+INSERT INTO [dbo].[Users]([Id], [UniqueId], [FirstName], [LastName], [Email], [Hash], [Active], [RoleUniqueId])
 VALUES(3, '2113D227-A8E5-437E-9CDD-8D2C043B66B5',
-'Jane', 'Doe', 'jane.doe@todo.io',	'988767', '804F7003-5777-4471-B1D4-B793D3FB643C')
+'Jane', 'Doe', 'jane.doe@todo.io',	'988767', 1, '804F7003-5777-4471-B1D4-B793D3FB643C')
 GO
 
 SET IDENTITY_INSERT [dbo].[Users] OFF
