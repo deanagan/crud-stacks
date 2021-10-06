@@ -5,8 +5,8 @@ namespace TodoBackend.Api.Interfaces
 {
     public interface IAuthService
     {
-        UserView UpdatePassword(UserView userView, string newPassword, string oldPassword);
-        bool VerifyPassword(UserView userView, string password);
+        UserView UpdatePassword(string hash, string newPassword, string oldPassword);
+        bool VerifyPassword(string hash, string password);
         UserView RegisterUser(RegisterView registerView);
         AuthDataView CreateAuthData(Guid guid);
     }

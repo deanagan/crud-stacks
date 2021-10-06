@@ -45,24 +45,6 @@ namespace TodoBackend.Api.Services
 
         private string GenerateToken(Guid guid)
         {
-
-            // var token = new JwtSecurityToken(
-            //     issuer: _configuration["JWT:Issuer"],
-            //     audience: _configuration["JWT:Audience"],
-            //     expires: DateTime.UtcNow.AddMinutes(1),
-            //     claims: authClaims,
-            //     signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256));
-
-            // var jwtToken = new JwtSecurityTokenHandler().WriteToken(token);
-
-            // var response = new AuthResultVM()
-            // {
-            //     Token = jwtToken,
-            //     ExpiresAt = token.ValidTo
-            // };
-
-            // return response;
-
             var authSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_secretKey));
             var tokenDescriptor = new JwtSecurityToken(
                 issuer: _issuer,
@@ -88,12 +70,12 @@ namespace TodoBackend.Api.Services
             };
         }
 
-        UserView IAuthService.UpdatePassword(UserView userView, string newPassword, string oldPassword)
+        bool IAuthService.VerifyPassword(string hash, string password)
         {
-            throw new NotImplementedException();
+            return hash == Crypto.HashPassword(password);
         }
 
-        bool IAuthService.VerifyPassword(UserView userView, string password)
+        UserView IAuthService.UpdatePassword(string hash, string newPassword, string oldPassword)
         {
             throw new NotImplementedException();
         }
