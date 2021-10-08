@@ -10,17 +10,17 @@ namespace TodoBackend.Api.Bindings
         public AutoMapperProfiles()
         {
             // Note: Map<ObjectFrom, ObjectTo>
-            CreateMap<User, UserView>().ReverseMap();
-            CreateMap<Role, RoleView>().ReverseMap();
-            CreateMap<TodoView, Todo>().ForMember(dest => dest.AssigneeGuid,
+            CreateMap<User, UserViewModel>().ReverseMap();
+            CreateMap<Role, RoleViewModel>().ReverseMap();
+            CreateMap<TodoViewModel, Todo>().ForMember(dest => dest.AssigneeGuid,
                 opt => opt.MapFrom(src => src.Assignee != null ? src.Assignee.UniqueId : Guid.Empty));
 
-            CreateMap<RegisterView, UserView>().ConstructUsing(rv => new UserView()
+            CreateMap<RegisterViewModel, UserViewModel>().ConstructUsing(rv => new UserViewModel()
             {
                 FirstName = rv.FirstName,
                 LastName = rv.LastName,
                 Email = rv.Email,
-                Role = new RoleView()
+                Role = new RoleViewModel()
                 {
                     UniqueId = rv.RoleUniqueId
                 }

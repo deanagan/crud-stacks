@@ -19,11 +19,11 @@ namespace TodoBackend.Api.Services
             _mapper = mapper;
         }
 
-        public RoleView CreateRole(RoleView roleView)
+        public RoleViewModel CreateRole(RoleViewModel roleView)
         {
             var role = _mapper.Map<Role>(roleView);
             var newRole = _rolesRepository.AddRole(role);
-            return _mapper.Map<RoleView>(newRole);
+            return _mapper.Map<RoleViewModel>(newRole);
         }
 
         bool IRolesService.DeleteRole(Guid guid)
@@ -31,23 +31,23 @@ namespace TodoBackend.Api.Services
             return _rolesRepository.DeleteRole(guid);
         }
 
-        public async Task<IEnumerable<RoleView>> GetAllRoles()
+        public async Task<IEnumerable<RoleViewModel>> GetAllRoles()
         {
             var roles = await _rolesRepository.GetAllRoles();
-            return _mapper.Map<IEnumerable<RoleView>>(roles);
+            return _mapper.Map<IEnumerable<RoleViewModel>>(roles);
         }
 
-        public async Task<RoleView> GetRoleByGuid(Guid guid)
+        public async Task<RoleViewModel> GetRoleByGuid(Guid guid)
         {
             var role = await _rolesRepository.GetRoleByGuid(guid);
-            return _mapper.Map<RoleView>(role);
+            return _mapper.Map<RoleViewModel>(role);
         }
 
-        public RoleView UpdateRole(Guid guid, RoleView roleView)
+        public RoleViewModel UpdateRole(Guid guid, RoleViewModel roleView)
         {
             var role = _mapper.Map<Role>(roleView);
             var updatedRole = _rolesRepository.UpdateRole(guid, role);
-            return _mapper.Map<RoleView>(updatedRole);
+            return _mapper.Map<RoleViewModel>(updatedRole);
         }
     }
 }

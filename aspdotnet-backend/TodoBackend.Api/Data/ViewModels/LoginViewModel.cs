@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace TodoBackend.Api.Data.ViewModels
 {
-    public class LoginView
+    public class LoginViewModel
     {
         [Required]
         public string Email { get; set; }

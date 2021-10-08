@@ -26,7 +26,7 @@ namespace TodoBackend.Api.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login(LoginView loginView)
+        public async Task<IActionResult> Login(LoginViewModel loginView)
         {
             try
             {
@@ -55,7 +55,7 @@ namespace TodoBackend.Api.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register(RegisterView registerView)
+        public async Task<IActionResult> Register(RegisterViewModel registerView)
         {
             try
             {
@@ -78,7 +78,7 @@ namespace TodoBackend.Api.Controllers
         }
 
         [HttpPut("reset-password/{guid}")]
-        public async Task<IActionResult> Reset(UserView guid, string newPassword)
+        public async Task<IActionResult> Reset(UserViewModel guid, string newPassword)
         {
             throw new NotImplementedException();
         }

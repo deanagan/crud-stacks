@@ -22,13 +22,13 @@ namespace TodoBackend.Api.Services
             _mapper = mapper;
         }
 
-        public async Task<TodoView> CreateTodo(TodoView todoView)
+        public async Task<TodoViewModel> CreateTodo(TodoViewModel todoView)
         {
             var todo = _mapper.Map<Todo>(todoView);
             var newTodo = _todoRepository.AddTodo(todo);
             var assignedUser = newTodo.AssigneeGuid != Guid.Empty ? await _userRepository.GetUserByGuid(newTodo.AssigneeGuid) : null;
 
-            return new TodoView()
+            return new TodoViewModel()
             {
                 UniqueId = newTodo.UniqueId,
                 Summary = newTodo.Summary,
@@ -45,12 +45,12 @@ namespace TodoBackend.Api.Services
             };
         }
 
-        public async Task<TodoView> GetTodo(Guid guid)
+        public async Task<TodoViewModel> GetTodo(Guid guid)
         {
             var todo = await _todoRepository.GetTodoByGuid(guid);
             var user = await _userRepository.GetUserByGuid(todo.AssigneeGuid);
 
-            return new TodoView() {
+            return new TodoViewModel() {
                 UniqueId = todo.UniqueId,
                 Summary = todo.Summary,
                 Detail = todo.Detail,
@@ -65,13 +65,13 @@ namespace TodoBackend.Api.Services
             };
         }
 
-        public async Task<IEnumerable<TodoView>> GetTodos()
+        public async Task<IEnumerable<TodoViewModel>> GetTodos()
         {
             var todos = await _todoRepository.GetAllTodos();
             var users = await _userRepository.GetUsersByGuids(todos.Select(todo => todo.AssigneeGuid));
             var userIdLookup = users.ToDictionary(key => key.UniqueId, value => value);
 
-            var todoViews = todos.Select(todo => new TodoView() {
+            var todoViews = todos.Select(todo => new TodoViewModel() {
                 UniqueId = todo.UniqueId,
                 Summary = todo.Summary,
                 Detail = todo.Detail,
@@ -88,14 +88,14 @@ namespace TodoBackend.Api.Services
             return todoViews;
         }
 
-        public async Task<TodoView> UpdateTodo(Guid guid, TodoView todoView)
+        public async Task<TodoViewModel> UpdateTodo(Guid guid, TodoViewModel todoView)
         {
             var todo = _mapper.Map<Todo>(todoView);
             var updatedTodo = _todoRepository.UpdateTodo(guid, todo);
             var user = (updatedTodo.AssigneeGuid != Guid.Empty) ?
                 await _userRepository.GetUserByGuid(updatedTodo.AssigneeGuid) : null;
 
-            return new TodoView()
+            return new TodoViewModel()
             {
                 UniqueId = updatedTodo.UniqueId,
                 Summary = updatedTodo.Summary,

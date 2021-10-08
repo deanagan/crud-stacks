@@ -8,10 +8,10 @@ namespace TodoBackend.Api.Interfaces
 {
     public interface ITodoService
     {
-        Task<IEnumerable<TodoView>> GetTodos();
-        Task<TodoView> GetTodo(Guid guid);
-        Task<TodoView> CreateTodo(TodoView todoView);
-        Task<TodoView> UpdateTodo(Guid guid, TodoView todoView);
+        Task<IEnumerable<TodoViewModel>> GetTodos();
+        Task<TodoViewModel> GetTodo(Guid guid);
+        Task<TodoViewModel> CreateTodo(TodoViewModel todoView);
+        Task<TodoViewModel> UpdateTodo(Guid guid, TodoViewModel todoView);
         bool DeleteTodo(Guid guid);
     }
 }

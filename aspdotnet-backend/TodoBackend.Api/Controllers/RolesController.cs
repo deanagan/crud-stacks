@@ -61,7 +61,7 @@ namespace TodoBackend.Api.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateRole(RoleView roleView)
+        public IActionResult CreateRole(RoleViewModel roleView)
         {
             if (roleView != null)
             {
@@ -80,7 +80,7 @@ namespace TodoBackend.Api.Controllers
         }
 
         [HttpPut("{guid}")]
-        public IActionResult UpdateRole(Guid guid, RoleView roleView)
+        public IActionResult UpdateRole(Guid guid, RoleViewModel roleView)
         {
             if (roleView != null)
             {

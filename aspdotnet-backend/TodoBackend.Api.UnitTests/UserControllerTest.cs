@@ -27,9 +27,9 @@ namespace TodoBackend.Api.Tests
         {
             // Arrange
             var controller = new UsersController(_fakeLogger, _userService);
-            var fakeUser1 = A.Fake<UserView>();
-            var fakeUser2 = A.Fake<UserView>();
-            A.CallTo(() => _userService.GetAllUsers()).Returns(new List<UserView>{ fakeUser1, fakeUser2 });
+            var fakeUser1 = A.Fake<UserViewModel>();
+            var fakeUser2 = A.Fake<UserViewModel>();
+            A.CallTo(() => _userService.GetAllUsers()).Returns(new List<UserViewModel>{ fakeUser1, fakeUser2 });
 
             // Act
             var result = await controller.GetUsers() as ObjectResult;
@@ -38,7 +38,7 @@ namespace TodoBackend.Api.Tests
             using (new AssertionScope())
             {
                 result.StatusCode.Should().Be(StatusCodes.Status200OK);
-                (result.Value as IEnumerable<UserView>).Should().NotBeEmpty().And.HaveCount(2);
+                (result.Value as IEnumerable<UserViewModel>).Should().NotBeEmpty().And.HaveCount(2);
             }
         }
 
@@ -47,9 +47,9 @@ namespace TodoBackend.Api.Tests
         {
             // Arrange
             var controller = new UsersController(_fakeLogger, _userService);
-            var fakeUser1 = A.Fake<UserView>();
-            var fakeUser2 = A.Fake<UserView>();
-            A.CallTo(() => _userService.GetAllUsers()).Returns(new List<UserView>{ fakeUser1, fakeUser2 });
+            var fakeUser1 = A.Fake<UserViewModel>();
+            var fakeUser2 = A.Fake<UserViewModel>();
+            A.CallTo(() => _userService.GetAllUsers()).Returns(new List<UserViewModel>{ fakeUser1, fakeUser2 });
 
             // Act
             var result = await controller.GetUser(fakeUser1.UniqueId) as ObjectResult;
@@ -67,7 +67,7 @@ namespace TodoBackend.Api.Tests
         {
             // Arrange
             var controller = new UsersController(_fakeLogger, _userService);
-            var fakeUser = A.Fake<UserView>();
+            var fakeUser = A.Fake<UserViewModel>();
 
             // Act
             var result = await controller.CreateUser(fakeUser) as ObjectResult;

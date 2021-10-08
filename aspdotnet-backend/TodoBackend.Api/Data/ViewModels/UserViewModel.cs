@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace TodoBackend.Api.Data.ViewModels
 {
-    public class UserView
+    public class UserViewModel
     {
         public Guid UniqueId { get; set; }
         [Required]
@@ -15,6 +15,6 @@ namespace TodoBackend.Api.Data.ViewModels
         public string Email { get; set; }
         public DateTime Created { get; set; }
         public DateTime Updated { get; set; }
-        public RoleView Role { get; set; }
+        public RoleViewModel Role { get; set; }
     }
 }

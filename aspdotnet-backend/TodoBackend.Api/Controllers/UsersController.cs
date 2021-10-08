@@ -63,7 +63,7 @@ namespace TodoBackend.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateUser(UserView user)
+        public async Task<IActionResult> CreateUser(UserViewModel user)
         {
             if (user != null)
             {
@@ -82,7 +82,7 @@ namespace TodoBackend.Api.Controllers
         }
 
         [HttpPut("{guid}")]
-        public IActionResult UpdateUser(Guid guid, UserView user)
+        public IActionResult UpdateUser(Guid guid, UserViewModel user)
         {
             if (user != null)
             {

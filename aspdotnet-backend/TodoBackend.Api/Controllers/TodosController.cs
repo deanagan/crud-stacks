@@ -61,7 +61,7 @@ namespace TodoBackend.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateTodo(TodoView todoView)
+        public async Task<IActionResult> CreateTodo(TodoViewModel todoView)
         {
             if (todoView != null)
             {
@@ -80,7 +80,7 @@ namespace TodoBackend.Api.Controllers
         }
 
         [HttpPut("{guid}")]
-        public async Task<IActionResult> UpdateTodo(Guid guid, TodoView todoView)
+        public async Task<IActionResult> UpdateTodo(Guid guid, TodoViewModel todoView)
         {
             if (todoView != null)
             {

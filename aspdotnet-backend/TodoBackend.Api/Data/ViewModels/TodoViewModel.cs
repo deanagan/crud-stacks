@@ -3,7 +3,7 @@ using TodoBackend.Api.Data.Models;
 
 namespace TodoBackend.Api.Data.ViewModels
 {
-    public class TodoView
+    public class TodoViewModel
     {
         public Guid UniqueId { get; set; }
         public string Summary { get; set; }

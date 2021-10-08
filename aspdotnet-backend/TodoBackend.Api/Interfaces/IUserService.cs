@@ -7,11 +7,11 @@ namespace TodoBackend.Api.Interfaces
 {
     public interface IUserService
     {
-        Task<IEnumerable<UserView>> GetAllUsers();
-        Task<UserView> GetUserByGuid(Guid guid);
-        Task<IEnumerable<UserView>> GetUsersByGuids(IEnumerable<Guid> guids);
-        Task<UserView> CreateUser(UserView user);
-        UserView UpdateUser(Guid guid, UserView user);
+        Task<IEnumerable<UserViewModel>> GetAllUsers();
+        Task<UserViewModel> GetUserByGuid(Guid guid);
+        Task<IEnumerable<UserViewModel>> GetUsersByGuids(IEnumerable<Guid> guids);
+        Task<UserViewModel> CreateUser(UserViewModel user);
+        UserViewModel UpdateUser(Guid guid, UserViewModel user);
         bool DeleteUser(Guid guid);
     }
 

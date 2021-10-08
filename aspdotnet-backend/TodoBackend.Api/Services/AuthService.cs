@@ -34,9 +34,9 @@ namespace TodoBackend.Api.Services
             }
         }
 
-        public UserView RegisterUser(RegisterView registerView)
+        public UserViewModel RegisterUser(RegisterViewModel registerView)
         {
-            var user = _mapper.Map<UserView>(registerView);
+            var user = _mapper.Map<UserViewModel>(registerView);
 
             user.Hash = Crypto.HashPassword(registerView.Password);
 
@@ -58,11 +58,11 @@ namespace TodoBackend.Api.Services
             return new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
         }
 
-        public AuthDataView CreateAuthData(Guid guid)
+        public AuthDataViewModel CreateAuthData(Guid guid)
         {
             var token = GenerateToken(guid);
 
-            return new AuthDataView()
+            return new AuthDataViewModel()
             {
                 UniqueId = guid,
                 Token = token,
@@ -75,7 +75,7 @@ namespace TodoBackend.Api.Services
             return hash == Crypto.HashPassword(password);
         }
 
-        UserView IAuthService.UpdatePassword(string hash, string newPassword, string oldPassword)
+        UserViewModel IAuthService.UpdatePassword(string hash, string newPassword, string oldPassword)
         {
             throw new NotImplementedException();
         }

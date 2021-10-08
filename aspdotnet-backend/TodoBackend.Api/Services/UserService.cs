@@ -22,7 +22,7 @@ namespace TodoBackend.Api.Services
             _mapper = mapper;
         }
 
-        public async Task<UserView> CreateUser(UserView userView)
+        public async Task<UserViewModel> CreateUser(UserViewModel userView)
         {
             var user = _mapper.Map<User>(userView);
 
@@ -49,7 +49,7 @@ namespace TodoBackend.Api.Services
                 Created = role.Created,
                 Updated = role.Updated
             };
-            return _mapper.Map<UserView>(newUser);
+            return _mapper.Map<UserViewModel>(newUser);
         }
 
         public bool DeleteUser(Guid guid)
@@ -57,29 +57,29 @@ namespace TodoBackend.Api.Services
             return _userRepository.DeleteUser(guid);
         }
 
-        public async Task<IEnumerable<UserView>> GetAllUsers()
+        public async Task<IEnumerable<UserViewModel>> GetAllUsers()
         {
             var users = await _userRepository.GetAllUsers();
-            return _mapper.Map<IEnumerable<UserView>>(users);
+            return _mapper.Map<IEnumerable<UserViewModel>>(users);
         }
 
-        public async Task<UserView> GetUserByGuid(Guid guid)
+        public async Task<UserViewModel> GetUserByGuid(Guid guid)
         {
             var user = await _userRepository.GetUserByGuid(guid);
-            return _mapper.Map<UserView>(user);
+            return _mapper.Map<UserViewModel>(user);
         }
 
-        public UserView UpdateUser(Guid guid, UserView userView)
+        public UserViewModel UpdateUser(Guid guid, UserViewModel userView)
         {
             var user = _mapper.Map<User>(userView);
             var updatedUser = _userRepository.UpdateUser(guid, user);
-            return _mapper.Map<UserView>(updatedUser);
+            return _mapper.Map<UserViewModel>(updatedUser);
         }
 
-        public async Task<IEnumerable<UserView>> GetUsersByGuids(IEnumerable<Guid> guids)
+        public async Task<IEnumerable<UserViewModel>> GetUsersByGuids(IEnumerable<Guid> guids)
         {
             var users = await _userRepository.GetUsersByGuids(guids);
-            return _mapper.Map<IEnumerable<UserView>>(users);
+            return _mapper.Map<IEnumerable<UserViewModel>>(users);
         }
     }
 }
