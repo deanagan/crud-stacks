@@ -26,7 +26,7 @@ namespace TodoBackend.Api.Services
         {
             var user = _mapper.Map<User>(userView);
 
-            if (user.Role == null)
+            if (user.Role.UniqueId == Guid.Empty)
             {
                 var availableRoles = await _roleRepository.GetAllRoles();
 
