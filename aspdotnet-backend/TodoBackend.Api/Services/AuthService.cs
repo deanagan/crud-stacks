@@ -9,11 +9,14 @@ using CryptoHelper;
 using TodoBackend.Api.Data.ViewModels;
 using TodoBackend.Api.Interfaces;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Identity;
+using TodoBackend.Api.Data.Models;
 
 namespace TodoBackend.Api.Services
 {
     public class AuthService : IAuthService
     {
+        private readonly UserManager<User> _userManager;
         private readonly IMapper _mapper;
         private readonly string _secretKey;
         private readonly int _tokenLifeSpan;
@@ -38,7 +41,9 @@ namespace TodoBackend.Api.Services
         {
             var user = _mapper.Map<UserViewModel>(registerView);
 
-            user.Hash = Crypto.HashPassword(registerView.Password);
+            // _userManager.CreateAsync(user);
+
+            user.PasswordHash = Crypto.HashPassword(registerView.Password);
 
             return user;
         }

@@ -7,7 +7,6 @@ using TodoBackend.Api.Data.Models;
 using TodoBackend.Api.Data.ViewModels;
 using TodoBackend.Api.Interfaces;
 
-
 namespace TodoBackend.Api.Services
 {
     public class UserService : IUserService
@@ -22,6 +21,7 @@ namespace TodoBackend.Api.Services
             _mapper = mapper;
         }
 
+        [Obsolete("We will replace this function with Identity")]
         public async Task<UserViewModel> CreateUser(UserViewModel userView)
         {
             var user = _mapper.Map<User>(userView);
@@ -35,7 +35,7 @@ namespace TodoBackend.Api.Services
                     throw new FormatException("There are no available roles registered and the user has not specified a role.");
                 }
 
-                user.Role = availableRoles.Where(roles => roles.Kind == "Default").Select(r => r).FirstOrDefault();
+                user.Role = availableRoles.Where(roles => roles.Name == "Default").Select(r => r).FirstOrDefault();
             }
             var newUser = _userRepository.AddUser(user);
             var role = await _roleRepository.GetRoleByGuid(user.Role.UniqueId);
@@ -44,7 +44,7 @@ namespace TodoBackend.Api.Services
             {
                 Id = role.Id,
                 UniqueId = role.UniqueId,
-                Kind = role.Kind,
+                Name = role.Name,
                 Description = role.Description,
                 Created = role.Created,
                 Updated = role.Updated

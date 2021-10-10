@@ -16,6 +16,8 @@ using TodoBackend.Api.Services;
 using TodoBackend.Api.Interfaces;
 using TodoBackend.Api.Bindings;
 using System.Threading.Tasks;
+using TodoBackend.Api.Data.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace TodoBackend.Api
 {
@@ -33,7 +35,7 @@ namespace TodoBackend.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-             services.AddCors(options =>
+            services.AddCors(options =>
             {
                 options.AddPolicy(name: AllowSpecificOrigins,
                               builder =>
@@ -41,6 +43,10 @@ namespace TodoBackend.Api
                                   builder.WithOrigins("*").AllowAnyHeader().AllowAnyMethod();
                               });
             });
+
+            // TODO: Finish wiring up identity
+            //services.AddIdentity<User, Role>().AddDefaultTokenProviders();
+
 
             services.AddControllers();
             services.AddHealthChecks();

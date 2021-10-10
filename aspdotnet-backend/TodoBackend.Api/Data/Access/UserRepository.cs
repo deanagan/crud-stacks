@@ -8,12 +8,16 @@ using Microsoft.Extensions.Configuration;
 using Dapper;
 using TodoBackend.Api.Interfaces;
 using TodoBackend.Api.Data.Models;
+using Microsoft.AspNetCore.Identity;
+using System.Threading;
 
 namespace TodoBackend.Api.Data.Access
 {
-    public class UserRepository : IUserRepository
+    public class UserRepository : IUserRepository, IUserStore<User>
     {
         private readonly string _connectionString;
+        private bool disposedValue;
+
         public UserRepository(IConfiguration configuration)
         {
             _connectionString = configuration["ConnectionStrings:DefaultConnection"];
@@ -27,12 +31,12 @@ namespace TodoBackend.Api.Data.Access
                            u.FirstName,
                            u.LastName,
                            u.Email,
-                           u.Hash,
+                           u.PasswordHash,
                            u.Created,
                            u.Updated,
                            r.Id,
                            r.UniqueId,
-                           r.Kind,
+                           r.Name,
                            r.Description,
                            r.Created,
                            r.Updated
@@ -60,12 +64,12 @@ namespace TodoBackend.Api.Data.Access
                            u.FirstName,
                            u.LastName,
                            u.Email,
-                           u.Hash,
+                           u.PasswordHash,
                            u.Created,
                            u.Updated,
                            r.Id,
                            r.UniqueId,
-                           r.Kind,
+                           r.Name,
                            r.Description,
                            r.Created,
                            r.Updated
@@ -126,7 +130,7 @@ namespace TodoBackend.Api.Data.Access
                 parameter.Add("@FirstName", user.FirstName);
                 parameter.Add("@LastName", user.LastName);
                 parameter.Add("@Email", user.Email);
-                parameter.Add("@Hash", user.Hash ?? "123456");
+                parameter.Add("@Hash", user.PasswordHash);
                 parameter.Add("@RoleUniqueId", user.Role.UniqueId);
 
                 parameter.Add("@Id", null, DbType.Int32, ParameterDirection.Output);
@@ -143,7 +147,7 @@ namespace TodoBackend.Api.Data.Access
                     FirstName = user.FirstName,
                     LastName = user.LastName,
                     Email = user.Email,
-                    Hash = user.Hash ?? "123456",
+                    PasswordHash = user.PasswordHash,
                     Created = parameter.Get<DateTime>("@UserCreated"),
                     Updated = parameter.Get<DateTime>("@UserUpdated"),
                 };
@@ -178,7 +182,7 @@ namespace TodoBackend.Api.Data.Access
                         set u.FirstName = @FirstName,
                             u.LastName = @LastName,
                             u.Email = @Email,
-                            u.Hash = @Hash,
+                            u.PasswordHash = @PasswordHash,
                             u.Updated = getutcdate(),
                             u.RoleUniqueId = @RoleUniqueId
 						from dbo.Users u
@@ -189,14 +193,14 @@ namespace TodoBackend.Api.Data.Access
                             select u.FirstName,
                                    u.LastName,
                                    u.Email,
-                                   u.Hash,
+                                   u.PasswordHash,
                                    u.Updated,
                                    r.UniqueId
                             except
                             select nv.FirstName,
                                    nv.LastName,
                                    nv.Email,
-                                   nv.Hash,
+                                   nv.PasswordHash,
                                    nv.Updated,
                                    nv.RoleUniqueId
                             from #NewValues nv
@@ -208,7 +212,7 @@ namespace TodoBackend.Api.Data.Access
                                @UserUpdated = u.Updated,
                                @RoleUniqueId = r.UniqueId,
                                @RoleId = r.Id,
-                               @RoleKind = r.Kind,
+                               @RoleName = r.Name,
                                @RoleDescription = r.Description,
                                @RoleCreated = r.Created,
                                @RoleUpdated = r.Updated
@@ -223,14 +227,14 @@ namespace TodoBackend.Api.Data.Access
                 parameter.Add("@FirstName", user.FirstName);
                 parameter.Add("@LastName", user.LastName);
                 parameter.Add("@Email", user.Email);
-                parameter.Add("@Hash", user.Hash ?? "123456");
+                parameter.Add("@Hash", user.PasswordHash);
                 parameter.Add("@RoleUniqueId", user.Role.UniqueId);
 
                 parameter.Add("@UserId", null, DbType.Int32, ParameterDirection.Output);
                 parameter.Add("@UserCreated", null, DbType.DateTime, ParameterDirection.Output);
                 parameter.Add("@UserUpdated", null, DbType.DateTime, ParameterDirection.Output);
                 parameter.Add("@RoleId", null, DbType.Int32, ParameterDirection.Output);
-                parameter.Add("@RoleKind", null, DbType.String, ParameterDirection.Output, 150);
+                parameter.Add("@RoleName", null, DbType.String, ParameterDirection.Output, 150);
                 parameter.Add("@RoleDescription", null, DbType.String, ParameterDirection.Output, -1);
                 parameter.Add("@RoleCreated", null, DbType.DateTime, ParameterDirection.Output);
                 parameter.Add("@RoleUpdated", null, DbType.DateTime, ParameterDirection.Output);
@@ -244,14 +248,14 @@ namespace TodoBackend.Api.Data.Access
                     FirstName = user.FirstName,
                     LastName = user.LastName,
                     Email = user.Email,
-                    Hash = user.Hash ?? "123456",
+                    PasswordHash = user.PasswordHash,
                     Created = parameter.Get<DateTime>("@UserCreated"),
                     Updated = parameter.Get<DateTime>("@UserUpdated"),
                     Role = new Role()
                     {
                         Id = parameter.Get<int>("@RoleId"),
                         UniqueId = user.Role.UniqueId,
-                        Kind = parameter.Get<string>("@RoleKind"),
+                        Name = parameter.Get<string>("@RoleName"),
                         Description = parameter.Get<string>("@RoleDescription"),
                         Created = parameter.Get<DateTime>("@RoleCreated"),
                         Updated = parameter.Get<DateTime>("@RoleUpdated")
@@ -285,12 +289,12 @@ namespace TodoBackend.Api.Data.Access
                            u.FirstName,
                            u.LastName,
                            u.Email,
-                           u.Hash,
+                           u.PasswordHash,
                            u.Created,
                            u.Updated,
                            r.Id,
                            r.UniqueId,
-                           r.Kind,
+                           r.Name,
                            r.Description,
                            r.Created,
                            r.Updated
@@ -311,5 +315,63 @@ namespace TodoBackend.Api.Data.Access
             }
         }
 
+        public Task<string> GetUserIdAsync(User user, CancellationToken cancellationToken)
+        {
+            return Task.FromResult(user.Id.ToString());
+        }
+
+        public Task<string> GetUserNameAsync(User user, CancellationToken cancellationToken)
+        {
+            return Task.FromResult(user.Email);
+        }
+
+        public Task SetUserNameAsync(User user, string userName, CancellationToken cancellationToken)
+        {
+            user.Email = userName;
+            return Task.FromResult(0);
+        }
+
+        public Task<string> GetNormalizedUserNameAsync(User user, CancellationToken cancellationToken)
+        {
+            return Task.FromResult(user.Email);
+        }
+
+        public Task SetNormalizedUserNameAsync(User user, string normalizedName, CancellationToken cancellationToken)
+        {
+            user.Email = normalizedName;
+            return Task.FromResult(0);
+        }
+
+        public Task<IdentityResult> CreateAsync(User user, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var newUser = AddUser(user);
+            return Task.FromResult(IdentityResult.Success);
+        }
+
+        public Task<IdentityResult> UpdateAsync(User user, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IdentityResult> DeleteAsync(User user, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<User> FindByIdAsync(string userId, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<User> FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        void IDisposable.Dispose()
+        {
+            // Nothing to dispose
+        }
     }
 }

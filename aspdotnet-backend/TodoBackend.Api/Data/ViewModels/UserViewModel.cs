@@ -10,7 +10,7 @@ namespace TodoBackend.Api.Data.ViewModels
         public string FirstName { get; set; }
         [Required]
         public string LastName { get; set; }
-        public string Hash { get; set; }
+        public string PasswordHash { get; set; }
         [Required]
         public string Email { get; set; }
         public DateTime Created { get; set; }

@@ -22,6 +22,7 @@ namespace TodoBackend.Api.Services
         public RoleViewModel CreateRole(RoleViewModel roleView)
         {
             var role = _mapper.Map<Role>(roleView);
+            role.NormalizedName = role.Name.ToUpper();
             var newRole = _rolesRepository.AddRole(role);
             return _mapper.Map<RoleViewModel>(newRole);
         }

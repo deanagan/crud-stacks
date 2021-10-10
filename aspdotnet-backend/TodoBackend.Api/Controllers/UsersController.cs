@@ -11,7 +11,6 @@ using TodoBackend.Api.Data.ViewModels;
 namespace TodoBackend.Api.Controllers
 {
     [ApiController]
-    [Authorize]
     [Route("v1/api/[controller]")]
     public class UsersController : ControllerBase
     {
@@ -25,6 +24,7 @@ namespace TodoBackend.Api.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetUsers()
         {
             try

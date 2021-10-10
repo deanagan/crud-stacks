@@ -39,7 +39,7 @@ namespace TodoBackend.Api.Controllers
                 }
 
 
-                if (_authService.VerifyPassword(user.Hash, loginView.Password))
+                if (_authService.VerifyPassword(user.PasswordHash, loginView.Password))
                 {
                     return Ok(_authService.CreateAuthData(user.UniqueId));
                 }
@@ -67,7 +67,21 @@ namespace TodoBackend.Api.Controllers
                 }
 
                 var userView = _authService.RegisterUser(registerView);
+                if (userView == null)
+                {
+                    return BadRequest(new { message = "Registration failed" });
+                }
+
                 var newUser = await _userService.CreateUser(userView);
+                if (newUser == null)
+                {
+                    return BadRequest(new { message = "User creation failed" });
+                }
+
+                // Add user role
+                //switch()
+
+
 
                 return Ok(_authService.CreateAuthData(newUser.UniqueId));
             }
