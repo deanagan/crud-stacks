@@ -13,19 +13,37 @@ using System.Threading;
 
 namespace TodoBackend.Api.Data.Access
 {
-    public class RolesRepository : IRolesRepository, IRoleStore<Role>
+    public class RolesRepository : IRolesRepository, IQueryableRoleStore<Role>
     {
         private readonly string _connectionString;
-        private bool _disposedValue;
+
+        public IQueryable<Role> Roles { get { return AllRoles(); } }
 
         public RolesRepository(IConfiguration configuration)
         {
             _connectionString = configuration["ConnectionStrings:DefaultConnection"];
         }
 
+        public IQueryable<Role> AllRoles()
+        {
+            var sql = @"
+                    select r.Id,
+                           r.UniqueId,
+                           r.Name,
+                           r.Description,
+                           r.Created,
+                           r.Updated
+                    from dbo.Roles as r with (nolock)";
+
+            using (var conn = new SqlConnection(_connectionString))
+            {
+                return conn.Query<Role>(sql).AsQueryable();
+            }
+        }
+
         public async Task<IEnumerable<Role>> GetAllRoles()
         {
-             var sql = @"
+            var sql = @"
                     select r.Id,
                            r.UniqueId,
                            r.Name,
@@ -107,7 +125,7 @@ namespace TodoBackend.Api.Data.Access
             }
         }
 
-        Role IRolesRepository.UpdateRole(Guid guid, Role role)
+        public Role UpdateRole(Guid guid, Role role)
         {
             var sql = @"
                         declare @Outcome table (
@@ -188,81 +206,110 @@ namespace TodoBackend.Api.Data.Access
             }
         }
 
-        Task<IdentityResult> IRoleStore<Role>.CreateAsync(Role role, CancellationToken cancellationToken)
+        public Task<IdentityResult> CreateAsync(Role role, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             AddRole(role);
             return Task.FromResult(IdentityResult.Success);
         }
 
-        Task<IdentityResult> IRoleStore<Role>.UpdateAsync(Role role, CancellationToken cancellationToken)
+        public Task<IdentityResult> UpdateAsync(Role role, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            cancellationToken.ThrowIfCancellationRequested();
+            UpdateRole(role.UniqueId, role);
+            return Task.FromResult(IdentityResult.Success);
         }
 
-        Task<IdentityResult> IRoleStore<Role>.DeleteAsync(Role role, CancellationToken cancellationToken)
+        public Task<IdentityResult> DeleteAsync(Role role, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            cancellationToken.ThrowIfCancellationRequested();
+            var sql = @"
+                        delete r
+                        from dbo.Roles r
+                        where r.UniqueId = @UniqueId;
+                        ";
+
+            using (var conn = new SqlConnection(_connectionString))
+            {
+                var parameter = new DynamicParameters();
+                parameter.Add("@UniqueId", role.UniqueId);
+
+                conn.Execute(sql, parameter);
+            }
+            return Task.FromResult(IdentityResult.Success);
         }
 
-        Task<string> IRoleStore<Role>.GetRoleIdAsync(Role role, CancellationToken cancellationToken)
+        public Task<string> GetRoleIdAsync(Role role, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+             return Task.FromResult(role.UniqueId.ToString());
         }
 
-        Task<string> IRoleStore<Role>.GetRoleNameAsync(Role role, CancellationToken cancellationToken)
+        public Task<string> GetRoleNameAsync(Role role, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(role.Name);
         }
 
-        Task IRoleStore<Role>.SetRoleNameAsync(Role role, string roleName, CancellationToken cancellationToken)
+        public Task SetRoleNameAsync(Role role, string roleName, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            role.Name = roleName;
+            return Task.FromResult(0);
         }
 
-        Task<string> IRoleStore<Role>.GetNormalizedRoleNameAsync(Role role, CancellationToken cancellationToken)
+        public Task<string> GetNormalizedRoleNameAsync(Role role, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(role.NormalizedName);
         }
 
-        Task IRoleStore<Role>.SetNormalizedRoleNameAsync(Role role, string normalizedName, CancellationToken cancellationToken)
+        public Task SetNormalizedRoleNameAsync(Role role, string normalizedName, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            role.NormalizedName = normalizedName;
+            return Task.FromResult(0);
         }
 
-        Task<Role> IRoleStore<Role>.FindByIdAsync(string roleId, CancellationToken cancellationToken)
+        public async Task<Role> FindByIdAsync(string roleId, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            cancellationToken.ThrowIfCancellationRequested();
+            var sql = @"
+                    select r.Id,
+                           r.UniqueId,
+                           r.Name,
+                           r.Description,
+                           r.Created,
+                           r.Updated
+                    from dbo.Roles as r with (nolock)
+                        where r.UniqueId = @UniqueId";
+
+            using (var conn = new SqlConnection(_connectionString))
+            {
+                return await conn.QuerySingleOrDefaultAsync<Role>(sql, new { UniqueId = roleId });
+            }
         }
 
-        Task<Role> IRoleStore<Role>.FindByNameAsync(string normalizedRoleName, CancellationToken cancellationToken)
+        public async Task<Role> FindByNameAsync(string normalizedRoleName, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            cancellationToken.ThrowIfCancellationRequested();
+            var sql = @"
+                    select r.Id,
+                           r.UniqueId,
+                           r.Name,
+                           r.Description,
+                           r.Created,
+                           r.Updated
+                    from dbo.Roles as r with (nolock)
+                        where r.NormalizedName = @NormalizedName";
+
+            using (var conn = new SqlConnection(_connectionString))
+            {
+                return await conn.QuerySingleOrDefaultAsync<Role>(sql, new { NormalizedName = normalizedRoleName });
+            }
         }
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!_disposedValue)
-            {
-                if (disposing)
-                {
-                    // TODO: dispose managed state (managed objects)
-                }
-
-                // TODO: free unmanaged resources (unmanaged objects) and override finalizer
-                // TODO: set large fields to null
-                _disposedValue = true;
-            }
+            // Nothing to dispose
         }
 
-        // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
-        // ~RolesRepository()
-        // {
-        //     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-        //     Dispose(disposing: false);
-        // }
-
-        void IDisposable.Dispose()
+        public void Dispose()
         {
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
             Dispose(disposing: true);

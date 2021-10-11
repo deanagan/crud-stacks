@@ -5,16 +5,18 @@ using TodoBackend.Api.Data.Models;
 using TodoBackend.Api.Data.ViewModels;
 using TodoBackend.Api.Interfaces;
 using AutoMapper;
-
+using Microsoft.AspNetCore.Identity;
 
 namespace TodoBackend.Api.Services
 {
     public class RolesService : IRolesService
     {
         private readonly IRolesRepository _rolesRepository;
+        private readonly RoleManager<Role> _roleManager;
         private readonly IMapper _mapper;
-        public RolesService(IRolesRepository rolesRepository, IMapper mapper)
+        public RolesService(RoleManager<Role> roleManager, IRolesRepository rolesRepository, IMapper mapper)
         {
+            _roleManager = roleManager;
             _rolesRepository = rolesRepository;
             _mapper = mapper;
         }
@@ -27,9 +29,10 @@ namespace TodoBackend.Api.Services
             return _mapper.Map<RoleViewModel>(newRole);
         }
 
-        bool IRolesService.DeleteRole(Guid guid)
+        public async Task<bool> DeleteRole(Guid guid)
         {
-            return _rolesRepository.DeleteRole(guid);
+            var result = await _roleManager.DeleteAsync(new Role { UniqueId = guid });
+            return result.Succeeded;
         }
 
         public async Task<IEnumerable<RoleViewModel>> GetAllRoles()

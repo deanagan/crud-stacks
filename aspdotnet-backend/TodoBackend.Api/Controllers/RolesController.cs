@@ -106,11 +106,11 @@ namespace TodoBackend.Api.Controllers
         }
 
         [HttpDelete("{guid}")]
-        public IActionResult DeleteRole(Guid guid)
+        public async Task<IActionResult> DeleteRole(Guid guid)
         {
             try
             {
-                if (_rolesService.DeleteRole(guid))
+                if (await _rolesService.DeleteRole(guid))
                 {
                     return NoContent();
                 }

@@ -44,8 +44,10 @@ namespace TodoBackend.Api
                               });
             });
 
-            // TODO: Finish wiring up identity
-            //services.AddIdentity<User, Role>().AddDefaultTokenProviders();
+            // Identity
+            services.AddTransient<IUserStore<User>, UserRepository>();
+            services.AddTransient<IRoleStore<Role>, RolesRepository>();
+            services.AddIdentity<User, Role>();
 
 
             services.AddControllers();
