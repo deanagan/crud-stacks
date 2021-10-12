@@ -11,13 +11,11 @@ namespace TodoBackend.Api.Services
 {
     public class RolesService : IRolesService
     {
-        private readonly IRolesRepository _rolesRepository;
         private readonly RoleManager<Role> _roleManager;
         private readonly IMapper _mapper;
-        public RolesService(RoleManager<Role> roleManager, IRolesRepository rolesRepository, IMapper mapper)
+        public RolesService(RoleManager<Role> roleManager, IMapper mapper)
         {
             _roleManager = roleManager;
-            _rolesRepository = rolesRepository;
             _mapper = mapper;
         }
 
@@ -25,7 +23,7 @@ namespace TodoBackend.Api.Services
         {
             var role = _mapper.Map<Role>(roleView);
             role.NormalizedName = role.Name.ToUpper();
-            var newRole = _rolesRepository.AddRole(role);
+            var newRole = _roleManager.CreateAsync(role);
             return _mapper.Map<RoleViewModel>(newRole);
         }
 
@@ -35,22 +33,23 @@ namespace TodoBackend.Api.Services
             return result.Succeeded;
         }
 
-        public async Task<IEnumerable<RoleViewModel>> GetAllRoles()
+        public IEnumerable<RoleViewModel> GetAllRoles()
         {
-            var roles = await _rolesRepository.GetAllRoles();
+            var roles = _roleManager.Roles;
             return _mapper.Map<IEnumerable<RoleViewModel>>(roles);
         }
 
         public async Task<RoleViewModel> GetRoleByGuid(Guid guid)
         {
-            var role = await _rolesRepository.GetRoleByGuid(guid);
+            var role = await _roleManager.FindByIdAsync(guid.ToString());
             return _mapper.Map<RoleViewModel>(role);
         }
 
         public RoleViewModel UpdateRole(Guid guid, RoleViewModel roleView)
         {
             var role = _mapper.Map<Role>(roleView);
-            var updatedRole = _rolesRepository.UpdateRole(guid, role);
+            role.UniqueId = guid;
+            var updatedRole = _roleManager.UpdateAsync(role);
             return _mapper.Map<RoleViewModel>(updatedRole);
         }
     }

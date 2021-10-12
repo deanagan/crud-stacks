@@ -23,11 +23,11 @@ namespace TodoBackend.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetRoles()
+        public IActionResult GetRoles()
         {
             try
             {
-                var result = await _rolesService.GetAllRoles();
+                var result = _rolesService.GetAllRoles();
                 if (result == null)
                 {
                     return NoContent();

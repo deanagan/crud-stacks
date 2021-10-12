@@ -6,18 +6,19 @@ using AutoMapper;
 using TodoBackend.Api.Data.Models;
 using TodoBackend.Api.Data.ViewModels;
 using TodoBackend.Api.Interfaces;
+using Microsoft.AspNetCore.Identity;
 
 namespace TodoBackend.Api.Services
 {
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
-        private readonly IRolesRepository _roleRepository;
+        private readonly RoleManager<Role> _roleManager;
         private readonly IMapper _mapper;
-        public UserService(IUserRepository userRepository, IRolesRepository roleRepository, IMapper mapper)
+        public UserService(IUserRepository userRepository, RoleManager<Role> roleManager, IMapper mapper)
         {
             _userRepository = userRepository;
-            _roleRepository = roleRepository;
+            _roleManager = roleManager;
             _mapper = mapper;
         }
 
@@ -28,7 +29,7 @@ namespace TodoBackend.Api.Services
 
             if (user.Role.UniqueId == Guid.Empty)
             {
-                var availableRoles = await _roleRepository.GetAllRoles();
+                var availableRoles = _roleManager.Roles;
 
                 if (availableRoles == null)
                 {
@@ -38,7 +39,7 @@ namespace TodoBackend.Api.Services
                 user.Role = availableRoles.Where(roles => roles.Name == "Default").Select(r => r).FirstOrDefault();
             }
             var newUser = _userRepository.AddUser(user);
-            var role = await _roleRepository.GetRoleByGuid(user.Role.UniqueId);
+            var role = await _roleManager.FindByIdAsync(user.Role.UniqueId.ToString());
 
             newUser.Role = new Role()
             {

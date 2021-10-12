@@ -11,20 +11,20 @@ using TodoBackend.Api.Data.Models;
 using Microsoft.AspNetCore.Identity;
 using System.Threading;
 
-namespace TodoBackend.Api.Data.Access
+namespace TodoBackend.Api.Data.Identity
 {
-    public class RolesRepository : IRolesRepository, IQueryableRoleStore<Role>
+    public class RolesRepository : IQueryableRoleStore<Role>
     {
         private readonly string _connectionString;
 
-        public IQueryable<Role> Roles { get { return AllRoles(); } }
+        public IQueryable<Role> Roles { get { return GetAllRoles(); } }
 
         public RolesRepository(IConfiguration configuration)
         {
             _connectionString = configuration["ConnectionStrings:DefaultConnection"];
         }
 
-        public IQueryable<Role> AllRoles()
+        private IQueryable<Role> GetAllRoles()
         {
             var sql = @"
                     select r.Id,
@@ -41,24 +41,7 @@ namespace TodoBackend.Api.Data.Access
             }
         }
 
-        public async Task<IEnumerable<Role>> GetAllRoles()
-        {
-            var sql = @"
-                    select r.Id,
-                           r.UniqueId,
-                           r.Name,
-                           r.Description,
-                           r.Created,
-                           r.Updated
-                    from dbo.Roles as r with (nolock)";
-
-            using (var conn = new SqlConnection(_connectionString))
-            {
-                return await conn.QueryAsync<Role>(sql);
-            }
-        }
-
-        public async Task<Role> GetRoleByGuid(Guid guid)
+        private async Task<Role> GetRoleByGuid(Guid guid)
         {
             var sql = @"
                     select r.Id,
@@ -77,7 +60,7 @@ namespace TodoBackend.Api.Data.Access
             }
         }
 
-        public Role AddRole(Role role)
+        private Role AddRole(Role role)
         {
             var sql = @"
                         declare @Outcome table (
@@ -125,7 +108,7 @@ namespace TodoBackend.Api.Data.Access
             }
         }
 
-        public Role UpdateRole(Guid guid, Role role)
+        private Role UpdateRole(Guid guid, Role role)
         {
             var sql = @"
                         declare @Outcome table (
@@ -185,24 +168,6 @@ namespace TodoBackend.Api.Data.Access
                 };
 
                 return updatedRole;
-            }
-        }
-
-        public bool DeleteRole(Guid guid)
-        {
-            var sql = @"
-                        delete r
-                        from dbo.Roles r
-                        where r.UniqueId = @UniqueId;
-                        ";
-
-            using (var conn = new SqlConnection(_connectionString))
-            {
-                var parameter = new DynamicParameters();
-                parameter.Add("@UniqueId", guid);
-
-                var s = conn.Execute(sql, parameter) != 0;
-                return s;
             }
         }
 

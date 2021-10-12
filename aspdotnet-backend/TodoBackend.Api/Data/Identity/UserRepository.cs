@@ -11,7 +11,7 @@ using TodoBackend.Api.Data.Models;
 using Microsoft.AspNetCore.Identity;
 using System.Threading;
 
-namespace TodoBackend.Api.Data.Access
+namespace TodoBackend.Api.Data.Identity
 {
     public class UserRepository : IUserRepository, IUserStore<User>
     {
