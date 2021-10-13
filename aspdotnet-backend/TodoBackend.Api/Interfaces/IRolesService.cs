@@ -9,8 +9,8 @@ namespace TodoBackend.Api.Interfaces
     {
         IEnumerable<RoleViewModel> GetAllRoles();
         Task<RoleViewModel> GetRoleByGuid(Guid guid);
-        RoleViewModel CreateRole(RoleViewModel role);
-        RoleViewModel UpdateRole(Guid guid, RoleViewModel role);
+        Task<RoleViewModel> CreateRole(RoleViewModel role);
+        Task<RoleViewModel> UpdateRole(Guid guid, RoleViewModel role);
         Task<bool> DeleteRole(Guid guid);
     }
 
