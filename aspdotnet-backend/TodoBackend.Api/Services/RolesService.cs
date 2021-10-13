@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
 using TodoBackend.Api.Data.Models;
 using TodoBackend.Api.Data.ViewModels;
 using TodoBackend.Api.Interfaces;
@@ -19,11 +20,17 @@ namespace TodoBackend.Api.Services
             _mapper = mapper;
         }
 
-        public RoleViewModel CreateRole(RoleViewModel roleView)
+        public async Task<RoleViewModel> CreateRole(RoleViewModel roleView)
         {
             var role = _mapper.Map<Role>(roleView);
             role.NormalizedName = role.Name.ToUpper();
-            var newRole = _roleManager.CreateAsync(role);
+            var result = await _roleManager.CreateAsync(role);
+            if (result.Errors.Any())
+            {
+                throw new Exception($"Failed to create role '{role.Name}'.");
+            }
+
+            var newRole = await _roleManager.FindByNameAsync(role.NormalizedName);
             return _mapper.Map<RoleViewModel>(newRole);
         }
 
@@ -45,11 +52,16 @@ namespace TodoBackend.Api.Services
             return _mapper.Map<RoleViewModel>(role);
         }
 
-        public RoleViewModel UpdateRole(Guid guid, RoleViewModel roleView)
+        public async Task<RoleViewModel> UpdateRole(Guid guid, RoleViewModel roleView)
         {
             var role = _mapper.Map<Role>(roleView);
             role.UniqueId = guid;
-            var updatedRole = _roleManager.UpdateAsync(role);
+            var result = await _roleManager.UpdateAsync(role);
+            if (result.Errors.Any())
+            {
+                throw new Exception($"Failed to update role '{role.Name}'.");
+            }
+            var updatedRole = await _roleManager.FindByIdAsync(guid.ToString());
             return _mapper.Map<RoleViewModel>(updatedRole);
         }
     }

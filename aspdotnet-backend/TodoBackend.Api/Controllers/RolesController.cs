@@ -61,13 +61,13 @@ namespace TodoBackend.Api.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateRole(RoleViewModel roleView)
+        public async Task<IActionResult> CreateRole(RoleViewModel roleView)
         {
             if (roleView != null)
             {
                 try
                 {
-                    var newRole = _rolesService.CreateRole(roleView);
+                    var newRole = await _rolesService.CreateRole(roleView);
                     return CreatedAtAction(nameof(GetRoles), new { UniqueId = newRole.UniqueId }, newRole);
                 }
                 catch (Exception ex)
@@ -80,13 +80,13 @@ namespace TodoBackend.Api.Controllers
         }
 
         [HttpPut("{guid}")]
-        public IActionResult UpdateRole(Guid guid, RoleViewModel roleView)
+        public async Task<IActionResult> UpdateRole(Guid guid, RoleViewModel roleView)
         {
             if (roleView != null)
             {
                 try
                 {
-                    var updatedRole = _rolesService.UpdateRole(guid, roleView);
+                    var updatedRole = await _rolesService.UpdateRole(guid, roleView);
                     if (updatedRole != null)
                     {
                         return Ok(updatedRole);
