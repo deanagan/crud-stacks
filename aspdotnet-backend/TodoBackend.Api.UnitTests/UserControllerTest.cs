@@ -23,7 +23,7 @@ namespace TodoBackend.Api.Tests
         private ILogger<UsersController> _fakeLogger = A.Fake<ILogger<UsersController>>();
 
         [Fact]
-        public async void ReturnOk_WhenDataExists()
+        public void ReturnOk_WhenDataExists()
         {
             // Arrange
             var controller = new UsersController(_fakeLogger, _userService);
@@ -32,7 +32,7 @@ namespace TodoBackend.Api.Tests
             A.CallTo(() => _userService.GetAllUsers()).Returns(new List<UserViewModel>{ fakeUser1, fakeUser2 });
 
             // Act
-            var result = await controller.GetUsers() as ObjectResult;
+            var result = controller.GetUsers() as ObjectResult;
 
             // Assert
             using (new AssertionScope())

@@ -24,12 +24,11 @@ namespace TodoBackend.Api.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> GetUsers()
+        public IActionResult GetUsers()
         {
             try
             {
-                var result = await _userService.GetAllUsers();
+                var result = _userService.GetAllUsers();
                 if (result == null)
                 {
                     return NoContent();

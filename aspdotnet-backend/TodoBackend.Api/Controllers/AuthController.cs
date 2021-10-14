@@ -26,11 +26,11 @@ namespace TodoBackend.Api.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login(LoginViewModel loginView)
+        public IActionResult Login(LoginViewModel loginView)
         {
             try
             {
-                var users = await _userService.GetAllUsers();
+                var users = _userService.GetAllUsers();
                 var user = users.Where(ue => ue.Email == loginView.Email).Select(u => u).FirstOrDefault();
 
                 if (user == null)
@@ -59,7 +59,7 @@ namespace TodoBackend.Api.Controllers
         {
             try
             {
-                var users = await _userService.GetAllUsers();
+                var users = _userService.GetAllUsers();
                 var userEmails = users.Select(u => u.Email);
                 if (userEmails.Any(e => e == registerView.Email))
                 {
