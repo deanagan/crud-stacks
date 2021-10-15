@@ -4,6 +4,7 @@ CREATE TABLE [dbo].[Roles](
   [Name] NVARCHAR(256) NOT NULL,
   [NormalizedName] NVARCHAR(256) NOT NULL,
   [Description] NVARCHAR(max) NOT NULL,
+  [IsDeleted] BIT DEFAULT 0,
   [Created] DATETIME DEFAULT GETUTCDATE(),
   [Updated] DATETIME DEFAULT GETUTCDATE(),
   CONSTRAINT PK_Roles PRIMARY KEY CLUSTERED([Id] ASC)
@@ -27,6 +28,7 @@ CREATE TABLE [dbo].[Users](
   [PhoneNumber] NVARCHAR(50) NULL,
   [PhoneNumberConfirmed] BIT NOT NULL,
   [TwoFactorEnabled] BIT NOT NULL,
+  [IsDeleted] BIT DEFAULT 0,
   [Created] DATETIME DEFAULT GETUTCDATE(),
   [Updated] DATETIME DEFAULT GETUTCDATE(),
   [RoleUniqueId] UNIQUEIDENTIFIER NOT NULL,
