@@ -33,7 +33,8 @@ namespace TodoBackend.Api.Data.Identity
                            r.Description,
                            r.Created,
                            r.Updated
-                    from dbo.Roles as r with (nolock)";
+                    from dbo.Roles as r with (nolock)
+                    where r.IsDeleted = 0";
 
             using (var conn = new SqlConnection(_connectionString))
             {
@@ -51,7 +52,7 @@ namespace TodoBackend.Api.Data.Identity
                            r.Created,
                            r.Updated
                     from dbo.Roles as r with (nolock)
-                        where r.UniqueId = @UniqueId";
+                    where r.UniqueId = @UniqueId and r.IsDeleted = 0";
 
             using (var conn = new SqlConnection(_connectionString))
             {
@@ -89,7 +90,7 @@ namespace TodoBackend.Api.Data.Identity
                             r.Description = coalesce(@Description, r.Description),
                             r.Updated = getutcdate()
                         from dbo.Roles r
-                        where r.UniqueId = @UniqueId
+                        where r.UniqueId = @UniqueId and r.IsDeleted = 0
                         ";
 
 
@@ -109,7 +110,8 @@ namespace TodoBackend.Api.Data.Identity
         {
             cancellationToken.ThrowIfCancellationRequested();
             var sql = @"
-                        delete r
+                        update r
+                        set r.IsDeleted = 1
                         from dbo.Roles r
                         where r.UniqueId = @UniqueId;
                         ";
@@ -162,7 +164,7 @@ namespace TodoBackend.Api.Data.Identity
                            r.Created,
                            r.Updated
                     from dbo.Roles as r with (nolock)
-                        where r.UniqueId = @UniqueId";
+                    where r.UniqueId = @UniqueId and r.IsDeleted = 0";
 
             using (var conn = new SqlConnection(_connectionString))
             {
@@ -181,7 +183,7 @@ namespace TodoBackend.Api.Data.Identity
                            r.Created,
                            r.Updated
                     from dbo.Roles as r with (nolock)
-                        where r.NormalizedName = @NormalizedName";
+                    where r.NormalizedName = @NormalizedName and r.IsDeleted = 0";
 
             using (var conn = new SqlConnection(_connectionString))
             {
