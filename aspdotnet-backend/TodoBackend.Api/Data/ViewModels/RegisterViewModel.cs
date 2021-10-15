@@ -7,6 +7,10 @@ namespace TodoBackend.Api.Data.ViewModels
     {
         [Required]
         [StringLength(60, MinimumLength = 2)]
+        public string UserName { get; set; }
+
+        [Required]
+        [StringLength(60, MinimumLength = 2)]
         public string FirstName { get; set; }
 
         [Required]

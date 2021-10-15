@@ -17,6 +17,7 @@ namespace TodoBackend.Api.Bindings
 
             CreateMap<RegisterViewModel, UserViewModel>().ConstructUsing(rv => new UserViewModel()
             {
+                UserName = rv.UserName,
                 FirstName = rv.FirstName,
                 LastName = rv.LastName,
                 Email = rv.Email,
