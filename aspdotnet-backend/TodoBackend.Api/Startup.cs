@@ -75,7 +75,6 @@ namespace TodoBackend.Api
             });
 
             ConfigureDBContext(services);
-            services.AddScoped(typeof(IUserRepository), typeof(UserRepository));
             services.AddScoped(typeof(ITodoRepository), typeof(TodoRepository));
             services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
             services.AddSwaggerGen(c =>

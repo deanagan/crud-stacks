@@ -81,13 +81,13 @@ namespace TodoBackend.Api.Controllers
         }
 
         [HttpPut("{guid}")]
-        public IActionResult UpdateUser(Guid guid, UserViewModel user)
+        public async Task<IActionResult> UpdateUser(Guid guid, UserViewModel user)
         {
             if (user != null)
             {
                 try
                 {
-                    var updatedUser = _userService.UpdateUser(guid, user);
+                    var updatedUser = await _userService.UpdateUser(guid, user);
                     if (updatedUser != null)
                     {
                         return Ok(updatedUser);
@@ -107,11 +107,11 @@ namespace TodoBackend.Api.Controllers
         }
 
         [HttpDelete("{guid}")]
-        public IActionResult DeleteUser(Guid guid)
+        public async Task<IActionResult> DeleteUser(Guid guid)
         {
             try
             {
-                if (_userService.DeleteUser(guid))
+                if (await _userService.DeleteUser(guid))
                 {
                     return NoContent();
                 }

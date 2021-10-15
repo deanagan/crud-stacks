@@ -8,14 +8,12 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Identity;
 using Dapper;
-using TodoBackend.Api.Interfaces;
 using TodoBackend.Api.Data.Models;
 
 
 namespace TodoBackend.Api.Data.Identity
 {
-    public class UserRepository : IUserRepository,
-                                  IQueryableUserStore<User>,
+    public class UserRepository : IQueryableUserStore<User>,
                                   IUserEmailStore<User>,
                                   IUserPhoneNumberStore<User>,
                                   IUserTwoFactorStore<User>,
@@ -23,16 +21,18 @@ namespace TodoBackend.Api.Data.Identity
                                   IUserRoleStore<User>
     {
         private readonly string _connectionString;
-        private bool disposedValue;
 
         public IQueryable<User> Users {
             get {
                 var sql = @"
                     select u.Id,
                            u.UniqueId,
+                           u.UserName,
+                           u.NormalizedUserName,
                            u.FirstName,
                            u.LastName,
                            u.Email,
+                           u.NormalizedEmail,
                            u.PasswordHash,
                            u.Created,
                            u.Updated,
@@ -43,7 +43,8 @@ namespace TodoBackend.Api.Data.Identity
                            r.Created,
                            r.Updated
                     from dbo.Users as u with (nolock)
-                        inner join dbo.Roles as r with (nolock) on u.RoleUniqueId = r.UniqueId";
+                        inner join dbo.Roles as r with (nolock) on u.RoleUniqueId = r.UniqueId
+                    where u.IsDeleted = 0";
 
             using (var conn = new SqlConnection(_connectionString))
             {
@@ -63,73 +64,6 @@ namespace TodoBackend.Api.Data.Identity
         public UserRepository(IConfiguration configuration)
         {
             _connectionString = configuration["ConnectionStrings:DefaultConnection"];
-        }
-
-        public async Task<IEnumerable<User>> GetAllUsers()
-        {
-            var sql = @"
-                    select u.Id,
-                           u.UniqueId,
-                           u.FirstName,
-                           u.LastName,
-                           u.Email,
-                           u.PasswordHash,
-                           u.Created,
-                           u.Updated,
-                           r.Id,
-                           r.UniqueId,
-                           r.Name,
-                           r.Description,
-                           r.Created,
-                           r.Updated
-                    from dbo.Users as u with (nolock)
-                        inner join dbo.Roles as r with (nolock) on u.RoleUniqueId = r.UniqueId";
-
-            using (var conn = new SqlConnection(_connectionString))
-            {
-                var users = await conn.QueryAsync<User, Role, User>(sql,
-                (user, role) =>
-                {
-                    user.Role = role;
-                    return user;
-                });
-
-                return users;
-            }
-        }
-
-        public async Task<User> GetUserByGuid(Guid guid)
-        {
-            var sql = @"
-                    select u.Id,
-                           u.UniqueId,
-                           u.FirstName,
-                           u.LastName,
-                           u.Email,
-                           u.PasswordHash,
-                           u.Created,
-                           u.Updated,
-                           r.Id,
-                           r.UniqueId,
-                           r.Name,
-                           r.Description,
-                           r.Created,
-                           r.Updated
-                    from dbo.Users as u with (nolock)
-                        inner join dbo.Roles as r with (nolock) on u.RoleUniqueId = r.UniqueId
-                    where u.UniqueId = @UserGuid";
-
-            using (var conn = new SqlConnection(_connectionString))
-            {
-                var result = await conn.QueryAsync<User, Role, User>(sql,
-                (user, role) =>
-                {
-                    user.Role = role;
-                    return user;
-                }, new { UserGuid = guid });
-
-                return result.FirstOrDefault();
-            }
         }
 
         public User AddUser(User user)
@@ -192,131 +126,6 @@ namespace TodoBackend.Api.Data.Identity
             }
         }
 
-        public User UpdateUser(Guid guid, User user)
-        {
-            var sql = @"
-						if object_id('tempdb.#NewValues') is not null
-						begin
-						   drop table #NewValues
-						end
-
-						create table #NewValues
-                        (
-                            UniqueId uniqueidentifier,
-                            FirstName nvarchar(100),
-                            LastName nvarchar(100),
-                            Email nvarchar(150),
-                            [Hash] nvarchar(150),
-                            Updated datetime,
-                            RoleUniqueId uniqueidentifier
-                        )
-
-						insert into #NewValues(UniqueId, FirstName, LastName, Email, Hash, Updated, RoleUniqueId)
-						Select @UniqueId, @FirstName, @LastName, @Email, @Hash, @UserUpdated, @RoleUniqueId
-
-                        update u
-                        set u.FirstName = @FirstName,
-                            u.LastName = @LastName,
-                            u.Email = @Email,
-                            u.PasswordHash = @PasswordHash,
-                            u.Updated = getutcdate(),
-                            u.RoleUniqueId = @RoleUniqueId
-						from dbo.Users u
-                            inner join dbo.Roles r on r.UniqueId = @RoleUniqueId
-                        where u.UniqueId = @UniqueId
-                        and exists
-                            (
-                            select u.FirstName,
-                                   u.LastName,
-                                   u.Email,
-                                   u.PasswordHash,
-                                   u.Updated,
-                                   r.UniqueId
-                            except
-                            select nv.FirstName,
-                                   nv.LastName,
-                                   nv.Email,
-                                   nv.PasswordHash,
-                                   nv.Updated,
-                                   nv.RoleUniqueId
-                            from #NewValues nv
-                            where nv.UniqueId = u.UniqueId
-                            )
-
-                        select @UserId = u.Id,
-                               @UserCreated = u.Created,
-                               @UserUpdated = u.Updated,
-                               @RoleUniqueId = r.UniqueId,
-                               @RoleId = r.Id,
-                               @RoleName = r.Name,
-                               @RoleDescription = r.Description,
-                               @RoleCreated = r.Created,
-                               @RoleUpdated = r.Updated
-                        from dbo.Users as u with (nolock)
-                            inner join dbo.Roles as r with (nolock) on u.RoleUniqueId = r.UniqueId
-                        where u.UniqueId = @UniqueId;";
-
-            using (var conn = new SqlConnection(_connectionString))
-            {
-                var parameter = new DynamicParameters();
-                parameter.Add("@UniqueId", guid);
-                parameter.Add("@FirstName", user.FirstName);
-                parameter.Add("@LastName", user.LastName);
-                parameter.Add("@Email", user.Email);
-                parameter.Add("@Hash", user.PasswordHash);
-                parameter.Add("@RoleUniqueId", user.Role.UniqueId);
-
-                parameter.Add("@UserId", null, DbType.Int32, ParameterDirection.Output);
-                parameter.Add("@UserCreated", null, DbType.DateTime, ParameterDirection.Output);
-                parameter.Add("@UserUpdated", null, DbType.DateTime, ParameterDirection.Output);
-                parameter.Add("@RoleId", null, DbType.Int32, ParameterDirection.Output);
-                parameter.Add("@RoleName", null, DbType.String, ParameterDirection.Output, 150);
-                parameter.Add("@RoleDescription", null, DbType.String, ParameterDirection.Output, -1);
-                parameter.Add("@RoleCreated", null, DbType.DateTime, ParameterDirection.Output);
-                parameter.Add("@RoleUpdated", null, DbType.DateTime, ParameterDirection.Output);
-
-                conn.Execute(sql, parameter);
-
-                return new User()
-                {
-                    Id = parameter.Get<int>("@UserId"),
-                    UniqueId = guid,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName,
-                    Email = user.Email,
-                    PasswordHash = user.PasswordHash,
-                    Created = parameter.Get<DateTime>("@UserCreated"),
-                    Updated = parameter.Get<DateTime>("@UserUpdated"),
-                    Role = new Role()
-                    {
-                        Id = parameter.Get<int>("@RoleId"),
-                        UniqueId = user.Role.UniqueId,
-                        Name = parameter.Get<string>("@RoleName"),
-                        Description = parameter.Get<string>("@RoleDescription"),
-                        Created = parameter.Get<DateTime>("@RoleCreated"),
-                        Updated = parameter.Get<DateTime>("@RoleUpdated")
-                    }
-                };
-            }
-        }
-
-        public bool DeleteUser(Guid userGuid)
-        {
-            var sql = @"
-						delete u
-                        from dbo.Users u
-                        where u.UniqueId = @UniqueId;
-                        ";
-
-            using (var conn = new SqlConnection(_connectionString))
-            {
-                var parameter = new DynamicParameters();
-                parameter.Add("@UniqueId", userGuid);
-
-                return conn.Execute(sql, parameter) != 0;
-            }
-        }
-
         public async Task<IEnumerable<User>> GetUsersByGuids(IEnumerable<Guid> guids)
         {
             var sql = @"
@@ -336,7 +145,7 @@ namespace TodoBackend.Api.Data.Identity
                            r.Updated
                     from dbo.Users as u with (nolock)
                         inner join dbo.Roles as r with (nolock) on u.RoleUniqueId = r.UniqueId
-                    where u.UniqueId in @UniqueIds";
+                    where u.UniqueId in @UniqueIds and u.IsDeleted = 0";
 
             using (var conn = new SqlConnection(_connectionString))
             {
@@ -353,7 +162,7 @@ namespace TodoBackend.Api.Data.Identity
 
         public Task<string> GetUserIdAsync(User user, CancellationToken cancellationToken)
         {
-            return Task.FromResult(user.Id.ToString());
+            return Task.FromResult(user.UniqueId.ToString());
         }
 
         public Task<string> GetUserNameAsync(User user, CancellationToken cancellationToken)
@@ -432,13 +241,18 @@ namespace TodoBackend.Api.Data.Identity
 
             var sql = @"
                         update u
-                        set u.FirstName = @FirstName,
+                        set u.UserName = @UserName,
+                            u.NormalizedUserName = @NormalizedUserName,
+                            u.FirstName = @FirstName,
                             u.LastName = @LastName,
                             u.Email = @Email,
+                            u.NormalizedEmail = @NormalizedEmail,
+                            u.EmailConfirmed = @EmailConfirmed,
                             u.PasswordHash = @PasswordHash,
                             u.Updated = getutcdate(),
                             u.RoleUniqueId = @RoleUniqueId
 						from dbo.Users u
+                        where u.UniqueId = @UniqueId and u.IsDeleted = 0
                             ";
 
             using (var conn = new SqlConnection(_connectionString))
@@ -455,7 +269,6 @@ namespace TodoBackend.Api.Data.Identity
                 parameter.Add("@PasswordHash", user.PasswordHash);
                 parameter.Add("@RoleUniqueId", user.Role.UniqueId);
 
-                conn.Execute(sql, parameter);
                 await conn.OpenAsync(cancellationToken);
                 await conn.ExecuteAsync(sql, parameter);
             }
@@ -467,7 +280,8 @@ namespace TodoBackend.Api.Data.Identity
         {
             cancellationToken.ThrowIfCancellationRequested();
             var sql = @"
-						delete u
+						update u
+                        set u.IsDeleted = 1
                         from dbo.Users u
                         where u.UniqueId = @UniqueId;
                         ";
@@ -490,9 +304,12 @@ namespace TodoBackend.Api.Data.Identity
             var sql = @"
                     select u.Id,
                            u.UniqueId,
+                           u.UserName,
+                           u.NormalizedUserName,
                            u.FirstName,
                            u.LastName,
                            u.Email,
+                           u.NormalizedEmail,
                            u.PasswordHash,
                            u.Created,
                            u.Updated,
@@ -504,7 +321,7 @@ namespace TodoBackend.Api.Data.Identity
                            r.Updated
                     from dbo.Users as u with (nolock)
                         inner join dbo.Roles as r with (nolock) on u.RoleUniqueId = r.UniqueId
-                    where u.UniqueId = @UniqueId";
+                    where u.UniqueId = @UniqueId and u.IsDeleted = 0";
 
             using (var conn = new SqlConnection(_connectionString))
             {
@@ -526,9 +343,12 @@ namespace TodoBackend.Api.Data.Identity
             var sql = @"
                     select u.Id,
                            u.UniqueId,
+                           u.UserName,
+                           u.NormalizedUserName,
                            u.FirstName,
                            u.LastName,
                            u.Email,
+                           u.NormalizedEmail,
                            u.PasswordHash,
                            u.Created,
                            u.Updated,
@@ -540,7 +360,7 @@ namespace TodoBackend.Api.Data.Identity
                            r.Updated
                     from dbo.Users as u with (nolock)
                         inner join dbo.Roles as r with (nolock) on u.RoleUniqueId = r.UniqueId
-                    where u.NormalizedUserName = @NormalizedUserName";
+                    where u.NormalizedUserName = @NormalizedUserName and u.IsDeleted = 0";
 
             using (var conn = new SqlConnection(_connectionString))
             {
@@ -589,7 +409,7 @@ namespace TodoBackend.Api.Data.Identity
             using (var connection = new SqlConnection(_connectionString))
             {
                 await connection.OpenAsync(cancellationToken);
-                var sqlQuery = "select u.* from dbo.Users u where u.NormalizedEmail = @NormalizedEmail";
+                var sqlQuery = "select u.* from dbo.Users u where u.NormalizedEmail = @NormalizedEmail and u.IsDeleted = 0";
                 return await connection.QuerySingleOrDefaultAsync<User>(sqlQuery, new { normalizedEmail = normalizedEmail });
             }
         }
@@ -746,7 +566,7 @@ namespace TodoBackend.Api.Data.Identity
                 var sqlQuery = @"
                     select u.* from dbo.Users u
                     inner join dbo.UserRole ur on ur.UserId = u.Id
-                    inner join dbo.Roles r on ur.RoleId = r.Id where r.NormalizedName = @NormalizedName";
+                    inner join dbo.Roles r on ur.RoleId = r.Id where r.NormalizedName = @NormalizedName and u.IsDeleted = 0";
                 var queryResults = await connection.QueryAsync<User>(sqlQuery, new { NormalizedName = roleName.ToUpper() });
 
                 return queryResults.ToList();

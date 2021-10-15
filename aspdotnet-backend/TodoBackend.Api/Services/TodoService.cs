@@ -13,12 +13,10 @@ namespace TodoBackend.Api.Services
     public class TodoService : ITodoService
     {
         private readonly ITodoRepository _todoRepository;
-        private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
-        public TodoService(ITodoRepository todoRepository, IUserRepository userRepository, IMapper mapper)
+        public TodoService(ITodoRepository todoRepository, IMapper mapper)
         {
             _todoRepository = todoRepository;
-            _userRepository = userRepository;
             _mapper = mapper;
         }
 
@@ -26,7 +24,7 @@ namespace TodoBackend.Api.Services
         {
             var todo = _mapper.Map<Todo>(todoView);
             var newTodo = _todoRepository.AddTodo(todo);
-            var assignedUser = newTodo.AssigneeGuid != Guid.Empty ? await _userRepository.GetUserByGuid(newTodo.AssigneeGuid) : null;
+            //var assignedUser = newTodo.AssigneeGuid != Guid.Empty ? await _userRepository.GetUserByGuid(newTodo.AssigneeGuid) : null;
 
             return new TodoViewModel()
             {
@@ -36,19 +34,20 @@ namespace TodoBackend.Api.Services
                 IsDone = newTodo.IsDone,
                 Created = newTodo.Created,
                 Updated = newTodo.Updated,
-                Assignee = assignedUser != null ? new AssigneeViewModel()
-                {
-                    UniqueId = assignedUser.UniqueId,
-                    FirstName = assignedUser.FirstName,
-                    LastName = assignedUser.LastName
-                } : null
+                Assignee = null
+                // Assignee = assignedUser != null ? new AssigneeViewModel()
+                // {
+                //     UniqueId = assignedUser.UniqueId,
+                //     FirstName = assignedUser.FirstName,
+                //     LastName = assignedUser.LastName
+                // } : null
             };
         }
 
         public async Task<TodoViewModel> GetTodo(Guid guid)
         {
             var todo = await _todoRepository.GetTodoByGuid(guid);
-            var user = await _userRepository.GetUserByGuid(todo.AssigneeGuid);
+            // var user = await _userRepository.GetUserByGuid(todo.AssigneeGuid);
 
             return new TodoViewModel() {
                 UniqueId = todo.UniqueId,
@@ -57,19 +56,20 @@ namespace TodoBackend.Api.Services
                 IsDone = todo.IsDone,
                 Created = todo.Created,
                 Updated = todo.Updated,
-                Assignee = user != null ? new AssigneeViewModel() {
-                    UniqueId = user.UniqueId,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName
-                } : null
+                Assignee = null
+                // user != null ? new AssigneeViewModel() {
+                //     UniqueId = user.UniqueId,
+                //     FirstName = user.FirstName,
+                //     LastName = user.LastName
+                // } : null
             };
         }
 
         public async Task<IEnumerable<TodoViewModel>> GetTodos()
         {
             var todos = await _todoRepository.GetAllTodos();
-            var users = await _userRepository.GetUsersByGuids(todos.Select(todo => todo.AssigneeGuid));
-            var userIdLookup = users.ToDictionary(key => key.UniqueId, value => value);
+            //var users = await _userRepository.GetUsersByGuids(todos.Select(todo => todo.AssigneeGuid));
+            //var userIdLookup = users.ToDictionary(key => key.UniqueId, value => value);
 
             var todoViews = todos.Select(todo => new TodoViewModel() {
                 UniqueId = todo.UniqueId,
@@ -78,11 +78,11 @@ namespace TodoBackend.Api.Services
                 IsDone = todo.IsDone,
                 Created = todo.Created,
                 Updated = todo.Updated,
-                Assignee = todo.AssigneeGuid != Guid.Empty ? new AssigneeViewModel() {
-                    UniqueId = userIdLookup[todo.AssigneeGuid].UniqueId,
-                    FirstName = userIdLookup[todo.AssigneeGuid].FirstName,
-                    LastName = userIdLookup[todo.AssigneeGuid].LastName
-                } : null
+                Assignee = null//todo.AssigneeGuid != Guid.Empty ? new AssigneeViewModel() {
+                //     UniqueId = userIdLookup[todo.AssigneeGuid].UniqueId,
+                //     FirstName = userIdLookup[todo.AssigneeGuid].FirstName,
+                //     LastName = userIdLookup[todo.AssigneeGuid].LastName
+                // } : null
             });
 
             return todoViews;
@@ -92,8 +92,8 @@ namespace TodoBackend.Api.Services
         {
             var todo = _mapper.Map<Todo>(todoView);
             var updatedTodo = _todoRepository.UpdateTodo(guid, todo);
-            var user = (updatedTodo.AssigneeGuid != Guid.Empty) ?
-                await _userRepository.GetUserByGuid(updatedTodo.AssigneeGuid) : null;
+            //var user = (updatedTodo.AssigneeGuid != Guid.Empty) ?
+                //await _userRepository.GetUserByGuid(updatedTodo.AssigneeGuid) : null;
 
             return new TodoViewModel()
             {
@@ -103,12 +103,12 @@ namespace TodoBackend.Api.Services
                 IsDone = updatedTodo.IsDone,
                 Created = updatedTodo.Created,
                 Updated = updatedTodo.Updated,
-                Assignee = user != null ? new AssigneeViewModel()
-                {
-                    UniqueId = user.UniqueId,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName
-                } : null
+                Assignee = null //user != null ? new AssigneeViewModel()
+                // {
+                //     UniqueId = user.UniqueId,
+                //     FirstName = user.FirstName,
+                //     LastName = user.LastName
+                // } : null
             };
         }
 
