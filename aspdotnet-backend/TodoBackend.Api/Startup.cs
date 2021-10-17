@@ -47,7 +47,13 @@ namespace TodoBackend.Api
             // Identity
             services.AddTransient<IUserStore<User>, UserRepository>();
             services.AddTransient<IRoleStore<Role>, RolesRepository>();
-            services.AddIdentity<User, Role>();
+            services.AddIdentity<User, Role>(opt => {
+                opt.Password.RequiredLength = 7;
+                opt.Password.RequireDigit = false;
+                opt.Password.RequireUppercase = false;
+                opt.User.RequireUniqueEmail = true;
+                opt.SignIn.RequireConfirmedEmail = true;
+            });
 
 
             services.AddControllers();
@@ -86,7 +92,7 @@ namespace TodoBackend.Api
             services.AddScoped<IRolesService, RolesService>();
             services.AddScoped<ITodoService, TodoService>();
 
-            services.AddSingleton<IAuthService, AuthService>();
+            services.AddScoped<IAuthService, AuthService>();
         }
 
         public virtual void ConfigureDBContext(IServiceCollection services)

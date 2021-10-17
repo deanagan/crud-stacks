@@ -59,31 +59,33 @@ namespace TodoBackend.Api.Controllers
         {
             try
             {
-                var users = _userService.GetAllUsers();
-                var userEmails = users.Select(u => u.Email);
-                if (userEmails.Any(e => e == registerView.Email))
+
+                // var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                // var result = await _userManager.CreateAsync(user, model.Password);
+                // if (result.Succeeded)
+                // {
+                //     _logger.LogInformation("User created a new account with password.");
+
+                //     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                //     var callbackUrl = Url.EmailConfirmationLink(user.Id, code, Request.Scheme);
+                //     await _emailSender.SendEmailConfirmationAsync(model.Email, callbackUrl);
+
+                //     await _signInManager.SignInAsync(user, isPersistent: false);
+                //     _logger.LogInformation("User created a new account with password.");
+                //     return RedirectToLocal(returnUrl);
+                // }
+                // AddErrors(result);
+
+                var result = await _authService.RegisterUser(registerView);
+
+                if (!result)
                 {
-                    return BadRequest(new { message = "User with this email already exists" });
+                    return BadRequest("Failed to register user");
                 }
 
-                var userView = _authService.RegisterUser(registerView);
-                if (userView == null)
-                {
-                    return BadRequest(new { message = "Registration failed" });
-                }
+                // TODO: Create user
 
-                var newUser = await _userService.CreateUser(userView);
-                if (newUser == null)
-                {
-                    return BadRequest(new { message = "User creation failed" });
-                }
-
-                // Add user role
-                //switch()
-
-
-
-                return Ok(_authService.CreateAuthData(newUser.UniqueId));
+                return Ok(result);
             }
             catch (Exception ex)
             {
