@@ -26,22 +26,14 @@ namespace TodoBackend.Api.Controllers
         }
 
         [HttpPost("login")]
-        public IActionResult Login(LoginViewModel loginView)
+        public async Task<IActionResult> Login(LoginViewModel loginView)
         {
             try
             {
-                var users = _userService.GetAllUsers();
-                var user = users.Where(ue => ue.Email == loginView.Email).Select(u => u).FirstOrDefault();
-
-                if (user == null)
+                var authData = await _authService.Login(loginView);
+                if (authData != null)
                 {
-                    return BadRequest(new { message = "User with this email does not exist" });
-                }
-
-
-                if (_authService.VerifyPassword(user.PasswordHash, loginView.Password))
-                {
-                    return Ok(_authService.CreateAuthData(user.UniqueId));
+                    return Ok(authData);
                 }
                 else
                 {
@@ -60,32 +52,18 @@ namespace TodoBackend.Api.Controllers
             try
             {
 
-                // var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
-                // var result = await _userManager.CreateAsync(user, model.Password);
-                // if (result.Succeeded)
-                // {
-                //     _logger.LogInformation("User created a new account with password.");
-
-                //     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                //     var callbackUrl = Url.EmailConfirmationLink(user.Id, code, Request.Scheme);
-                //     await _emailSender.SendEmailConfirmationAsync(model.Email, callbackUrl);
-
-                //     await _signInManager.SignInAsync(user, isPersistent: false);
-                //     _logger.LogInformation("User created a new account with password.");
-                //     return RedirectToLocal(returnUrl);
-                // }
-                // AddErrors(result);
-
                 var result = await _authService.RegisterUser(registerView);
 
-                if (!result)
+                if (!result.Succeeded)
                 {
-                    return BadRequest("Failed to register user");
+                    result.Errors.ToList().ForEach(err => ModelState.AddModelError(err.Code, err.Description));
+                    return BadRequest(ModelState);
                 }
 
-                // TODO: Create user
+                // TODO: Create user or email confirmation
+                // var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
 
-                return Ok(result);
+                return Ok();
             }
             catch (Exception ex)
             {

@@ -23,6 +23,7 @@ namespace TodoBackend.Api.Controllers
             _userService = userService;
         }
 
+        [Authorize]
         [HttpGet]
         public IActionResult GetUsers()
         {

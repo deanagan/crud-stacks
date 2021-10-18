@@ -406,11 +406,38 @@ namespace TodoBackend.Api.Data.Identity
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            using (var connection = new SqlConnection(_connectionString))
+            using (var conn = new SqlConnection(_connectionString))
             {
-                await connection.OpenAsync(cancellationToken);
-                var sqlQuery = "select u.* from dbo.Users u where u.NormalizedEmail = @NormalizedEmail and u.IsDeleted = 0";
-                return await connection.QuerySingleOrDefaultAsync<User>(sqlQuery, new { normalizedEmail = normalizedEmail });
+                await conn.OpenAsync(cancellationToken);
+                var sql = @"
+                    select u.Id,
+                           u.UniqueId,
+                           u.UserName,
+                           u.NormalizedUserName,
+                           u.FirstName,
+                           u.LastName,
+                           u.Email,
+                           u.NormalizedEmail,
+                           u.PasswordHash,
+                           u.Created,
+                           u.Updated,
+                           r.Id,
+                           r.UniqueId,
+                           r.Name,
+                           r.Description,
+                           r.Created,
+                           r.Updated
+                    from dbo.Users as u with (nolock)
+                        inner join dbo.Roles as r with (nolock) on u.RoleUniqueId = r.UniqueId
+                    where u.NormalizedEmail = @NormalizedEmail and u.IsDeleted = 0";
+                var user = await conn.QueryAsync<User, Role, User>(sql,
+                (user, role) =>
+                {
+                    user.Role = role;
+                    return user;
+                }, new { NormalizedEmail = normalizedEmail });
+
+                return user.FirstOrDefault();
             }
         }
 
@@ -482,26 +509,31 @@ namespace TodoBackend.Api.Data.Identity
             {
                 await connection.OpenAsync(cancellationToken);
                 var normalizedName = roleName.ToUpper();
-                var roleIdQuery = "select r.Id from dbo.Role r where r.NormalizedName = @NormalizedName";
-                var roleId = await connection.ExecuteScalarAsync<int?>(roleIdQuery, new { NormalizedName = normalizedName });
-                if (!roleId.HasValue)
+                var roleUniqueIdQuery = "select r.UniqueId from dbo.Roles r where r.NormalizedName = @NormalizedName";
+                var roleUniqueId = await connection.ExecuteScalarAsync<Guid?>(roleUniqueIdQuery, new { NormalizedName = normalizedName });
+                if (roleUniqueId == null || roleUniqueId == Guid.Empty)
                 {
-                    var insertQuery = @"insert into dbo.Roles (UniqueId, Name, NormalizedName, Description)
+                    var insertQuery = @"declare @generated table([UniqueId] uniqueidentifier)
+
+                                        insert into dbo.Roles (UniqueId, Name, NormalizedName, Description)
+                                        output inserted.UniqueId
                                         values (NEWID(), @Name, @NormalizedName, @Description)
+
+                                        select UniqueId from @generated
                                       ";
                     var parameter = new DynamicParameters();
                     parameter.Add("@Name", roleName);
                     parameter.Add("@NormalizedName", normalizedName);
                     parameter.Add("@Description", user.Role.Description ?? string.Empty);
-                    roleId = await connection.ExecuteAsync(insertQuery, parameter);
+                    roleUniqueId = await connection.ExecuteScalarAsync<Guid>(insertQuery, parameter);
                 }
 
-                var insertToUserRoleQuery = @"if not exists(select 1 from dbo.UserRole ur where ur.UserId = @UserId and ur.RoleId = @RoleId)
+                var insertToUserRoleQuery = @"if not exists(select 1 from dbo.UserRole ur where ur.UserUniqueId = @UserUniqueId and ur.RoleUniqueId = @RoleUniqueId)
                                               begin
-                                                insert into dbo.UserRole(UserId, RoleId)
-                                                values(@UserId, @RoleId)
+                                                insert into dbo.UserRole(UserUniqueId, RoleUniqueId)
+                                                values(@UserUniqueId, @RoleUniqueId)
                                               end";
-                await connection.ExecuteAsync(insertToUserRoleQuery, new { UserId = user.Id, RoleId = roleId });
+                await connection.ExecuteAsync(insertToUserRoleQuery, new { UserUniqueId = user.UniqueId, RoleUniqueId = roleUniqueId });
             }
         }
 
@@ -512,12 +544,12 @@ namespace TodoBackend.Api.Data.Identity
             using (var connection = new SqlConnection(_connectionString))
             {
                 await connection.OpenAsync(cancellationToken);
-                var sqlQuery = "select r.Id from dbo.Roles r where r.NormalizedName = @NormalizedName";
-                var roleId = await connection.ExecuteScalarAsync<int?>(sqlQuery, new { NormalizedName = roleName.ToUpper() });
-                if (!roleId.HasValue)
+                var sqlQuery = "select r.UniqueId from dbo.Roles r where r.NormalizedName = @NormalizedName";
+                var roleUniqueId = await connection.ExecuteScalarAsync<Guid?>(sqlQuery, new { NormalizedName = roleName.ToUpper() });
+                if (roleUniqueId != null && roleUniqueId != Guid.Empty)
                 {
-                    var deleteQuery = "delete from dbo.UserRole ur where ur.UserId = @UserId and ur.RoleId = @RoleId";
-                    await connection.ExecuteAsync(deleteQuery, new { UserId = user.Id, RoleId = roleId });
+                    var deleteQuery = "delete from dbo.UserRole ur where ur.UserUniqueId = @UserUniqueId and ur.RoleUniqueId = @RoleUniqueId";
+                    await connection.ExecuteAsync(deleteQuery, new { UserUniqueId = user.UniqueId, RoleUniqueId = roleUniqueId });
                 }
             }
         }
@@ -529,8 +561,11 @@ namespace TodoBackend.Api.Data.Identity
             using (var connection = new SqlConnection(_connectionString))
             {
                 await connection.OpenAsync(cancellationToken);
-                var sqlQuery = "select r.Name from dbo.Roles r inner join dbo.UserRole ur on ur.RoleId = r.Id where ur.UserId = @UserId";
-                var queryResults = await connection.QueryAsync<string>(sqlQuery, new { UserId = user.Id });
+                var sqlQuery = @"select r.Name from dbo.Roles r
+                                 inner join dbo.UserRole ur on ur.RoleUniqueId = r.UniqueId
+                                 where ur.UserUniqueId = @UserUniqueId
+                                ";
+                var queryResults = await connection.QueryAsync<string>(sqlQuery, new { UserUniqueId = user.UniqueId });
 
                 return queryResults.ToList();
             }
@@ -542,16 +577,22 @@ namespace TodoBackend.Api.Data.Identity
 
             using (var connection = new SqlConnection(_connectionString))
             {
-                var sqlQueryGetId = "select r.Id from dbo.Roles r where r.NormalizedName = @NormalizedName";
-                var roleId = await connection.ExecuteScalarAsync<int?>(sqlQueryGetId, new { NormalizedName = roleName.ToUpper() });
+                var sqlQueryGetUniqueId = @"select r.UniqueId from dbo.Roles r
+                                            where r.NormalizedName = @NormalizedName and r.IsDeleted = 0";
+                var roleUniqueId = await connection.ExecuteScalarAsync<Guid?>(sqlQueryGetUniqueId, new { NormalizedName = roleName.ToUpper() });
 
-                if (roleId == default(int))
+                if (roleUniqueId == null || roleUniqueId == Guid.Empty)
                 {
                     return false;
                 }
 
-                var sqlQueryGetMatchingRole = "select count(*) from dbo.UserRole ur where ur.UserId = @UserId and ur.RoleId = @RoleId";
-                var matchingRoles = await connection.ExecuteScalarAsync<int>(sqlQueryGetMatchingRole, new { UserId = user.Id, RoleId = roleId });
+                var sqlQueryGetMatchingRole = "select count(*) from dbo.UserRole ur where ur.UserUniqueId = @UserUniqueId and ur.RoleUniqueId = @RoleUniqueId";
+                var matchingRoles = await connection.ExecuteScalarAsync<int>(sqlQueryGetMatchingRole,
+                    new
+                    {
+                        UserUniqueId = user.UniqueId,
+                        RoleUniqueId = roleUniqueId
+                    });
 
                 return matchingRoles > 0;
             }
@@ -565,8 +606,8 @@ namespace TodoBackend.Api.Data.Identity
             {
                 var sqlQuery = @"
                     select u.* from dbo.Users u
-                    inner join dbo.UserRole ur on ur.UserId = u.Id
-                    inner join dbo.Roles r on ur.RoleId = r.Id where r.NormalizedName = @NormalizedName and u.IsDeleted = 0";
+                    inner join dbo.UserRole ur on ur.UserUniqueId = u.UniqueId
+                    inner join dbo.Roles r on ur.UniqueRoleId = r.UniqueId where r.NormalizedName = @NormalizedName and u.IsDeleted = 0";
                 var queryResults = await connection.QueryAsync<User>(sqlQuery, new { NormalizedName = roleName.ToUpper() });
 
                 return queryResults.ToList();

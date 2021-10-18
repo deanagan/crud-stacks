@@ -11,14 +11,14 @@ using TodoBackend.Api.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using TodoBackend.Api.Data.Models;
 using System.Threading.Tasks;
-using System.Security.Policy;
+using System.Security.Claims;
+using System.Collections.Generic;
 
 namespace TodoBackend.Api.Services
 {
     public class AuthService : IAuthService
     {
         private readonly UserManager<User> _userManager;
-        private readonly SignInManager<User> _signInManager;
         private readonly RoleManager<Role> _roleManager;
         private readonly IMapper _mapper;
         private readonly string _secretKey;
@@ -34,7 +34,6 @@ namespace TodoBackend.Api.Services
         {
             _mapper = mapper;
             _userManager = userManager;
-            _signInManager = signInManager;
             _roleManager = roleManager;
             _secretKey = configuration.GetValue<string>("Auth:JWTSecretKey");
             _tokenLifeSpan = configuration.GetValue<int>("Auth:JWTLifespan");
@@ -47,15 +46,8 @@ namespace TodoBackend.Api.Services
             }
         }
 
-        public async Task<bool> RegisterUser(RegisterViewModel registerView)
+        public async Task<IdentityResult> RegisterUser(RegisterViewModel registerView)
         {
-            // var user = _mapper.Map<UserViewModel>(registerView);
-
-            // // _userManager.CreateAsync(user);
-
-            // user.PasswordHash = Crypto.HashPassword(registerView.Password);
-
-            // return user;
             var userView = _mapper.Map<UserViewModel>(registerView);
             var user = _mapper.Map<User>(userView);
 
@@ -75,21 +67,28 @@ namespace TodoBackend.Api.Services
             }
 
             var result = await _userManager.CreateAsync(user, registerView.Password);
-            if (result.Errors.Any())
+            if (result.Succeeded)
             {
-                throw new Exception($"Failed to register user: {result.Errors.First().Description}");
+                var registeredUser = await _userManager.FindByNameAsync(user.UserName);
+                await _userManager.AddToRoleAsync(registeredUser, registeredUser.Role.Name);
             }
 
-            await _signInManager.SignInAsync(user, isPersistent: false);
-            return result.Succeeded;
+            return result;
         }
 
-        private string GenerateToken(Guid guid)
+        private string GenerateToken(User user)
         {
             var authSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_secretKey));
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, user.UserName),
+                new Claim(ClaimTypes.Role, user.Role.Name)
+            };
+
             var tokenDescriptor = new JwtSecurityToken(
                 issuer: _issuer,
                 audience: _audience,
+                claims: claims,
                 expires: DateTime.UtcNow.AddMinutes(_tokenLifeSpan),
                 signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
             );
@@ -99,26 +98,37 @@ namespace TodoBackend.Api.Services
             return new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
         }
 
-        public AuthDataViewModel CreateAuthData(Guid guid)
+        private AuthDataViewModel CreateAuthData(User user)
         {
-            var token = GenerateToken(guid);
+            var token = GenerateToken(user);
 
             return new AuthDataViewModel()
             {
-                UniqueId = guid,
+                Email = user.Email,
+                Role = user.Role.Name,
+                UserName = user.UserName,
                 Token = token,
                 TokenExpirationTime = _tokenLifeSpan
             };
-        }
-
-        bool IAuthService.VerifyPassword(string hash, string password)
-        {
-            return hash == Crypto.HashPassword(password);
         }
 
         UserViewModel IAuthService.UpdatePassword(string hash, string newPassword, string oldPassword)
         {
             throw new NotImplementedException();
         }
+
+        public async Task Logout()
+        {
+         //   await _signInManager.SignOutAsync();
+        }
+
+        public async Task<AuthDataViewModel> Login(LoginViewModel loginView)
+        {
+            var user = await _userManager.FindByEmailAsync(loginView.Email);
+            var isValidUser = user != null && await _userManager.CheckPasswordAsync(user, loginView.Password);
+
+            return isValidUser ? CreateAuthData(user) : null;
+        }
+
     }
 }
