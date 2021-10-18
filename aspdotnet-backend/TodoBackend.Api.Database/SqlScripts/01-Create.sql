@@ -40,11 +40,11 @@ GO
 
 CREATE TABLE [dbo].[UserRole]
 (
-	[UserId] INT NOT NULL,
-	[RoleId] INT NOT NULL
-  PRIMARY KEY ([UserId], [RoleId]),
-  CONSTRAINT [FK_UserRole_User] FOREIGN KEY ([UserId]) REFERENCES [Users]([Id]),
-  CONSTRAINT [FK_UserRole_Role] FOREIGN KEY ([RoleId]) REFERENCES [Roles]([Id])
+	[UserUniqueId] UNIQUEIDENTIFIER NOT NULL,
+	[RoleUniqueId] UNIQUEIDENTIFIER NOT NULL
+  PRIMARY KEY ([UserUniqueId], [RoleUniqueId]),
+  CONSTRAINT [FK_UserRole_User] FOREIGN KEY ([UserUniqueId]) REFERENCES [Users]([UniqueId]),
+  CONSTRAINT [FK_UserRole_Role] FOREIGN KEY ([RoleUniqueId]) REFERENCES [Roles]([UniqueId])
 )
 GO
 
@@ -71,47 +71,10 @@ GO
 SET IDENTITY_INSERT [dbo].[Roles] ON
 GO
 INSERT INTO [dbo].[Roles]([Id], [UniqueId], [Name], [NormalizedName], [Description])
-VALUES(1, 'B7D50830-622B-443C-8BC8-AAB6D1C6C3C4', 'Super Admin', 'SUPER ADMIN', 'A super admin has extra authorisation.')
+VALUES(1, 'B7D50830-622B-443C-8BC8-AAB6D1C6C3C4', 'Admin', 'ADMIN', 'A super admin has extra authorisation.')
 
 INSERT INTO [dbo].[Roles]([Id], [UniqueId], [Name], [NormalizedName], [Description])
 VALUES(2, '804F7003-5777-4471-B1D4-B793D3FB643C', 'Default', 'DEFAULT', 'A default role is assigned to a user who registers without a role.')
 GO
 SET IDENTITY_INSERT [dbo].[Roles] OFF
-GO
-
-SET IDENTITY_INSERT [dbo].[Users] ON
-GO
-INSERT INTO [dbo].[Users](
-  [Id], [UniqueId], [UserName], [NormalizedUserName], [FirstName], [LastName], [Email], [NormalizedEmail], [EmailConfirmed],
-  [PasswordHash], [PhoneNumber], [PhoneNumberConfirmed], [TwoFactorEnabled], [RoleUniqueId])
-VALUES(1, '3BD023BD-EB19-4858-92E2-24ABB9EC79C9', 'jack.black', 'JACK.BLACK', 'Jack', 'Black',	'jack.black@todo.io',	'JACK.BLACK@TODO.IO', 1,
-       NULL, NULL, 1, 0, 'B7D50830-622B-443C-8BC8-AAB6D1C6C3C4')
-
-INSERT INTO [dbo].[Users](
-  [Id], [UniqueId], [UserName], [NormalizedUserName], [FirstName], [LastName], [Email], [NormalizedEmail], [EmailConfirmed],
-  [PasswordHash], [PhoneNumber], [PhoneNumberConfirmed], [TwoFactorEnabled], [RoleUniqueId])
-VALUES(2, '2113D227-A8E5-437E-9CDD-8D2C043B66B5', 'jane.doe', 'JANE.DOE', 'Jane', 'Doe', 'jane.doe@todo.io', 'JANE.DOE@TODO.IO', 1,
-       NULL, NULL, 1, 0, '804F7003-5777-4471-B1D4-B793D3FB643C')
-GO
-
-SET IDENTITY_INSERT [dbo].[Users] OFF
-GO
-
-SET IDENTITY_INSERT [dbo].Todo ON
-GO
-INSERT INTO [dbo].Todo([Id], [UniqueId], [Summary], [Detail], [IsDone], [AssigneeGuid])
-VALUES(1, '7BE021BD-EBAC-4858-35E2-24ABB9EC79C9',
-'Implement clock animation',	'Clock must show on lower right',	0, '3BD023BD-EB19-4858-92E2-24ABB9EC79C9')
-
-INSERT INTO [dbo].Todo([Id], [UniqueId], [Summary], [Detail], [IsDone], [AssigneeGuid])
-VALUES(2, '35F6A946-DEAD-BEEF-B59E-CF04AA63FBDD',
-'Test case 1232', 'Test case 1232 involves E2E tests',	0, '2113D227-A8E5-437E-9CDD-8D2C043B66B5')
-GO
-
-INSERT INTO [dbo].Todo([Id], [UniqueId], [Summary], [Detail], [IsDone])
-VALUES(3, '75F4A986-FEAD-AEFA-B59E-EF12BE85CAAC',
-'Chase up hardware engineer', 'Get equipment fixed',	0)
-GO
-
-SET IDENTITY_INSERT [dbo].Todo OFF
 GO
