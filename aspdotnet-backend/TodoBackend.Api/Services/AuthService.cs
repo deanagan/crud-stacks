@@ -5,7 +5,6 @@ using System.IdentityModel.Tokens.Jwt;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using AutoMapper;
-using CryptoHelper;
 using TodoBackend.Api.Data.ViewModels;
 using TodoBackend.Api.Interfaces;
 using Microsoft.AspNetCore.Identity;
@@ -112,16 +111,6 @@ namespace TodoBackend.Api.Services
             };
         }
 
-        UserViewModel IAuthService.UpdatePassword(string hash, string newPassword, string oldPassword)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task Logout()
-        {
-         //   await _signInManager.SignOutAsync();
-        }
-
         public async Task<AuthDataViewModel> Login(LoginViewModel loginView)
         {
             var user = await _userManager.FindByEmailAsync(loginView.Email);
@@ -130,5 +119,17 @@ namespace TodoBackend.Api.Services
             return isValidUser ? CreateAuthData(user) : null;
         }
 
+        public async Task<bool> UpdatePassword(Guid guid, ChangePasswordViewModel changePasswordView)
+        {
+            var user = await _userManager.FindByEmailAsync(changePasswordView.Email);
+            if (user == null)
+            {
+                return false;
+            }
+
+            var changeResult = await _userManager.ChangePasswordAsync(user, changePasswordView.OldPassword, changePasswordView.NewPassword);
+
+            return changeResult.Succeeded;
+        }
     }
 }

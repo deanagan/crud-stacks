@@ -7,9 +7,8 @@ namespace TodoBackend.Api.Interfaces
 {
     public interface IAuthService
     {
-        UserViewModel UpdatePassword(string hash, string newPassword, string oldPassword);
+        Task<bool> UpdatePassword(Guid guid, ChangePasswordViewModel changePasswordView);
         Task<IdentityResult> RegisterUser(RegisterViewModel registerView);
-        Task Logout();
         Task<AuthDataViewModel> Login(LoginViewModel loginView);
     }
 

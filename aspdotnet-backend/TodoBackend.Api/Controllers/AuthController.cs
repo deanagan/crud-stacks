@@ -61,7 +61,7 @@ namespace TodoBackend.Api.Controllers
                 }
 
                 // TODO: Create user or email confirmation
-                // var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                //var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
 
                 return Ok();
             }
@@ -71,10 +71,25 @@ namespace TodoBackend.Api.Controllers
             }
         }
 
-        [HttpPut("reset-password/{guid}")]
-        public async Task<IActionResult> Reset(UserViewModel guid, string newPassword)
+        [HttpPost("reset-password/{guid}")]
+        public async Task<IActionResult> Reset(Guid guid, ChangePasswordViewModel changePasswordView)
         {
-            throw new NotImplementedException();
+             try
+            {
+
+                var result = await _authService.UpdatePassword(guid, changePasswordView);
+
+                if (!result)
+                {
+                    return BadRequest("Internal error when resetting password");
+                }
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }
