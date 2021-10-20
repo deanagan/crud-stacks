@@ -35,8 +35,7 @@ namespace TodoBackend.Api.Data.Access
 
             using (var conn = new SqlConnection(_connectionString))
             {
-                var users = await conn.QueryAsync<Todo>(sql);
-                return users;
+                return await conn.QueryAsync<Todo>(sql);
             }
         }
 
