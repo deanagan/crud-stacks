@@ -16,6 +16,13 @@ export interface Todo {
     assignee?: Assignee;
 }
 
+export interface User {
+    uniqueId?: uuidv4Type;
+    userName: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+}
 
 export interface TodoState {
     readonly loading: boolean;
