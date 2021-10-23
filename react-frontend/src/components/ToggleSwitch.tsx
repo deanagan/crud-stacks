@@ -1,8 +1,5 @@
 import styled from "styled-components";
 import { FC, useState } from "react";
-import { useDispatch } from "react-redux";
-import { bindActionCreators } from "redux";
-import { actionCreators } from "../store";
 import { uuidv4Type } from "../types";
 
 const ToggleSwitchDivWrapper = styled.div`
@@ -58,16 +55,14 @@ const ToggleSwitchWrapper = styled.input.attrs({ type: 'checkbox' })`
 interface ToggleSwitchProp {
   switchUniqueId: uuidv4Type;
   isDone: boolean;
+  updateSwitchStage: (id: uuidv4Type, state: boolean) => void;
 }
 
-export const ToggleSwitch: FC<ToggleSwitchProp> = ({ switchUniqueId, isDone }) => {
-  const dispatch = useDispatch();
-
-  const { updateTodoState } = bindActionCreators(actionCreators, dispatch);
+export const ToggleSwitch: FC<ToggleSwitchProp> = ({ switchUniqueId, isDone, updateSwitchStage }) => {
   const [switchState, setSwitchState] = useState(isDone);
 
   const onSwitchChanged = (isDone: boolean) => {
-    updateTodoState(switchUniqueId, isDone);
+    updateSwitchStage(switchUniqueId, isDone);
     setSwitchState(isDone);
   };
 

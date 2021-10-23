@@ -4,14 +4,13 @@ import { bindActionCreators } from "redux";
 import styled from "styled-components";
 import { ActionLink } from "../components/ActionLink";
 import { ViewBox, Button } from "../design-system/atoms";
-import { actionCreators, State } from "../store";
+import { todoActionCreators, usersActionCreators, State } from "../store";
 import { ToggleSwitch } from "../components/ToggleSwitch";
 import { Table } from "../components/Table";
 import { Modal } from "../components/Modal";
 import { AddEntryForm } from "../components/AddEntryForm";
 import { newUuidV4, uuidv4Type } from "../types";
 import { Dropdown } from "../components";
-
 
 const Wrapper = styled(ViewBox)`
   justify-content: center;
@@ -22,6 +21,7 @@ const Wrapper = styled(ViewBox)`
 export const Home = () => {
   const dispatch = useDispatch();
   const { todos } = useSelector((state: State) => state.todo);
+  const { users } = useSelector((state: State) => state.user);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [idForDeletion, setIdForDeletion] = useState<uuidv4Type | null>(null);
@@ -29,53 +29,82 @@ export const Home = () => {
   const [newSummary, setNewSummary] = useState("");
   const [newDetail, setNewDetail] = useState("");
 
-  const { addTodo, deleteTodo } = bindActionCreators(actionCreators, dispatch);
-
+  const { addTodo, deleteTodo, updateTodoState } = bindActionCreators(
+    todoActionCreators,
+    dispatch
+  );
 
   const deleteEntry = (uniqueId: uuidv4Type) => {
     setIdForDeletion(uniqueId);
     setShowDeleteModal(true);
-  }
+  };
 
   const cancelDeletion = () => {
     setIdForDeletion(null);
     setShowDeleteModal(false);
-  }
+  };
 
   const addEntryFormProp = {
     summary: newSummary,
     detail: newDetail,
     changeSummary: setNewSummary,
     changeDetail: setNewDetail,
-  }
+  };
 
   useEffect(() => {
-    dispatch(actionCreators.getTodos());
+    dispatch(todoActionCreators.getTodos());
+    dispatch(usersActionCreators.getUsers());
   }, [dispatch]);
 
   return (
     <Wrapper w={80} h={100}>
       <Table
-        rowData={todos.map((todo) => (
-            {
-                id: todo.uniqueId,
-                summary: todo.summary,
-                detail: todo.detail,
-                isDone: todo.isDone ? "True" : "False",
-                switch: (<ToggleSwitch switchUniqueId={todo.uniqueId as uuidv4Type} isDone={todo.isDone}/>),
-                deleter: (<ActionLink color='red' message='delete' deleteFn={() => deleteEntry(todo.uniqueId as uuidv4Type)}/>),
-                assignee: (<Dropdown itemUniqueId={todo.uniqueId as uuidv4Type}
-                                     currentEntry="gel"
-                                     possibleEntries={[
-                                       {
-                                         uniqueId: newUuidV4(),
-                                         name: "a"
-                                       }
-                                      ]} />)
-            }
-          ))}
-        columnLabels={['Summary', 'Detail', 'Completed', 'Update', 'Remove Todo', 'Assignee']}
-        rowFields={['summary', 'detail', 'isDone', 'switch', 'deleter', 'assignee']}
+        rowData={todos.map((todo) => ({
+          id: todo.uniqueId,
+          summary: todo.summary,
+          detail: todo.detail,
+          isDone: todo.isDone ? "True" : "False",
+          switch: (
+            <ToggleSwitch
+              switchUniqueId={todo.uniqueId as uuidv4Type}
+              isDone={todo.isDone}
+              updateSwitchStage={updateTodoState}
+            />
+          ),
+          deleter: (
+            <ActionLink
+              color="red"
+              message="delete"
+              deleteFn={() => deleteEntry(todo.uniqueId as uuidv4Type)}
+            />
+          ),
+          assignee: (
+            <Dropdown
+              itemUniqueId={todo.uniqueId as uuidv4Type}
+              currentEntry="gel"
+              possibleEntries={users.map((u) => ({
+                uniqueId: u.uniqueId as uuidv4Type,
+                name: [u.firstName, u.lastName].join(" "),
+              }))}
+            />
+          ),
+        }))}
+        columnLabels={[
+          "Summary",
+          "Detail",
+          "Completed",
+          "Update",
+          "Remove Todo",
+          "Assignee",
+        ]}
+        rowFields={[
+          "summary",
+          "detail",
+          "isDone",
+          "switch",
+          "deleter",
+          "assignee",
+        ]}
       />
 
       <Button onClick={() => setShowAddModal(true)}>Add Request</Button>
@@ -87,7 +116,7 @@ export const Home = () => {
         }}
         onOk={() => {
           setShowAddModal(false);
-          addTodo({summary: newSummary, detail: newDetail, isDone: false});
+          addTodo({ summary: newSummary, detail: newDetail, isDone: false });
         }}
         show={showAddModal}
         title="Add New Request"
@@ -96,8 +125,8 @@ export const Home = () => {
         children={<AddEntryForm {...addEntryFormProp} />}
         showFooter={!!(newSummary && newDetail)}
         showClose
-       />
-       <Modal
+      />
+      <Modal
         onCancel={() => cancelDeletion()}
         onOk={() => idForDeletion !== null && deleteTodo(idForDeletion)}
         show={showDeleteModal}
@@ -107,7 +136,7 @@ export const Home = () => {
         children={<h4>Are you sure you want to delete this request?</h4>}
         showFooter
         showClose={false}
-       />
+      />
     </Wrapper>
   );
 };
