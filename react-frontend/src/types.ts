@@ -30,6 +30,12 @@ export interface TodoState {
     readonly errors?: string;
 }
 
+export interface UserState {
+    readonly loading: boolean;
+    readonly users: User[];
+    readonly errors?: string;
+}
+
 export interface IHttpClientRequestParameters<T> {
     url: string
     requiresToken: boolean
