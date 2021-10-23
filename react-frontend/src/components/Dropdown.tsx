@@ -44,7 +44,7 @@ const DropDownLi = styled.li`
 `;
 
 interface Entries {
-  uniqueId: string | number;
+  uniqueId: uuidv4Type | string | number;
   name: string;
 }
 interface DropdownProp {
