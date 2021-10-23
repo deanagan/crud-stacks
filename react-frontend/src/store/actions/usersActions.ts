@@ -5,7 +5,7 @@ import { User } from '../../types';
 
 interface GetUsersAction {
     type: UsersActionTypes.GET_ALL_USERS;
-    todos: User[];
+    users: User[];
 }
 
 
