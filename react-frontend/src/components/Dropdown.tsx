@@ -28,8 +28,9 @@ const SubA = styled.a`
   text-decoration: none;
   display: block;
   text-align: left;
+  cursor: pointer;
   &:hover {
-    background-color: #f1f1f1;
+    background-color: #13795a;
   }
 `;
 
@@ -43,18 +44,18 @@ const DropDownLi = styled.li`
   }
 `;
 
-interface Entries {
+export interface Entry {
   uniqueId: uuidv4Type | string | number;
   name: string;
 }
 interface DropdownProp {
   itemUniqueId: uuidv4Type;
   currentEntry: string;
-  possibleEntries: Entries[];
+  possibleEntries: Entry[];
+  onSelect: (entry: Entry) => void;
 }
 
-export const Dropdown: FC<DropdownProp> = ({ itemUniqueId, currentEntry, possibleEntries }) => {
-
+export const Dropdown: FC<DropdownProp> = ({ itemUniqueId, currentEntry, possibleEntries, onSelect }) => {
 
   return (
     <DropDownLi>
@@ -62,7 +63,8 @@ export const Dropdown: FC<DropdownProp> = ({ itemUniqueId, currentEntry, possibl
       {currentEntry}
       </Dropbtn>
       <DropDownContent>
-        {possibleEntries.map((pe) => (<SubA key={pe.uniqueId.toString()} onClick={() => {}}>{pe.name}</SubA>))}
+        {possibleEntries.map((pe) => (<SubA key={pe.uniqueId.toString()}
+        onClick={() => { onSelect(pe) }}>{pe.name}</SubA>))}
       </DropDownContent>
     </DropDownLi>
   );
