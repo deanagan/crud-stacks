@@ -9,8 +9,8 @@ import { ToggleSwitch } from "../components/ToggleSwitch";
 import { Table } from "../components/Table";
 import { Modal } from "../components/Modal";
 import { AddEntryForm } from "../components/AddEntryForm";
-import { newUuidV4, uuidv4Type } from "../types";
-import { Dropdown } from "../components";
+import { uuidv4Type } from "../types";
+import { Entry, Dropdown } from "../components";
 
 const Wrapper = styled(ViewBox)`
   justify-content: center;
@@ -29,7 +29,7 @@ export const Home = () => {
   const [newSummary, setNewSummary] = useState("");
   const [newDetail, setNewDetail] = useState("");
 
-  const { addTodo, deleteTodo, updateTodoState } = bindActionCreators(
+  const { addTodo, deleteTodo, updateTodoState, updateTodoAssignee } = bindActionCreators(
     todoActionCreators,
     dispatch
   );
@@ -56,6 +56,8 @@ export const Home = () => {
     dispatch(usersActionCreators.getUsers());
   }, [dispatch]);
 
+  const concatName = (firstName: string, lastName: string) => [firstName, lastName].join(" ")
+
   return (
     <Wrapper w={80} h={100}>
       <Table
@@ -81,12 +83,17 @@ export const Home = () => {
           assignee: (
             <Dropdown
               itemUniqueId={todo.uniqueId as uuidv4Type}
-              currentEntry="gel"
+              currentEntry={ !!todo.assignee ? concatName(todo.assignee?.firstName, todo.assignee?.lastName) : 'Unassigned' }
               possibleEntries={users.map((u) => ({
                 uniqueId: u.uniqueId as uuidv4Type,
-                name: [u.firstName, u.lastName].join(" "),
+                name: concatName(u.firstName, u.lastName)
               }))}
-            />
+
+              onSelect={function (entry: Entry): void {
+                const [firstName, lastName] = entry.name.split(' ');
+                updateTodoAssignee(todo.uniqueId as uuidv4Type, entry.uniqueId as uuidv4Type, firstName, lastName);
+              } }
+              />
           ),
         }))}
         columnLabels={[

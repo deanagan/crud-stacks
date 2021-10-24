@@ -31,6 +31,16 @@ const reducer = (state: TodoState = initialState, action: TodoAction) => {
                 ...state,
                 todos: state.todos.filter(e => e.uniqueId !== action.uniqueId)
             }
+        case TodoActionTypes.UPDATE_TODO_ASSIGNEE:
+            return {
+                ...state,
+                todos: state.todos.map(e => e.uniqueId === action.uniqueId ?
+                    { ...e, assignee: {
+                        uniqueId: action.uniqueId,
+                        firstName: action.firstName,
+                        lastName: action.lastName
+                    } } : e)
+            }
         default:
             return state;
     }

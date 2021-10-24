@@ -18,9 +18,17 @@ interface GetTodoEntriesAction {
     todos: Todo[];
 }
 
-interface deleteTodoAction {
+interface DeleteTodoAction {
     type: TodoActionTypes.DELETE_TODO_ENTRY;
     uniqueId: uuidv4Type;
 }
 
-export type TodoAction = AddTodoAction | UpdateTodoAction | GetTodoEntriesAction | deleteTodoAction;
+interface UpdateTodoAssignee {
+    type: TodoActionTypes.UPDATE_TODO_ASSIGNEE;
+    uniqueId: uuidv4Type;
+    firstName: string;
+    lastName: string;
+
+}
+
+export type TodoAction = AddTodoAction | UpdateTodoAction | GetTodoEntriesAction | DeleteTodoAction | UpdateTodoAssignee;
