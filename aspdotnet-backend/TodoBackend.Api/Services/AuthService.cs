@@ -68,6 +68,11 @@ namespace TodoBackend.Api.Services
             var result = await _userManager.CreateAsync(user, registerView.Password);
             if (result.Succeeded)
             {
+
+                var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                //TODO: Send email
+                //await _emailSender.SendEmailAsync(message);
+
                 var registeredUser = await _userManager.FindByNameAsync(user.UserName);
                 await _userManager.AddToRoleAsync(registeredUser, registeredUser.Role.Name);
             }
@@ -115,6 +120,7 @@ namespace TodoBackend.Api.Services
         {
             var user = await _userManager.FindByEmailAsync(loginView.Email);
             var isValidUser = user != null && await _userManager.CheckPasswordAsync(user, loginView.Password);
+            isValidUser = isValidUser && await _userManager.IsEmailConfirmedAsync(user);
 
             return isValidUser ? CreateAuthData(user) : null;
         }
