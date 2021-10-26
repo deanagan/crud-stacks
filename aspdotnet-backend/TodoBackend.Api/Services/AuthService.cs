@@ -45,7 +45,7 @@ namespace TodoBackend.Api.Services
             }
         }
 
-        public async Task<IdentityResult> RegisterUser(RegisterViewModel registerView)
+        public async Task<(IdentityResult, string)> RegisterUser(RegisterViewModel registerView)
         {
             var userView = _mapper.Map<UserViewModel>(registerView);
             var user = _mapper.Map<User>(userView);
@@ -66,18 +66,16 @@ namespace TodoBackend.Api.Services
             }
 
             var result = await _userManager.CreateAsync(user, registerView.Password);
+            var token = string.Empty;
             if (result.Succeeded)
             {
 
-                var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                //TODO: Send email
-                //await _emailSender.SendEmailAsync(message);
-
+                token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                 var registeredUser = await _userManager.FindByNameAsync(user.UserName);
                 await _userManager.AddToRoleAsync(registeredUser, registeredUser.Role.Name);
             }
 
-            return result;
+            return (result, token);
         }
 
         private string GenerateToken(User user)

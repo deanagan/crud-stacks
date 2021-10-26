@@ -9,6 +9,7 @@ namespace TodoBackend.Api.Interfaces
     {
         IList<UserViewModel> GetAllUsers();
         Task<UserViewModel> GetUserByGuid(Guid guid);
+        Task<UserViewModel> GetUserByEmail(string email);
         Task<UserViewModel> CreateUser(UserViewModel user);
         Task<UserViewModel> UpdateUser(Guid guid, UserViewModel userView);
         Task<bool> DeleteUser(Guid guid);

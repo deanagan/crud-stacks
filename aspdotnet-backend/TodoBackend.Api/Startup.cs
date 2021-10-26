@@ -92,8 +92,8 @@ namespace TodoBackend.Api
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IRolesService, RolesService>();
             services.AddScoped<ITodoService, TodoService>();
-
             services.AddScoped<IAuthService, AuthService>();
+            services.AddTransient<IEmailService, EmailService>();
         }
 
         public virtual void ConfigureDBContext(IServiceCollection services)

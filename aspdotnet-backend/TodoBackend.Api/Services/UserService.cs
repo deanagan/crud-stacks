@@ -16,8 +16,6 @@ namespace TodoBackend.Api.Services
         private readonly RoleManager<Role> _roleManager;
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
-        // TODO: Add email sender service
-        //private readonly IEmailSender _emailSender;
         private readonly ILogger<UserService> _logger;
 
         private readonly IMapper _mapper;
@@ -93,6 +91,12 @@ namespace TodoBackend.Api.Services
         public async Task<UserViewModel> GetUserByGuid(Guid guid)
         {
             var user = await _userManager.FindByIdAsync(guid.ToString());
+            return _mapper.Map<UserViewModel>(user);
+        }
+
+        public async Task<UserViewModel> GetUserByEmail(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
             return _mapper.Map<UserViewModel>(user);
         }
 

@@ -14,15 +14,17 @@ namespace TodoBackend.Api.Controllers
     [Route("v1/api/[controller]")]
     public class AuthController : ControllerBase
     {
-        private IAuthService _authService;
-        private IUserService _userService;
+        private readonly IAuthService _authService;
+        private readonly IUserService _userService;
+        private readonly IEmailService _emailService;
         private readonly ILogger<AuthController> _logger;
 
-        public AuthController(ILogger<AuthController> logger, IAuthService authService, IUserService userService)
+        public AuthController(ILogger<AuthController> logger, IAuthService authService, IUserService userService, IEmailService emailService)
         {
             _logger = logger;
             _authService = authService;
             _userService = userService;
+            _emailService = emailService;
         }
 
         [HttpPost("login")]
@@ -52,7 +54,7 @@ namespace TodoBackend.Api.Controllers
             try
             {
 
-                var result = await _authService.RegisterUser(registerView);
+                var (result, token) = await _authService.RegisterUser(registerView);
 
                 if (!result.Succeeded)
                 {
@@ -60,8 +62,9 @@ namespace TodoBackend.Api.Controllers
                     return BadRequest(ModelState);
                 }
 
-                // TODO: Create user or email confirmation
-                //var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                // TODO: Create  email confirmation
+                // var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                // await _emailService.SendEmail(userTo, userFrom, subject, contentText, contentHtml);
 
                 return Ok();
             }
