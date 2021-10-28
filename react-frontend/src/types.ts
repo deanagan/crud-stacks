@@ -1,7 +1,9 @@
 import { v4 as uuidv4 } from "uuid";
+import { NIL as NIL_UUID } from 'uuid';
+
 
 export type uuidv4Type = typeof uuidv4;
-export const newUuidV4 = () => uuidv4();
+export const emptyGuid = NIL_UUID;
 
 export interface Assignee {
     uniqueId: uuidv4Type;
@@ -13,7 +15,7 @@ export interface Todo {
     summary: string;
     detail: string;
     isDone: boolean;
-    assignee?: Assignee;
+    assignee?: Assignee | null;
 }
 
 export interface User {
