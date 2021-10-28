@@ -39,7 +39,7 @@ const DropDownLi = styled.li`
   &:hover {
     background-color: red;
   }
-  /* &:click ${DropDownContent} {
+  /* &:hover ${DropDownContent} {
     display: block;
   } */
 `;
