@@ -1,5 +1,5 @@
 
-import React, { FC } from "react";
+import React, { FC, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { uuidv4Type } from "../types";
 
@@ -13,7 +13,7 @@ const Dropbtn = styled.div`
 `;
 
 const DropDownContent = styled.div`
-  display: none;
+  display: block;
   position: absolute;
   background-color: #f9f9f9;
   min-width: 160px;
@@ -39,9 +39,9 @@ const DropDownLi = styled.li`
   &:hover {
     background-color: red;
   }
-  &:hover ${DropDownContent} {
+  /* &:click ${DropDownContent} {
     display: block;
-  }
+  } */
 `;
 
 export interface Entry {
@@ -57,15 +57,36 @@ interface DropdownProp {
 
 export const Dropdown: FC<DropdownProp> = ({ itemUniqueId, currentEntry, possibleEntries, onSelect }) => {
 
+  const [clickedOutside, setClickedOutside] = useState(true);
+  const currentComponentRef = useRef<HTMLDivElement>(null);
+
+  const handleClickOutside = (e: MouseEvent) => {
+    const current = currentComponentRef.current;
+    if (!current?.contains(e.target as Node)) {
+      setClickedOutside(true);
+    }
+  };
+  const handleClickInside = () => setClickedOutside(false);
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  });
+
   return (
     <DropDownLi>
-      <Dropbtn onClick={() => {}}>
+      <Dropbtn onClick={handleClickInside}>
       {currentEntry}
       </Dropbtn>
-      <DropDownContent>
+      { !clickedOutside ?
+      <DropDownContent ref={currentComponentRef}>
         {possibleEntries.map((pe) => (<SubA key={pe.uniqueId.toString()}
-        onClick={() => { onSelect(pe) }}>{pe.name}</SubA>))}
+        onClick={() => {
+          onSelect(pe);
+          setClickedOutside(true);
+        }}>{pe.name}</SubA>))}
       </DropDownContent>
+      : null }
     </DropDownLi>
   );
 
