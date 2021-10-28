@@ -48,7 +48,7 @@ export const updateTodoState = (uniqueId: uuidv4Type, isDone: boolean) => {
   };
 };
 
-export const updateTodoAssignee = (uniqueId: uuidv4Type, assigneeUniqueId: uuidv4Type, firstName: string, lastName: string) => {
+export const updateTodoAssignee = (uniqueId: uuidv4Type, assigneeUniqueId: string) => {
   const todoUpdate = {
     assignee: {
       uniqueId: assigneeUniqueId,
@@ -66,6 +66,7 @@ export const updateTodoAssignee = (uniqueId: uuidv4Type, assigneeUniqueId: uuidv
         dispatch({
           type: TodoActionTypes.UPDATE_TODO_ASSIGNEE,
           uniqueId: todo.uniqueId as uuidv4Type,
+          assigneeGuid: todo.assignee?.uniqueId ?? null,
           firstName: todo.assignee?.firstName ?? '',
           lastName: todo.assignee?.lastName ?? ''
         });
