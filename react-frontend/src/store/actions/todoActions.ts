@@ -26,6 +26,7 @@ interface DeleteTodoAction {
 interface UpdateTodoAssignee {
     type: TodoActionTypes.UPDATE_TODO_ASSIGNEE;
     uniqueId: uuidv4Type;
+    assigneeGuid: uuidv4Type | null;
     firstName: string;
     lastName: string;
 
