@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { bindActionCreators } from "redux";
-import styled from "styled-components";
 import { ActionLink } from "../components/ActionLink";
 import { ViewBox, Button } from "../design-system/atoms";
 import { todoActionCreators, usersActionCreators, State } from "../store";
@@ -9,8 +8,9 @@ import { ToggleSwitch } from "../components/ToggleSwitch";
 import { Table } from "../components/Table";
 import { Modal } from "../components/Modal";
 import { AddEntryForm } from "../components/AddEntryForm";
-import { uuidv4Type } from "../types";
+import { emptyGuid, uuidv4Type } from "../types";
 import { Entry, Dropdown } from "../components";
+import styled from "styled-components";
 
 const Wrapper = styled(ViewBox)`
   justify-content: center;
@@ -83,15 +83,18 @@ export const Home = () => {
           assignee: (
             <Dropdown
               itemUniqueId={todo.uniqueId as uuidv4Type}
-              currentEntry={ !!todo.assignee ? concatName(todo.assignee?.firstName, todo.assignee?.lastName) : 'Unassigned' }
-              possibleEntries={users.map((u) => ({
-                uniqueId: u.uniqueId as uuidv4Type,
+              currentEntry={ todo.assignee !== null ? concatName(todo.assignee?.firstName ?? '', todo.assignee?.lastName ?? '') : 'Unassigned' }
+              possibleEntries={[{
+                uniqueId: emptyGuid,
+                name: 'Unassigned'
+              }, ...users.map((u) => ({
+                uniqueId: u.uniqueId?.toString() as string,
                 name: concatName(u.firstName, u.lastName)
-              }))}
+              }))]}
 
               onSelect={function (entry: Entry): void {
-                const [firstName, lastName] = entry.name.split(' ');
-                updateTodoAssignee(todo.uniqueId as uuidv4Type, entry.uniqueId as uuidv4Type, firstName, lastName);
+                const entryGuidString = entry.uniqueId?.toString() ?? emptyGuid;
+                updateTodoAssignee(todo.uniqueId as uuidv4Type, entryGuidString);
               } }
               />
           ),
