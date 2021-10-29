@@ -1,16 +1,12 @@
+import styled from "styled-components";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { bindActionCreators } from "redux";
-import { ActionLink } from "../components/ActionLink";
 import { ViewBox, Button } from "../design-system/atoms";
 import { todoActionCreators, usersActionCreators, State } from "../store";
-import { ToggleSwitch } from "../components/ToggleSwitch";
-import { Table } from "../components/Table";
-import { Modal } from "../components/Modal";
-import { AddEntryForm } from "../components/AddEntryForm";
 import { emptyGuid, uuidv4Type } from "../types";
-import { Entry, Dropdown } from "../components";
-import styled from "styled-components";
+import { Entry, Dropdown, ToggleSwitch, Table, ActionLink, Modal } from "../components";
+import { AddEntryForm } from "../components/addentryform";
 
 const Wrapper = styled(ViewBox)`
   justify-content: center;
@@ -82,7 +78,6 @@ export const Home = () => {
             ),
             assignee: (
               <Dropdown
-                itemUniqueId={todo.uniqueId as uuidv4Type}
                 currentEntry={
                   todo.assignee !== null
                     ? concatName(

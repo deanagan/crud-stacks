@@ -1,8 +1,8 @@
 import React from 'react';
-import {ViewBox} from '../design-system/atoms';
 import styled from 'styled-components';
-import {Routes} from '../routes';
-import {NavBar} from '../components/navigation';
+import { ViewBox } from '../design-system/atoms';
+import { Routes } from '../routes';
+import { NavBar } from '../components';
 
 const Wrapper = styled(ViewBox)`
     flex-direction: column;

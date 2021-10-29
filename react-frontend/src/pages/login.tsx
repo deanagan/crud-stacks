@@ -1,7 +1,6 @@
-import React from 'react';
-import {ViewBox} from '../design-system/atoms';
 import styled from 'styled-components';
-import { AuthForm } from '../components/AuthForm';
+import {ViewBox} from '../design-system/atoms';
+import { AuthForm } from '../components';
 
 const Wrapper = styled(ViewBox)`
     justify-content: center;

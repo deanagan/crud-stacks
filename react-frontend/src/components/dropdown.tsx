@@ -1,5 +1,5 @@
 
-import React, { FC, useEffect, useRef, useState } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { uuidv4Type } from "../types";
 
@@ -48,14 +48,14 @@ export interface Entry {
   uniqueId: uuidv4Type | string | number;
   name: string;
 }
+
 interface DropdownProp {
-  itemUniqueId: uuidv4Type;
   currentEntry: string;
   possibleEntries: Entry[];
   onSelect: (entry: Entry) => void;
 }
 
-export const Dropdown: FC<DropdownProp> = ({ itemUniqueId, currentEntry, possibleEntries, onSelect }) => {
+export const Dropdown: FC<DropdownProp> = ({ currentEntry, possibleEntries, onSelect }) => {
 
   const [clickedOutside, setClickedOutside] = useState(true);
   const currentComponentRef = useRef<HTMLDivElement>(null);
