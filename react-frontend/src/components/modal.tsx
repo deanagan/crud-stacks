@@ -1,4 +1,4 @@
-import { FC, useEffect } from "react";
+import { FC, useEffect, useRef } from "react";
 import ReactDOM from "react-dom";
 import { CSSTransition } from "react-transition-group";
 import styled from "styled-components";
@@ -96,6 +96,8 @@ export const Modal: FC<ModalProps> = ({
   showFooter,
   showClose,
 }) => {
+
+  const portalRef = useRef(null);
   useEffect(() => {
     const closeWhenEscapeKeyPressed = (key: string) => {
       if (key === "Escape") {
@@ -123,8 +125,8 @@ export const Modal: FC<ModalProps> = ({
   const closeStyle = showClose ? "block" : "none";
 
   return ReactDOM.createPortal(
-    <CSSTransition in={show} unmountOnExit timeout={{ enter: 0, exit: 300 }}>
-      <StyledModal onClick={onCancel}>
+    <CSSTransition nodeRef={portalRef} in={show} unmountOnExit timeout={{ enter: 0, exit: 300 }}>
+      <StyledModal ref={portalRef} onClick={onCancel}>
         <ModalContent onClick={(e) => e.stopPropagation()}>
           <ModalHeader>
             <ModalTitle>
