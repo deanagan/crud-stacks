@@ -9,7 +9,7 @@ const Wrapper = styled(ViewBox)`
     margin-top: 55px;
 `;
 
-export const Auth = () => {
+export const Login = () => {
     return (
         <Wrapper w={60} h={60}>
             <AuthForm />

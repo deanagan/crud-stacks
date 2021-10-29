@@ -1,5 +1,7 @@
 export const RoutePaths = {
     home: '/',
     contact: '/contact',
-    auth: '/auth',
+    login: '/auth',
+    register: '/register',
+    confirm: '/confirm'
 };

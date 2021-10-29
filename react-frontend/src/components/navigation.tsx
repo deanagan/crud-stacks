@@ -18,6 +18,11 @@ export const NavLinkWrapper = styled(NavLink)`
   }
 `;
 
+
+export const NavLinkWrapperRight = styled(NavLinkWrapper)`
+  float: right;
+`;
+
 export const NavBarWrapper = styled.nav`
   position: absolute;
   left: 0;
@@ -41,6 +46,9 @@ export const NavBar: React.FC = () => {
         <NavLinkWrapper to={"/contact"}>
           <Text>Contact</Text>
         </NavLinkWrapper>
+        <NavLinkWrapperRight exact to={"/login"}>
+          <Text>Logout</Text>
+        </NavLinkWrapperRight>
       </NavBarWrapper>
     </ViewBox>
   );
