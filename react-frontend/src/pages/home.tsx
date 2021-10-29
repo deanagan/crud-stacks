@@ -29,10 +29,8 @@ export const Home = () => {
   const [newSummary, setNewSummary] = useState("");
   const [newDetail, setNewDetail] = useState("");
 
-  const { addTodo, deleteTodo, updateTodoState, updateTodoAssignee } = bindActionCreators(
-    todoActionCreators,
-    dispatch
-  );
+  const { addTodo, deleteTodo, updateTodoState, updateTodoAssignee } =
+    bindActionCreators(todoActionCreators, dispatch);
 
   const deleteEntry = (uniqueId: uuidv4Type) => {
     setIdForDeletion(uniqueId);
@@ -56,68 +54,83 @@ export const Home = () => {
     dispatch(usersActionCreators.getUsers());
   }, [dispatch]);
 
-  const concatName = (firstName: string, lastName: string) => [firstName, lastName].join(" ")
+  const concatName = (firstName: string, lastName: string) =>
+    [firstName, lastName].join(" ");
 
   return (
     <Wrapper w={80} h={100}>
-      <Table
-        rowData={todos.map((todo) => ({
-          id: todo.uniqueId,
-          summary: todo.summary,
-          detail: todo.detail,
-          isDone: todo.isDone ? "True" : "False",
-          switch: (
-            <ToggleSwitch
-              switchUniqueId={todo.uniqueId as uuidv4Type}
-              isDone={todo.isDone}
-              updateSwitchStage={updateTodoState}
-            />
-          ),
-          deleter: (
-            <ActionLink
-              color="red"
-              message="delete"
-              deleteFn={() => deleteEntry(todo.uniqueId as uuidv4Type)}
-            />
-          ),
-          assignee: (
-            <Dropdown
-              itemUniqueId={todo.uniqueId as uuidv4Type}
-              currentEntry={ todo.assignee !== null ? concatName(todo.assignee?.firstName ?? '', todo.assignee?.lastName ?? '') : 'Unassigned' }
-              possibleEntries={[{
-                uniqueId: emptyGuid,
-                name: 'Unassigned'
-              }, ...users.map((u) => ({
-                uniqueId: u.uniqueId?.toString() as string,
-                name: concatName(u.firstName, u.lastName)
-              }))]}
-
-              onSelect={function (entry: Entry): void {
-                const entryGuidString = entry.uniqueId?.toString() ?? emptyGuid;
-                updateTodoAssignee(todo.uniqueId as uuidv4Type, entryGuidString);
-              } }
+      {todos.length > 0 ? (
+        <Table
+          rowData={todos.map((todo) => ({
+            id: todo.uniqueId,
+            summary: todo.summary,
+            detail: todo.detail,
+            isDone: todo.isDone ? "True" : "False",
+            switch: (
+              <ToggleSwitch
+                switchUniqueId={todo.uniqueId as uuidv4Type}
+                isDone={todo.isDone}
+                updateSwitchStage={updateTodoState}
               />
-          ),
-        }))}
-        columnLabels={[
-          "Summary",
-          "Detail",
-          "Completed",
-          "Update",
-          "Remove Todo",
-          "Assignee",
-        ]}
-        rowFields={[
-          "summary",
-          "detail",
-          "isDone",
-          "switch",
-          "deleter",
-          "assignee",
-        ]}
-      />
-
-      <Button onClick={() => setShowAddModal(true)}>Add Request</Button>
+            ),
+            deleter: (
+              <ActionLink
+                color="red"
+                message="delete"
+                deleteFn={() => deleteEntry(todo.uniqueId as uuidv4Type)}
+              />
+            ),
+            assignee: (
+              <Dropdown
+                itemUniqueId={todo.uniqueId as uuidv4Type}
+                currentEntry={
+                  todo.assignee !== null
+                    ? concatName(
+                        todo.assignee?.firstName ?? "",
+                        todo.assignee?.lastName ?? ""
+                      )
+                    : "Unassigned"
+                }
+                possibleEntries={[
+                  {
+                    uniqueId: emptyGuid,
+                    name: "Unassigned",
+                  },
+                  ...users.map((u) => ({
+                    uniqueId: u.uniqueId?.toString() as string,
+                    name: concatName(u.firstName, u.lastName),
+                  })),
+                ]}
+                onSelect={function (entry: Entry): void {
+                  const entryGuidString =
+                    entry.uniqueId?.toString() ?? emptyGuid;
+                  updateTodoAssignee(
+                    todo.uniqueId as uuidv4Type,
+                    entryGuidString
+                  );
+                }}
+              />
+            ),
+          }))}
+          columnLabels={[
+            "Summary",
+            "Detail",
+            "Completed",
+            "Update",
+            "Remove Todo",
+            "Assignee",
+          ]}
+          rowFields={[
+            "summary",
+            "detail",
+            "isDone",
+            "switch",
+            "deleter",
+            "assignee",
+          ]}
+        />
+      ) : <h1>No more todos!</h1>}
+      <Button onClick={() => setShowAddModal(true)}>Add Todo</Button>
       <Modal
         onCancel={() => {
           setShowAddModal(false);
@@ -129,7 +142,7 @@ export const Home = () => {
           addTodo({ summary: newSummary, detail: newDetail, isDone: false });
         }}
         show={showAddModal}
-        title="Add New Request"
+        title="Add New Todo"
         okText="Ok"
         cancelText="Cancel"
         children={<AddEntryForm {...addEntryFormProp} />}
@@ -140,7 +153,7 @@ export const Home = () => {
         onCancel={() => cancelDeletion()}
         onOk={() => idForDeletion !== null && deleteTodo(idForDeletion)}
         show={showDeleteModal}
-        title="Delete Request"
+        title="Delete Todo"
         okText="Ok"
         cancelText="Cancel"
         children={<h4>Are you sure you want to delete this request?</h4>}
