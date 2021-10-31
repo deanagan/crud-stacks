@@ -162,7 +162,7 @@ namespace TodoBackend.Api.Data.Identity
 
         public Task<string> GetUserIdAsync(User user, CancellationToken cancellationToken)
         {
-            return Task.FromResult(user.UniqueId.ToString());
+            return Task.FromResult(user.Email);
         }
 
         public Task<string> GetUserNameAsync(User user, CancellationToken cancellationToken)
@@ -310,6 +310,7 @@ namespace TodoBackend.Api.Data.Identity
                            u.LastName,
                            u.Email,
                            u.NormalizedEmail,
+                           u.EmailConfirmed,
                            u.PasswordHash,
                            u.Created,
                            u.Updated,
@@ -349,6 +350,7 @@ namespace TodoBackend.Api.Data.Identity
                            u.LastName,
                            u.Email,
                            u.NormalizedEmail,
+                           u.EmailConfirmed,
                            u.PasswordHash,
                            u.Created,
                            u.Updated,
@@ -418,6 +420,7 @@ namespace TodoBackend.Api.Data.Identity
                            u.LastName,
                            u.Email,
                            u.NormalizedEmail,
+                           u.EmailConfirmed,
                            u.PasswordHash,
                            u.Created,
                            u.Updated,

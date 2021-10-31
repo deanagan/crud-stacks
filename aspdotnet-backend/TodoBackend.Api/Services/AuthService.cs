@@ -12,6 +12,8 @@ using TodoBackend.Api.Data.Models;
 using System.Threading.Tasks;
 using System.Security.Claims;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.WebUtilities;
+using System.Web;
 
 namespace TodoBackend.Api.Services
 {
@@ -45,7 +47,7 @@ namespace TodoBackend.Api.Services
             }
         }
 
-        public async Task<(IdentityResult, string)> RegisterUser(RegisterViewModel registerView)
+        public async Task<IdentityResult> RegisterUser(RegisterViewModel registerView)
         {
             var userView = _mapper.Map<UserViewModel>(registerView);
             var user = _mapper.Map<User>(userView);
@@ -66,16 +68,25 @@ namespace TodoBackend.Api.Services
             }
 
             var result = await _userManager.CreateAsync(user, registerView.Password);
-            var token = string.Empty;
             if (result.Succeeded)
             {
-
-                token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                 var registeredUser = await _userManager.FindByNameAsync(user.UserName);
                 await _userManager.AddToRoleAsync(registeredUser, registeredUser.Role.Name);
             }
 
-            return (result, token);
+            return result;
+        }
+
+        public async Task<string> RequestRegistrationToken(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user == null)
+            {
+                return null;
+            }
+            var tokenToEncode = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            return HttpUtility.UrlEncode(tokenToEncode);
         }
 
         private string GenerateToken(User user)
@@ -123,7 +134,7 @@ namespace TodoBackend.Api.Services
             return isValidUser ? CreateAuthData(user) : null;
         }
 
-        public async Task<bool> UpdatePassword(Guid guid, ChangePasswordViewModel changePasswordView)
+        public async Task<bool> ChangePassword(Guid guid, ChangePasswordViewModel changePasswordView)
         {
             var user = await _userManager.FindByEmailAsync(changePasswordView.Email);
             if (user == null)
@@ -134,6 +145,51 @@ namespace TodoBackend.Api.Services
             var changeResult = await _userManager.ChangePasswordAsync(user, changePasswordView.OldPassword, changePasswordView.NewPassword);
 
             return changeResult.Succeeded;
+        }
+
+        public async Task<bool> ConfirmEmail(string token, string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                return false;
+            }
+
+            var result = await _userManager.ConfirmEmailAsync(user, token);
+            return result.Succeeded;
+        }
+
+        public async Task<string> RequestPasswordReset(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                return null;
+            }
+
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            return HttpUtility.UrlEncode(token);
+        }
+
+        public async Task<bool> ResetPassword(ResetPasswordViewModel resetPasswordView)
+        {
+            var user = await _userManager.FindByEmailAsync(resetPasswordView.Email);
+
+            if (user == null)
+            {
+                return false;
+            }
+
+            var isConfirmedUser = await _userManager.IsEmailConfirmedAsync(user);
+            if (!isConfirmedUser)
+            {
+                return false;
+            }
+
+            var decodedToken = HttpUtility.UrlDecode(resetPasswordView.Token);
+            var result = await _userManager.ResetPasswordAsync(user, decodedToken, resetPasswordView.NewPassword);
+
+            return result.Succeeded;
         }
     }
 }
