@@ -1,4 +1,4 @@
-import { FC, useEffect, useRef } from "react";
+import { FC, useEffect, useRef, memo } from "react";
 import ReactDOM from "react-dom";
 import { CSSTransition } from "react-transition-group";
 import styled from "styled-components";
@@ -85,7 +85,7 @@ interface ModalProps {
   show: boolean;
 }
 
-export const Modal: FC<ModalProps> = ({
+export const Modal: FC<ModalProps> = memo(({
   onCancel,
   onOk,
   show,
@@ -98,10 +98,12 @@ export const Modal: FC<ModalProps> = ({
 }) => {
 
   const portalRef = useRef(null);
+  const callback = useRef<typeof onCancel>(onCancel);
+
   useEffect(() => {
     const closeWhenEscapeKeyPressed = (key: string) => {
       if (key === "Escape") {
-        onCancel();
+        callback.current();
       }
     };
 
@@ -114,7 +116,7 @@ export const Modal: FC<ModalProps> = ({
         closeWhenEscapeKeyPressed(e.key)
       );
     };
-  }, [onCancel]);
+  }, [callback]);
 
   const OkAndClose = () => {
     onOk();
@@ -146,4 +148,4 @@ export const Modal: FC<ModalProps> = ({
     </CSSTransition>,
     document.getElementById("root") as HTMLElement
   );
-};
+});

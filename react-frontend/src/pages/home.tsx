@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { bindActionCreators } from "redux";
 import { ViewBox, Button } from "../design-system/atoms";
@@ -53,6 +53,13 @@ export const Home = () => {
   const concatName = (firstName: string, lastName: string) =>
     [firstName, lastName].join(" ");
 
+  const onCancel = useCallback(() => {
+    setShowAddModal(false);
+    setNewDetail("");
+    setNewSummary("");
+  }, []);
+
+  const addEntryForm = (<AddEntryForm {...addEntryFormProp} />);
   return (
     <Wrapper w={80} h={100}>
       {todos.length > 0 ? (
@@ -127,11 +134,7 @@ export const Home = () => {
       ) : <h1>No more todos!</h1>}
       <Button onClick={() => setShowAddModal(true)}>Add Todo</Button>
       <Modal
-        onCancel={() => {
-          setShowAddModal(false);
-          setNewDetail("");
-          setNewSummary("");
-        }}
+        onCancel={onCancel}
         onOk={() => {
           setShowAddModal(false);
           addTodo({ summary: newSummary, detail: newDetail, isDone: false });
@@ -140,7 +143,7 @@ export const Home = () => {
         title="Add New Todo"
         okText="Ok"
         cancelText="Cancel"
-        children={<AddEntryForm {...addEntryFormProp} />}
+        children={addEntryForm}
         showFooter={!!(newSummary && newDetail)}
         showClose
       />
