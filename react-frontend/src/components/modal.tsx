@@ -116,7 +116,7 @@ export const Modal: FC<ModalProps> = memo(({
         closeWhenEscapeKeyPressed(e.key)
       );
     };
-  }, [callback]);
+  }, []);
 
   const OkAndClose = () => {
     onOk();
