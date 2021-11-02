@@ -1,4 +1,4 @@
-import { FC, PropsWithChildren, useCallback } from "react";
+import { PropsWithChildren } from "react";
 import styled from "styled-components";
 import { ViewBox } from "../design-system/atoms/ViewBox";
 
@@ -61,7 +61,7 @@ export const Table: <T>(props: PropsWithChildren<TableProp<T>>) => React.ReactEl
             </tr>
           </thead>
           <tbody>
-            {props.rowData.map((singleRow) => applyRowData(singleRow))}
+            {props.rowData.map(applyRowData)}
           </tbody>
         </StyledTable>
       </StyledTableWrapper>
