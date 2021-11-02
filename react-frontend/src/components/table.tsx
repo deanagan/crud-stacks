@@ -1,4 +1,4 @@
-import { PropsWithChildren } from "react";
+import { FC, PropsWithChildren, useCallback } from "react";
 import styled from "styled-components";
 import { ViewBox } from "../design-system/atoms/ViewBox";
 
@@ -35,7 +35,20 @@ interface TableProp<T extends TableRowBase> {
   rowData: T[];
 }
 
-export function Table<T>(props: PropsWithChildren<TableProp<T>>) {
+export const Table: <T>(props: PropsWithChildren<TableProp<T>>) => React.ReactElement = props => {
+  const applyRowData = (singleRow: TableRowBase) => {
+    const row = singleRow;
+    const fields = Object.entries(singleRow).filter(v => 'id' !== v[0]);
+
+    return (
+      <tr key={row.id}>
+        {fields.map((field, index) => (
+          <td key={index}>{field[1]}</td>
+        ))}
+      </tr>
+    );
+  };
+
   return (
     <ViewBox>
       <StyledTableWrapper>
@@ -48,18 +61,7 @@ export function Table<T>(props: PropsWithChildren<TableProp<T>>) {
             </tr>
           </thead>
           <tbody>
-            {props.rowData.map((singleRow) => {
-              const row = singleRow as TableRowBase;
-              const fields = Object.entries(singleRow).filter(v => 'id' !== v[0]);
-
-              return (
-                <tr key={row.id}>
-                  {fields.map((field, index) => (
-                    <td key={index}>{field[1]}</td>
-                  ))}
-                </tr>
-              );
-            })}
+            {props.rowData.map((singleRow) => applyRowData(singleRow))}
           </tbody>
         </StyledTable>
       </StyledTableWrapper>
