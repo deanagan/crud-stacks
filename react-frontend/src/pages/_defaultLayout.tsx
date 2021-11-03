@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { ViewBox } from '../design-system/atoms';
-import { Routes } from '../routes';
+import { RoutesWrapper } from '../routes';
 import { NavBar } from '../components';
 
 const Wrapper = styled(ViewBox)`
@@ -17,7 +17,7 @@ export const DefaultLayout: React.FC = () => {
     return (
         <Wrapper>
             <NavBar />
-            <Routes />
+            <RoutesWrapper />
         </Wrapper>
     );
 };

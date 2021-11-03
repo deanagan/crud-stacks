@@ -40,13 +40,13 @@ export const NavBar: React.FC = () => {
   return (
     <ViewBox>
       <NavBarWrapper>
-        <NavLinkWrapper exact to={"/"}>
+        <NavLinkWrapper to={"/"}>
           <Text>Home</Text>
         </NavLinkWrapper>
         <NavLinkWrapper to={"/contact"}>
           <Text>Contact</Text>
         </NavLinkWrapper>
-        <NavLinkWrapperRight exact to={"/login"}>
+        <NavLinkWrapperRight to={"/login"}>
           <Text>Logout</Text>
         </NavLinkWrapperRight>
       </NavBarWrapper>

@@ -1,12 +1,11 @@
-import { Switch, Route } from 'react-router-dom';
-import { Login, Contact, Home } from '../pages';
-import {RoutePaths} from './paths';
+import { Routes, Route } from "react-router-dom";
+import { Login, Contact, Home } from "../pages";
+import { RoutePaths } from "./paths";
 
-
-export const Routes = () => (
-    <Switch>
-        <Route exact path={RoutePaths.home} component={Home} />
-        <Route exact path={RoutePaths.contact} component={Contact} />
-        <Route exact path={RoutePaths.login} component={Login} />
-    </Switch>
+export const RoutesWrapper = () => (
+  <Routes>
+    <Route path={RoutePaths.home} element={<Home />} />
+    <Route path={RoutePaths.contact} element={<Contact />} />
+    <Route path={RoutePaths.login} element={<Login />} />
+  </Routes>
 );
