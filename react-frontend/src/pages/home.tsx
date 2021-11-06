@@ -144,7 +144,7 @@ export const Home = () => {
         okText="Ok"
         cancelText="Cancel"
         children={addEntryForm}
-        showFooter={!!(newSummary && newDetail)}
+        allowOk={!!(newSummary && newDetail)}
         showClose
       />
       <Modal
@@ -155,7 +155,6 @@ export const Home = () => {
         okText="Ok"
         cancelText="Cancel"
         children={<h4>Are you sure you want to delete this request?</h4>}
-        showFooter
         showClose={false}
       />
     </Wrapper>

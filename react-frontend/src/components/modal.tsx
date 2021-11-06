@@ -1,7 +1,7 @@
 import { FC, useEffect, useRef, memo } from "react";
 import ReactDOM from "react-dom";
 import { CSSTransition } from "react-transition-group";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { ButtonWrapper, CloseIcon } from "../design-system/atoms";
 
 const StyledModal = styled.div`
@@ -68,21 +68,25 @@ const CancelButton = styled(ButtonWrapper)`
 `;
 
 const OkButton = styled(ButtonWrapper)`
-  &&& {
-    background: blue;
-    color: white;
-  }
+  ${props => props.disabled && css`
+    background-color: gray;
+  `}
+
+  ${props => !props.disabled && css`
+    background-color: blue;
+  `}
+
 `;
 
 interface ModalProps {
   onCancel: () => void;
   onOk: () => void;
-  showFooter: boolean;
   showClose: boolean;
   okText: string;
   cancelText: string;
   title: string;
   show: boolean;
+  allowOk?: boolean;
 }
 
 export const Modal: FC<ModalProps> = memo(({
@@ -90,10 +94,10 @@ export const Modal: FC<ModalProps> = memo(({
   onOk,
   show,
   children,
+  allowOk = true,
   title,
   okText,
   cancelText,
-  showFooter,
   showClose,
 }) => {
 
@@ -123,7 +127,6 @@ export const Modal: FC<ModalProps> = memo(({
     onCancel();
   };
 
-  const footerStyle = showFooter ? "block" : "none";
   const closeStyle = showClose ? "block" : "none";
 
   return ReactDOM.createPortal(
@@ -139,8 +142,8 @@ export const Modal: FC<ModalProps> = memo(({
             </ModalTitle>
           </ModalHeader>
           <ModalBody>{children}</ModalBody>
-          <ModalFooter style={{ display: footerStyle }}>
-            <OkButton onClick={OkAndClose}>{okText}</OkButton>
+          <ModalFooter>
+            <OkButton onClick={OkAndClose} disabled={!allowOk}>{okText}</OkButton>
             <CancelButton onClick={onCancel}>{cancelText}</CancelButton>
           </ModalFooter>
         </ModalContent>
