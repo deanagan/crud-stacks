@@ -70,6 +70,10 @@ const CancelButton = styled(ButtonWrapper)`
 const OkButton = styled(ButtonWrapper)`
   ${props => props.disabled && css`
     background-color: gray;
+    &:hover {
+      background-color: gray;
+      color: white;
+    }
   `}
 
   ${props => !props.disabled && css`
