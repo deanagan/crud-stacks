@@ -1,7 +1,7 @@
 
 import { FC, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import { uuidv4Type } from "../types";
+import { uuidv4Type } from "../../types";
 
 
 const Dropbtn = styled.div`
