@@ -2,23 +2,25 @@
 import { memo, FC, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { bindActionCreators } from "redux";
-import { ActionLink, Dropdown, Table, ToggleSwitch } from "../design-system/molecules";
+import { DeleterAction } from ".";
+import { Table, ToggleSwitch } from "../design-system/molecules";
 import { State, todoActionCreators } from "../store";
-import { emptyGuid, uuidv4Type } from "../types";
+import { uuidv4Type } from "../types";
 
-export const TodoTable: FC = memo(() => {
+
+interface TodoTableProp {
+    switchUniqueId: uuidv4Type;
+    initialState: boolean;
+    updateSwitchStage: (id: uuidv4Type, state: boolean) => void;
+  }
+
+
+export const TodoTable: FC<TodoTableProp> = memo(() => {
   //export const TodoTable: FC = (() => { // using this line will cause the table to re-render
   const dispatch = useDispatch();
   const { updateTodoState } = bindActionCreators(todoActionCreators, dispatch);
   const { todos } = useSelector((state: State) => state.todo);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [idForDeletion, setIdForDeletion] = useState<uuidv4Type | null>(null);
   const nTodos = todos.length;
-
-  const deleteEntry = (uniqueId: uuidv4Type) => {
-    setIdForDeletion(uniqueId);
-    setShowDeleteModal(true);
-  };
 
   return nTodos > 0 ? (
     <Table
@@ -34,16 +36,10 @@ export const TodoTable: FC = memo(() => {
               updateSwitchStage={updateTodoState}
             />
         ),
-        deleter: (
-            <ActionLink
-              color="red"
-              message="delete"
-              deleteFn={() => deleteEntry(todo.uniqueId as uuidv4Type)}
-            />
-        ),
+        deleter: (<DeleterAction uniqueId = {todo.uniqueId as uuidv4Type}/>),
       }))}
-      columnLabels={["Summary", "Detail", "Completed", "Status"]}
-      rowFields={["summary", "detail", "isDone", "switch"]}
+      columnLabels={["Summary", "Detail", "Completed", "Status", "Delete"]}
+      rowFields={["summary", "detail", "isDone", "switch", "deleter"]}
     />
   ) : (
     <h1>No todos!</h1>
