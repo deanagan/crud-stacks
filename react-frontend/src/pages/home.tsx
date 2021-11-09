@@ -1,9 +1,9 @@
 import styled from "styled-components";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { useDispatch } from "react-redux";
 import { bindActionCreators } from "redux";
 import { ViewBox, Button } from "../design-system/atoms";
-import { todoActionCreators, usersActionCreators } from "../store";
+import { todoActionCreators } from "../store";
 import { uuidv4Type } from "../types";
 import {
   Modal,
@@ -41,12 +41,6 @@ export const Home = () => {
     changeSummary: setNewSummary,
     changeDetail: setNewDetail,
   };
-
-  useEffect(() => {
-    dispatch(todoActionCreators.getTodos());
-    dispatch(usersActionCreators.getUsers());
-  }, [dispatch]);
-
 
   const onCancel = useCallback(() => {
     setShowAddModal(false);
