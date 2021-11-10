@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { FC, useState } from "react";
-import { uuidv4Type } from "../types";
+import { uuidv4Type } from "../../types";
 
 const ToggleSwitchDivWrapper = styled.div`
   position: relative;
@@ -54,12 +54,12 @@ const ToggleSwitchWrapper = styled.input.attrs({ type: 'checkbox' })`
 
 interface ToggleSwitchProp {
   switchUniqueId: uuidv4Type;
-  isDone: boolean;
+  initialState: boolean;
   updateSwitchStage: (id: uuidv4Type, state: boolean) => void;
 }
 
-export const ToggleSwitch: FC<ToggleSwitchProp> = ({ switchUniqueId, isDone, updateSwitchStage }) => {
-  const [switchState, setSwitchState] = useState(isDone);
+export const ToggleSwitch: FC<ToggleSwitchProp> = ({ switchUniqueId, initialState, updateSwitchStage }) => {
+  const [switchState, setSwitchState] = useState(initialState);
 
   const onSwitchChanged = (isDone: boolean) => {
     updateSwitchStage(switchUniqueId, isDone);

@@ -1,6 +1,6 @@
 import { PropsWithChildren } from "react";
 import styled from "styled-components";
-import { ViewBox } from "../design-system/atoms/ViewBox";
+import { ViewBox } from "../atoms/ViewBox";
 
 export const StyledTableWrapper = styled.div`
   overflow-x: auto;
@@ -35,14 +35,14 @@ interface TableProp<T extends TableRowBase> {
   rowData: T[];
 }
 
-export const Table: <T>(props: PropsWithChildren<TableProp<T>>) => React.ReactElement = props => {
+export const Table: <T>(props: PropsWithChildren<TableProp<T>>) => React.ReactElement = ({columnLabels, rowFields, rowData}) => {
   const applyRowData = (singleRow: TableRowBase) => {
     const row = singleRow;
-    const fields = Object.entries(singleRow).filter(v => 'id' !== v[0]);
+    const fieldValues = Object.entries(singleRow).filter(v => rowFields.includes(v[0]));
 
     return (
       <tr key={row.id}>
-        {fields.map((field, index) => (
+        {fieldValues.map((field, index) => (
           <td key={index}>{field[1]}</td>
         ))}
       </tr>
@@ -55,13 +55,13 @@ export const Table: <T>(props: PropsWithChildren<TableProp<T>>) => React.ReactEl
         <StyledTable>
           <thead>
             <tr>
-              {props.columnLabels.map((label, index) => (
+              {columnLabels.map((label, index) => (
                 <th key={index}>{label}</th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {props.rowData.map(applyRowData)}
+            {rowData.map(applyRowData)}
           </tbody>
         </StyledTable>
       </StyledTableWrapper>
