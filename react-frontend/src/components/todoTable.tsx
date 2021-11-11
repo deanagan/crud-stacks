@@ -5,7 +5,7 @@ import { bindActionCreators } from "redux";
 import { DeleterAction } from ".";
 import { Table, ToggleSwitch } from "../design-system/molecules";
 import { State, todoActionCreators } from "../store";
-import { uuidv4Type } from "../types";
+import { emptyGuid, uuidv4Type } from "../types";
 import { AssigneeDropDown } from "./assigneeDropDown";
 
 
@@ -37,7 +37,7 @@ export const TodoTable: FC = memo(() => {
             />
         ),
         deleter: (<DeleterAction uniqueId = {todo.uniqueId as uuidv4Type}/>),
-        assignee: (<AssigneeDropDown uniqueId={todo.uniqueId as uuidv4Type} />)
+        assignee: (<AssigneeDropDown assigneeUniqueId={todo.assignee?.uniqueId ?? emptyGuid} todoUniqueId={todo.uniqueId as uuidv4Type} />)
       }))}
       columnLabels={["Summary", "Detail", "Completed", "Status", "Delete", "Assignee"]}
       rowFields={["summary", "detail", "isDone", "switch", "deleter", "assignee"]}
