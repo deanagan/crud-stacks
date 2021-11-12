@@ -4,6 +4,7 @@ import { emptyGuid, User, uuidv4Type } from "../types";
 import { State, todoActionCreators, usersActionCreators } from "../store";
 import { useDispatch, useSelector } from "react-redux";
 import { bindActionCreators } from "redux";
+import React from "react";
 
 export interface AssigneeDropDownProp {
   assigneeUniqueId: uuidv4Type | string;
@@ -12,7 +13,8 @@ export interface AssigneeDropDownProp {
 
 interface UserEntries extends Array<Entry>{};
 
-export const AssigneeDropDown: FC<AssigneeDropDownProp> = ({ assigneeUniqueId, todoUniqueId }) => {
+export const AssigneeDropDown: FC<AssigneeDropDownProp> = React.memo(({ assigneeUniqueId, todoUniqueId }) => {
+//export const AssigneeDropDown: FC<AssigneeDropDownProp> = ({ assigneeUniqueId, todoUniqueId }) => {
   const dispatch = useDispatch();
   const { users } = useSelector((state: State) => state.user);
   const [ userEntries, setUserEntries ] = useState<UserEntries>([]);
@@ -48,4 +50,4 @@ export const AssigneeDropDown: FC<AssigneeDropDownProp> = ({ assigneeUniqueId, t
       }}
     />
   );
-};
+});

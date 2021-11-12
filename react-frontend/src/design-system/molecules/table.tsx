@@ -1,6 +1,7 @@
 import { PropsWithChildren } from "react";
 import styled from "styled-components";
 import { ViewBox } from "../atoms/ViewBox";
+import { TableHeaderRow } from "./tableHeaderRow";
 
 export const StyledTableWrapper = styled.div`
   overflow-x: auto;
@@ -53,13 +54,14 @@ export const Table: <T>(props: PropsWithChildren<TableProp<T>>) => React.ReactEl
     <ViewBox>
       <StyledTableWrapper>
         <StyledTable>
-          <thead>
-            <tr>
+
+            <TableHeaderRow columnLabels={columnLabels} />
+            {/* <tr>
               {columnLabels.map((label, index) => (
                 <th key={index}>{label}</th>
               ))}
-            </tr>
-          </thead>
+            </tr> */}
+
           <tbody>
             {rowData.map(applyRowData)}
           </tbody>

@@ -5,12 +5,14 @@ import { uuidv4Type } from "../types";
 import { todoActionCreators } from "../store";
 import { useDispatch } from "react-redux";
 import { bindActionCreators } from "redux";
+import React from "react";
 
 export interface DeleterActionProp {
   uniqueId: uuidv4Type;
 }
 
-export const DeleterAction: FC<DeleterActionProp> = ({ uniqueId }) => {
+//export const DeleterAction: FC<DeleterActionProp> = ({ uniqueId }) => {
+export const DeleterAction: FC<DeleterActionProp> = React.memo(({ uniqueId }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [idForDeletion, setIdForDeletion] = useState<uuidv4Type | null>(null);
   const dispatch = useDispatch();
@@ -46,4 +48,4 @@ export const DeleterAction: FC<DeleterActionProp> = ({ uniqueId }) => {
       />
     </>
   );
-};
+});

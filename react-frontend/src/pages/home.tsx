@@ -48,13 +48,13 @@ export const Home = () => {
     setNewSummary("");
   }, []);
 
-  const showAddModalHandler = () => setShowAddModal(true);
+  // const showAddModalHandler = () => setShowAddModal(true);
 
   const addEntryForm = <AddEntryForm {...addEntryFormProp} />;
   return (
     <Wrapper w={80} h={100}>
       <TodoTable />
-      <Button onClick={showAddModalHandler}>Add Todo</Button>
+      <Button onClick={() => setShowAddModal(true)}>Add Todo</Button>
       <Modal
         onCancel={onCancel}
         onOk={() => {

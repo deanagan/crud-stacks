@@ -1,4 +1,5 @@
 
+import React from "react";
 import { FC, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { uuidv4Type } from "../../types";
@@ -71,7 +72,7 @@ export const Dropdown: FC<DropdownProp> = ({ currentEntry, possibleEntries, onSe
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  });
+  }, []);
 
   return (
     <DropDownLi>

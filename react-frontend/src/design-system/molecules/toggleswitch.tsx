@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { FC, useState } from "react";
 import { uuidv4Type } from "../../types";
+import React from "react";
 
 const ToggleSwitchDivWrapper = styled.div`
   position: relative;
@@ -58,7 +59,8 @@ interface ToggleSwitchProp {
   updateSwitchStage: (id: uuidv4Type, state: boolean) => void;
 }
 
-export const ToggleSwitch: FC<ToggleSwitchProp> = ({ switchUniqueId, initialState, updateSwitchStage }) => {
+export const ToggleSwitch: FC<ToggleSwitchProp> = React.memo(({ switchUniqueId, initialState, updateSwitchStage }) => {
+//export const ToggleSwitch: FC<ToggleSwitchProp> = ({ switchUniqueId, initialState, updateSwitchStage }) => {
   const [switchState, setSwitchState] = useState(initialState);
 
   const onSwitchChanged = (isDone: boolean) => {
@@ -76,4 +78,4 @@ export const ToggleSwitch: FC<ToggleSwitchProp> = ({ switchUniqueId, initialStat
       <ToggleSwitchLabel htmlFor={`switch${switchUniqueId}`} />
     </ToggleSwitchDivWrapper>
   );
-};
+});
