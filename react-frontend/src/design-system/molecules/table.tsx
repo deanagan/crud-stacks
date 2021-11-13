@@ -1,6 +1,7 @@
 import { PropsWithChildren } from "react";
 import styled from "styled-components";
 import { ViewBox } from "../atoms/ViewBox";
+import { TableDataRow } from "./tableDataRow";
 import { TableHeaderRow } from "./tableHeaderRow";
 
 export const StyledTableWrapper = styled.div`
@@ -33,22 +34,22 @@ export interface TableRowBase {
 interface TableProp<T extends TableRowBase> {
   columnLabels: string[];
   rowFields: string[];
-  rowData: T[];
+  tableData: T[];
 }
 
-export const Table: <T>(props: PropsWithChildren<TableProp<T>>) => React.ReactElement = ({columnLabels, rowFields, rowData}) => {
-  const applyRowData = (singleRow: TableRowBase) => {
-    const row = singleRow;
-    const fieldValues = Object.entries(singleRow).filter(v => rowFields.includes(v[0]));
+export const Table: <T>(props: PropsWithChildren<TableProp<T>>) => React.ReactElement = ({columnLabels, rowFields, tableData}) => {
+  // const applyRowData = (singleRow: TableRowBase) => {
+  //   const row = singleRow;
+  //   const fieldValues = Object.entries(singleRow).filter(v => rowFields.includes(v[0]));
 
-    return (
-      <tr key={row.id}>
-        {fieldValues.map((field, index) => (
-          <td key={index}>{field[1]}</td>
-        ))}
-      </tr>
-    );
-  };
+  //   return (
+  //     <tr key={row.id}>
+  //       {fieldValues.map((field, index) => (
+  //         <td key={index}>{field[1]}</td>
+  //       ))}
+  //     </tr>
+  //   );
+  // };
 
   return (
     <ViewBox>
@@ -61,10 +62,16 @@ export const Table: <T>(props: PropsWithChildren<TableProp<T>>) => React.ReactEl
                 <th key={index}>{label}</th>
               ))}
             </tr> */}
-
           <tbody>
-            {rowData.map(applyRowData)}
+          {
+            tableData.map((rd) =>
+            <TableDataRow key={(rd as TableRowBase).id} rowData = {rd} rowFields = {rowFields} />
+            )
+          }
           </tbody>
+          {/* <tbody>
+            {rowData.map(applyRowData)}
+          </tbody> */}
         </StyledTable>
       </StyledTableWrapper>
     </ViewBox>

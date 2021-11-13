@@ -5,7 +5,7 @@ import { bindActionCreators } from "redux";
 import { DeleterAction } from ".";
 import { Table, ToggleSwitch } from "../design-system/molecules";
 import { State, todoActionCreators } from "../store";
-import { emptyGuid, Todo, uuidv4Type } from "../types";
+import { emptyGuid, uuidv4Type } from "../types";
 import { AssigneeDropDown } from "./assigneeDropDown";
 
 
@@ -26,9 +26,9 @@ export const TodoTable: FC = memo(() => {
   const updateSwitchState = useCallback((id, isDone) => callback.current(id, isDone), []);
   // we use this to prevent header from re-rendering since it doesn't change at all
   const columnLabels = useMemo(() => ["Summary", "Detail", "Completed", "Status", "Delete", "Assignee"], []);
-
-  const todoHandler = useCallback((todo: Todo) => {
-    return {
+  const rowFields = useMemo(() => ["summary", "detail", "isDone", "switch", "deleter", "assignee"], []);
+  const tableData = () => {
+    return todos.map((todo) => ({
       id: todo.uniqueId,
       summary: todo.summary,
       detail: todo.detail,
@@ -42,14 +42,14 @@ export const TodoTable: FC = memo(() => {
       ),
       deleter: (<DeleterAction uniqueId = {todo.uniqueId as uuidv4Type}/>),
       assignee: (<AssigneeDropDown assigneeUniqueId={todo.assignee?.uniqueId ?? emptyGuid} todoUniqueId={todo.uniqueId as uuidv4Type} />)
-    }
-  }, [updateSwitchState]);
+    }))
+  };
 
   return nTodos > 0 ? (
     <Table
-      rowData={todos.map(todoHandler)}
+      tableData={tableData()}
       columnLabels={columnLabels/*["Summary", "Detail", "Completed", "Status", "Delete", "Assignee"]*/}
-      rowFields={["summary", "detail", "isDone", "switch", "deleter", "assignee"]}
+      rowFields={rowFields/*["summary", "detail", "isDone", "switch", "deleter", "assignee"]*/}
     />
     // <Table
     //   rowData={todos.map((todo) => ({
