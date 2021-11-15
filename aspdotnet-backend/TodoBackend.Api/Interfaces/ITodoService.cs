@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using TodoBackend.Api.Data.Models;
 using TodoBackend.Api.Data.ViewModels;
 
 namespace TodoBackend.Api.Interfaces
