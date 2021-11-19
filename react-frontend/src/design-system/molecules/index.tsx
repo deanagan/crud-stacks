@@ -3,3 +3,4 @@ export * from './toggleswitch';
 export * from './actionlink';
 export * from './dropdown';
 export * from './tableHeaderRow';
+export * from './statCard';

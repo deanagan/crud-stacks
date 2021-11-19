@@ -10,6 +10,7 @@ import {
 } from "../components";
 import { AddEntryForm } from "../components/addentryform";
 import { TodoTable } from "../components/todoTable";
+import { StatCard } from "../design-system/molecules";
 
 const Wrapper = styled(ViewBox)`
   justify-content: center;
@@ -53,6 +54,7 @@ export const Home = () => {
   const addEntryForm = <AddEntryForm {...addEntryFormProp} />;
   return (
     <Wrapper w={80} h={100}>
+      <StatCard onClick={()=>{}} />
       <TodoTable />
       <Button onClick={() => setShowAddModal(true)}>Add Todo</Button>
       <Modal
