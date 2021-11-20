@@ -16,7 +16,7 @@ export const ButtonWrapper = styled.button`
   border-radius: 5px;
   box-shadow: 0 3px #999;
   float: right;
-  margin-top: 2px;
+  margin-top: 5px;
   margin-left: 5px;
   margin-bottom: 10px;
 
