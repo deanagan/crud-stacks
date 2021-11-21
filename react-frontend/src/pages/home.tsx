@@ -1,9 +1,9 @@
 import styled from "styled-components";
 import { useCallback, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { bindActionCreators } from "redux";
 import { ViewBox, Button } from "../design-system/atoms";
-import { todoActionCreators } from "../store";
+import { State, todoActionCreators } from "../store";
 import { uuidv4Type } from "../types";
 import {
   Modal,
@@ -30,6 +30,7 @@ export const Home = () => {
   const { addTodo, deleteTodo } =
     bindActionCreators(todoActionCreators, dispatch);
 
+  const { todos } = useSelector((state: State) => state.todo);
 
   const cancelDeletion = () => {
     setIdForDeletion(null);
@@ -54,8 +55,8 @@ export const Home = () => {
   const addEntryForm = <AddEntryForm {...addEntryFormProp} />;
   return (
     <Wrapper w={80} h={100}>
-      <StatCard onClick={()=>{}} />
-      <TodoTable />
+      <StatCard totalTasks={todos.length} totalIncompleteTasks={todos.filter((todo) => !todo.isDone).length} />
+      <TodoTable todos={todos} />
       <Button onClick={() => setShowAddModal(true)}>Add Todo</Button>
       <Modal
         onCancel={onCancel}

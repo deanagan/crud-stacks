@@ -1,8 +1,6 @@
 import React from "react";
 import styled from "styled-components";
 
-
-
 export const CardWrapper = styled.div`
   padding: 15px 25px;
   font-size: 12px;
@@ -20,22 +18,23 @@ export const CardWrapper = styled.div`
   margin-bottom: 10px;
   height: 80px;
   width: 10%;
-
 `;
 
 interface CardProp {
-  onClick: () => void;
+  totalIncompleteTasks: number;
+  totalTasks: number;
 }
 
-export const StatCard: React.FC<CardProp> = ({ children, onClick }) => {
+export const StatCard: React.FC<CardProp> = ({
+  totalIncompleteTasks,
+  totalTasks,
+}) => {
   return (
     <CardWrapper style={{ color: "#fff" }}>
       <h2>Summary</h2>
 
-      <div>
-        Incomplete Tasks:
-        Total Tasks:
-      </div>
+      <div>Incomplete Tasks: {totalIncompleteTasks}</div>
+      <div>Total Tasks: {totalTasks}</div>
     </CardWrapper>
   );
 };

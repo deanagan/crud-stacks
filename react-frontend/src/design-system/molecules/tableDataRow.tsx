@@ -14,6 +14,8 @@ export const TableDataRow: React.FC<Todo> = React.memo(
       todoActionCreators,
       dispatch
     );
+    const updateSwitch = (uniqueId: uuidv4Type, isDone: boolean) =>
+    updateTodoState(uniqueId, isDone);
 
     return (
       <tr>
@@ -24,9 +26,10 @@ export const TableDataRow: React.FC<Todo> = React.memo(
           <ToggleSwitch
             switchUniqueId={uniqueId as uuidv4Type}
             initialState={isDone}
-            updateSwitchStage={(uniqueId: uuidv4Type, isDone: boolean) =>
-              updateTodoState(uniqueId, isDone)
-            }
+            //  updateSwitchFunc={(uniqueId: uuidv4Type, isDone: boolean) =>
+            //    updateTodoState(uniqueId, isDone)
+            //  }
+            updateSwitchFunc={updateSwitch}
           />
         </td>
         <td>

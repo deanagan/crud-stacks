@@ -1,7 +1,8 @@
 import { memo, FC, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Table } from "../design-system/molecules";
-import { State, todoActionCreators } from "../store";
+import { todoActionCreators } from "../store";
+import { Todo } from "../types";
 
 
 const columnLabels = [
@@ -13,11 +14,14 @@ const columnLabels = [
   "Assignee",
 ];
 
+interface TodoTableProp {
+  todos: Todo[];
+}
 
-export const TodoTable: FC = memo(() => {
+export const TodoTable: FC<TodoTableProp> = memo(({ todos }) => {
   //export const TodoTable: FC = (() => { // using this line will cause the table to re-render
   const dispatch = useDispatch();
-  const { todos } = useSelector((state: State) => state.todo);
+
   const nTodos = todos.length;
 
   useEffect(() => {

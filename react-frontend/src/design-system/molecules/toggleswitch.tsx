@@ -56,15 +56,15 @@ const ToggleSwitchWrapper = styled.input.attrs({ type: 'checkbox' })`
 interface ToggleSwitchProp {
   switchUniqueId: uuidv4Type;
   initialState: boolean;
-  updateSwitchStage: (id: uuidv4Type, state: boolean) => void;
+  updateSwitchFunc: (id: uuidv4Type, state: boolean) => void;
 }
 
-export const ToggleSwitch: FC<ToggleSwitchProp> = React.memo(({ switchUniqueId, initialState, updateSwitchStage }) => {
-//export const ToggleSwitch: FC<ToggleSwitchProp> = ({ switchUniqueId, initialState, updateSwitchStage }) => {
+export const ToggleSwitch: FC<ToggleSwitchProp> = React.memo(({ switchUniqueId, initialState, updateSwitchFunc }) => {
+//export const ToggleSwitch: FC<ToggleSwitchProp> = ({ switchUniqueId, initialState, updateSwitchFunc }) => {
   const [switchState, setSwitchState] = useState(initialState);
 
   const onSwitchChanged = (isDone: boolean) => {
-    updateSwitchStage(switchUniqueId, isDone);
+    updateSwitchFunc(switchUniqueId, isDone);
     setSwitchState(isDone);
   };
 
