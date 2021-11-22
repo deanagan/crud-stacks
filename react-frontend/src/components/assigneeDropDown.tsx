@@ -40,14 +40,16 @@ export const AssigneeDropDown: FC<AssigneeDropDownProp> = React.memo(({ assignee
     setUserEntries(users.map(user => ({ uniqueId: user.uniqueId, name: fullName(user) }) as Entry));
   }, [users]);
 
+  const onSelectHandler = (entry: Entry): void => {
+    const entryGuidString = entry.uniqueId?.toString() ?? emptyGuid;
+    updateTodoAssignee(todoUniqueId, entryGuidString);
+  }
+
   return (
     <Dropdown
       currentEntry={assignee}
       possibleEntries={userEntries}
-      onSelect={(entry: Entry): void => {
-        const entryGuidString = entry.uniqueId?.toString() ?? emptyGuid;
-        updateTodoAssignee(todoUniqueId, entryGuidString);
-      }}
+      onSelect={onSelectHandler}
     />
   );
 });
