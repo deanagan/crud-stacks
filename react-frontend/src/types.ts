@@ -26,6 +26,12 @@ export interface User {
     email: string;
 }
 
+export interface AuthState {
+    readonly loading: boolean;
+    readonly isLoggedIn: boolean;
+    readonly errors?: string;
+}
+
 export interface TodoState {
     readonly loading: boolean;
     readonly todos: Todo[];

@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import { ViewBox } from '../design-system/atoms';
 import { RoutesWrapper } from '../routes';
 import { NavBar } from '../components';
+import { useSelector } from 'react-redux';
+import { State } from '../store';
 
 const Wrapper = styled(ViewBox)`
     flex-direction: column;
@@ -14,10 +16,12 @@ const Wrapper = styled(ViewBox)`
 `;
 
 export const DefaultLayout: React.FC = () => {
+   const { isLoggedIn } = useSelector((state: State) => state.auth);
+
     return (
         <Wrapper>
             <NavBar />
-            <RoutesWrapper />
+            <RoutesWrapper isLoggedIn = {isLoggedIn}/>
         </Wrapper>
     );
 };
