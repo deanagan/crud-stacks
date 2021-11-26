@@ -16,12 +16,13 @@ const Wrapper = styled(ViewBox)`
 `;
 
 export const DefaultLayout: React.FC = () => {
-   const { isLoggedIn } = useSelector((state: State) => state.auth);
+    // TODO: Hook up
+   // const { isLoggedIn } = useSelector((state: State) => state.auth);
 
     return (
         <Wrapper>
             <NavBar />
-            <RoutesWrapper isLoggedIn = {isLoggedIn}/>
+            <RoutesWrapper isLoggedIn/>
         </Wrapper>
     );
 };
