@@ -1,3 +1,4 @@
+import { AuthForm } from '../../types';
 import { AuthActionTypes } from '../action-types/authActionTypes';
 
 
@@ -6,5 +7,9 @@ interface GetAuthAction {
     isLoggedIn: boolean;
 }
 
+interface LogInAction {
+    type: AuthActionTypes.LOG_IN;
+    authForm: AuthForm;
+}
 
-export type AuthAction = GetAuthAction;
+export type AuthAction = GetAuthAction | LogInAction;

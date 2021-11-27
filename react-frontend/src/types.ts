@@ -26,6 +26,11 @@ export interface User {
     email: string;
 }
 
+export interface AuthForm {
+    email: string;
+    password: string;
+}
+
 export interface AuthState {
     readonly loading: boolean;
     readonly isLoggedIn: boolean;
