@@ -11,7 +11,7 @@ const Wrapper = styled(ViewBox)`
 export const Login = () => {
     return (
         <Wrapper w={60} h={60}>
-            <AuthForm />
+            <AuthForm isLoginForm/>
         </Wrapper>
     );
 };

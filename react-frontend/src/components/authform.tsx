@@ -1,5 +1,9 @@
-import { FC, useState } from "react"
+import { EventHandler, FC, useState } from "react"
 import styled from "styled-components";
+
+const Button = styled.button`
+
+`;
 
 const Section = styled.section`
   display: inline-block;
@@ -25,15 +29,32 @@ const FormEntryInput = styled.input`
   display: inline-block;
 `;
 
-export const AuthForm: FC = () => {
+interface AuthFormProp {
+  isLoginForm: boolean;
+}
+
+interface FormElements extends HTMLFormControlsCollection {
+  usernameInput: HTMLInputElement
+}
+
+interface AuthFormElement extends HTMLFormElement {
+  readonly elements: FormElements
+}
+
+export const AuthForm: FC<AuthFormProp> = ({isLoginForm}) => {
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [isLogin, setIsLogin] = useState(true);
 
+    const onSubmitHandler = (e:  React.FormEvent<AuthFormElement>) => {
+      e.preventDefault();
+      console.log("Log me in!");
+    };
+
     return (
         <Section>
             <Header>{isLogin ? 'Login' : 'Sign Up'}</Header>
-            <Form>
+            <Form onSubmit={onSubmitHandler}>
                 <FormEntry>
                     <FormEntryLabel htmlFor='email'>Email</FormEntryLabel>
                     <FormEntryInput type='email' id='email' required />
@@ -43,6 +64,7 @@ export const AuthForm: FC = () => {
                     <FormEntryInput type='password' id='password' required />
                 </FormEntry>
             </Form>
+            <Button>{isLogin? "Log In": "Register"}</Button>
         </Section>
     );
 }
