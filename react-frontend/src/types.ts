@@ -31,6 +31,13 @@ export interface AuthForm {
     password: string;
 }
 
+export interface AuthResponse {
+    userName: string;
+    email: string;
+    role: string;
+    token: string;
+}
+
 export interface AuthState {
     readonly loading: boolean;
     readonly isLoggedIn: boolean;
