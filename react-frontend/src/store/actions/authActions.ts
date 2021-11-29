@@ -1,4 +1,4 @@
-import { AuthForm } from '../../types';
+import { AuthResponse } from '../../types';
 import { AuthActionTypes } from '../action-types/authActionTypes';
 
 
@@ -9,7 +9,7 @@ interface GetAuthAction {
 
 interface LogInAction {
     type: AuthActionTypes.LOG_IN;
-    authForm: AuthForm;
+    authResponse: AuthResponse;
 }
 
 export type AuthAction = GetAuthAction | LogInAction;
