@@ -1,5 +1,8 @@
 import { EventHandler, FC, useState } from "react"
+import { useDispatch } from "react-redux";
+import { bindActionCreators } from "redux";
 import styled from "styled-components";
+import { authActionCreators } from "../store";
 
 const Button = styled.button`
 
@@ -34,7 +37,8 @@ interface AuthFormProp {
 }
 
 interface FormElements extends HTMLFormControlsCollection {
-  usernameInput: HTMLInputElement
+  email: HTMLInputElement,
+  password: HTMLInputElement
 }
 
 interface AuthFormElement extends HTMLFormElement {
@@ -45,10 +49,16 @@ export const AuthForm: FC<AuthFormProp> = ({isLoginForm}) => {
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [isLogin, setIsLogin] = useState(true);
+    const dispatch = useDispatch()
+    const { logInUser } = bindActionCreators(authActionCreators, dispatch);
 
-    const onSubmitHandler = (e:  React.FormEvent<AuthFormElement>) => {
-      e.preventDefault();
-      console.log("Log me in!");
+    const onSubmitHandler = (event:  React.FormEvent<AuthFormElement>) => {
+      event.preventDefault();
+      const email = event.currentTarget.elements.email.value;
+      const password = event.currentTarget.elements.password.value;
+      logInUser({
+        email, password
+      });
     };
 
     return (
@@ -63,8 +73,9 @@ export const AuthForm: FC<AuthFormProp> = ({isLoginForm}) => {
                     <FormEntryLabel htmlFor='password'>Password</FormEntryLabel>
                     <FormEntryInput type='password' id='password' required />
                 </FormEntry>
+                <Button>{isLogin? "Log In": "Register"}</Button>
             </Form>
-            <Button>{isLogin? "Log In": "Register"}</Button>
+
         </Section>
     );
 }
