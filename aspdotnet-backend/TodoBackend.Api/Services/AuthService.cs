@@ -1,19 +1,18 @@
 using System;
-using System.Linq;
-using System.Text;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using System.Security.Claims;
+using System.Text;
+using System.Threading.Tasks;
+using System.Web;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using AutoMapper;
+using TodoBackend.Api.Data.Models;
 using TodoBackend.Api.Data.ViewModels;
 using TodoBackend.Api.Interfaces;
-using Microsoft.AspNetCore.Identity;
-using TodoBackend.Api.Data.Models;
-using System.Threading.Tasks;
-using System.Security.Claims;
-using System.Collections.Generic;
-using Microsoft.AspNetCore.WebUtilities;
-using System.Web;
 
 namespace TodoBackend.Api.Services
 {
