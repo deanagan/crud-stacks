@@ -4,19 +4,28 @@ import { AuthState } from "../../types";
 import { Reducer } from "redux";
 
 const initialState: AuthState = {
-    isLoggedIn: false,
     errors: undefined,
     loading: false,
+    currentLoggedInUser: undefined
   }
 
 const reducer: Reducer<AuthState, AuthAction> = (state: AuthState = initialState, action: AuthAction) => {
     switch (action.type) {
-        case AuthActionTypes.IS_LOGGED_ON:
+        case AuthActionTypes.LOG_IN:
             return {
                 ...state,
-                isLoggedOn: action.isLoggedOn
+                currentLoggedInUser: action.currentLoggedInUser
             }
-
+        case AuthActionTypes.LOG_OUT:
+            return {
+                ...state,
+                currentLoggedInUser: {
+                    email: '',
+                    role: '',
+                    token: '',
+                    userName: ''
+                }
+            }
         default:
             return state;
     }

@@ -1,15 +1,16 @@
-import { AuthResponse } from '../../types';
+import { AuthLoggedInUser } from '../../types';
 import { AuthActionTypes } from '../action-types/authActionTypes';
 
 
-interface GetAuthAction {
-    type: AuthActionTypes.IS_LOGGED_ON;
-    isLoggedIn: boolean;
-}
+
 
 interface LogInAction {
     type: AuthActionTypes.LOG_IN;
-    authResponse: AuthResponse;
+    currentLoggedInUser: AuthLoggedInUser;
 }
 
-export type AuthAction = GetAuthAction | LogInAction;
+interface LogOutAction {
+    type: AuthActionTypes.LOG_OUT;
+}
+
+export type AuthAction = LogInAction | LogOutAction;

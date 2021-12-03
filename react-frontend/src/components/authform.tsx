@@ -1,8 +1,9 @@
-import { EventHandler, FC, useState } from "react"
-import { useDispatch } from "react-redux";
+import { EventHandler, FC, useEffect, useState } from "react"
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate  } from "react-router-dom";
 import { bindActionCreators } from "redux";
 import styled from "styled-components";
-import { authActionCreators } from "../store";
+import { State, authActionCreators } from "../store";
 
 const Button = styled.button`
 
@@ -51,6 +52,17 @@ export const AuthForm: FC<AuthFormProp> = ({isLoginForm}) => {
     const [isLogin, setIsLogin] = useState(true);
     const dispatch = useDispatch()
     const { logInUser } = bindActionCreators(authActionCreators, dispatch);
+    const navigate = useNavigate ();
+
+    const { currentLoggedInUser } = useSelector((state: State) => state.auth);
+
+    useEffect(() => {
+      if (currentLoggedInUser?.email === '') {
+        navigate('/login');
+      } else {
+        navigate('/');
+      }
+    }, [currentLoggedInUser?.email, navigate]);
 
     const onSubmitHandler = (event:  React.FormEvent<AuthFormElement>) => {
       event.preventDefault();
@@ -63,6 +75,7 @@ export const AuthForm: FC<AuthFormProp> = ({isLoginForm}) => {
 
     return (
         <Section>
+            <div>{currentLoggedInUser?.email}</div>
             <Header>{isLogin ? 'Login' : 'Sign Up'}</Header>
             <Form onSubmit={onSubmitHandler}>
                 <FormEntry>

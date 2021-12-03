@@ -1,4 +1,4 @@
 export enum AuthActionTypes {
-    IS_LOGGED_ON = "IS_LOGGED_ON",
-    LOG_IN = "LOG_IN"
+    LOG_IN = "LOG_IN",
+    LOG_OUT = "LOG_OUT"
 }

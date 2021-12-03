@@ -31,7 +31,7 @@ export interface AuthForm {
     password: string;
 }
 
-export interface AuthResponse {
+export interface AuthLoggedInUser {
     userName: string;
     email: string;
     role: string;
@@ -40,7 +40,7 @@ export interface AuthResponse {
 
 export interface AuthState {
     readonly loading: boolean;
-    readonly isLoggedIn: boolean;
+    readonly currentLoggedInUser?: AuthLoggedInUser;
     readonly errors?: string;
 }
 
