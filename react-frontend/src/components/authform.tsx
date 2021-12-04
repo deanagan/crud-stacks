@@ -1,4 +1,4 @@
-import { EventHandler, FC, useEffect, useState } from "react"
+import { FC, useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate  } from "react-router-dom";
 import { bindActionCreators } from "redux";
@@ -47,9 +47,6 @@ interface AuthFormElement extends HTMLFormElement {
 }
 
 export const AuthForm: FC<AuthFormProp> = ({isLoginForm}) => {
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [isLogin, setIsLogin] = useState(true);
     const dispatch = useDispatch()
     const { logInUser } = bindActionCreators(authActionCreators, dispatch);
     const navigate = useNavigate ();
@@ -76,7 +73,7 @@ export const AuthForm: FC<AuthFormProp> = ({isLoginForm}) => {
     return (
         <Section>
             <div>{currentLoggedInUser?.email}</div>
-            <Header>{isLogin ? 'Login' : 'Sign Up'}</Header>
+            <Header>{isLoginForm ? 'Login' : 'Sign Up'}</Header>
             <Form onSubmit={onSubmitHandler}>
                 <FormEntry>
                     <FormEntryLabel htmlFor='email'>Email</FormEntryLabel>
@@ -86,7 +83,7 @@ export const AuthForm: FC<AuthFormProp> = ({isLoginForm}) => {
                     <FormEntryLabel htmlFor='password'>Password</FormEntryLabel>
                     <FormEntryInput type='password' id='password' required />
                 </FormEntry>
-                <Button>{isLogin? "Log In": "Register"}</Button>
+                <Button>{isLoginForm ? "Log In": "Register"}</Button>
             </Form>
 
         </Section>
