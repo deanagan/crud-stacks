@@ -3,34 +3,61 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate  } from "react-router-dom";
 import { bindActionCreators } from "redux";
 import styled from "styled-components";
+import { ButtonWrapper } from "../design-system/atoms";
 import { State, authActionCreators } from "../store";
 
-const Button = styled.button`
 
+const LoginButton = styled(ButtonWrapper)`
+  &&& {
+    float: none;
+    margin-left: 2rem;
+    width: 30%;
+  }
 `;
 
 const Section = styled.section`
-  display: inline-block;
+  height: 100%;
+  display: block;
 `;
 
 const Header = styled.h1`
-  display: inline-block;
+  margin-left: 2rem;
+  color: silver;
 `;
 
 const Form = styled.form`
-  display: inline-block;
+  width: 80%;
 `;
 
 const FormEntry = styled.div`
-  display: inline-block;
+  /* display: inline-block; */
 `;
 
 const FormEntryLabel = styled.label`
-  display: inline-block;
+  /* display: inline-block; */
+  margin-bottom: 10px;
+  margin-left: 2rem;
+  width: 80px;
+  color: silver;
 `;
 
 const FormEntryInput = styled.input`
-  display: inline-block;
+  width: 100%;
+  padding: 11px 13px;
+  background: #f9f9fa;
+  margin-bottom: 0.9rem;
+  margin-top: 0.2rem;
+  margin-left: 2rem;
+  border-radius: 4px;
+  outline: 0;
+  border: 1px solid rgba(245, 245, 245, 0.7);
+  font-size: 14px;
+  transition: all 0.3s ease-out;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(0, 0, 0, 0.1);
+  :focus,
+  :hover {
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.15), 0 1px 5px rgba(0, 0, 0, 0.1);
+  }
 `;
 
 interface AuthFormProp {
@@ -72,7 +99,6 @@ export const AuthForm: FC<AuthFormProp> = ({isLoginForm}) => {
 
     return (
         <Section>
-            <div>{currentLoggedInUser?.email}</div>
             <Header>{isLoginForm ? 'Login' : 'Sign Up'}</Header>
             <Form onSubmit={onSubmitHandler}>
                 <FormEntry>
@@ -83,9 +109,8 @@ export const AuthForm: FC<AuthFormProp> = ({isLoginForm}) => {
                     <FormEntryLabel htmlFor='password'>Password</FormEntryLabel>
                     <FormEntryInput type='password' id='password' required />
                 </FormEntry>
-                <Button>{isLoginForm ? "Log In": "Register"}</Button>
+                <LoginButton>{isLoginForm ? "Log In": "Register"}</LoginButton>
             </Form>
-
         </Section>
     );
 }

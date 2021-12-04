@@ -16,6 +16,7 @@ const Wrapper = styled(ViewBox)`
   justify-content: center;
   background-color: ${({ theme }) => theme.Colors.white};
   margin-top: 55px;
+  align-items: center;
 `;
 
 export const Home = () => {
@@ -54,7 +55,7 @@ export const Home = () => {
 
   const addEntryForm = <AddEntryForm {...addEntryFormProp} />;
   return (
-    <Wrapper w={80} h={100}>
+    <Wrapper w={90}>
       <StatCard totalTasks={todos.length} totalIncompleteTasks={todos.filter((todo) => !todo.isDone).length} />
       <TodoTable todos={todos} />
       <Button onClick={() => setShowAddModal(true)}>Add Todo</Button>

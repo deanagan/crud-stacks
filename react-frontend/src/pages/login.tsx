@@ -8,7 +8,7 @@ import { bindActionCreators } from 'redux';
 
 const Wrapper = styled(ViewBox)`
     justify-content: center;
-    background-color: ${({ theme }) => theme.Colors.red };
+    background-color: ${({ theme }) => theme.Colors.blue };
     margin-top: 55px;
 `;
 
@@ -22,7 +22,7 @@ export const Login = () => {
     }, []);
 
     return (
-        <Wrapper w={60} h={60}>
+        <Wrapper w={40}>
             <AuthForm isLoginForm/>
         </Wrapper>
     );
