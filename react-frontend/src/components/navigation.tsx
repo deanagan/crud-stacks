@@ -37,6 +37,7 @@ export const NavBarWrapper = styled.nav`
 `;
 
 export const NavBar: React.FC = () => {
+
   return (
     <ViewBox>
       <NavBarWrapper>

@@ -5,6 +5,7 @@ import { useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { authActionCreators } from '../store';
 import { bindActionCreators } from 'redux';
+import { StorageTypes } from '../constants';
 
 const Wrapper = styled(ViewBox)`
     justify-content: center;
@@ -19,6 +20,7 @@ export const Login = () => {
 
     useEffect(() => {
         logOutUserRef.current();
+        window.localStorage.removeItem(StorageTypes.TOKEN);
     }, []);
 
     return (

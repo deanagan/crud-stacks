@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate  } from "react-router-dom";
 import { bindActionCreators } from "redux";
 import styled from "styled-components";
+import { StorageTypes } from "../constants";
 import { ButtonWrapper } from "../design-system/atoms";
 import { State, authActionCreators } from "../store";
 
@@ -81,12 +82,13 @@ export const AuthForm: FC<AuthFormProp> = ({isLoginForm}) => {
     const { currentLoggedInUser } = useSelector((state: State) => state.auth);
 
     useEffect(() => {
-      if (currentLoggedInUser?.email === '') {
+      if (currentLoggedInUser?.token === '') {
         navigate('/login');
       } else {
+        window.localStorage.setItem(StorageTypes.TOKEN, currentLoggedInUser?.token || '');
         navigate('/');
       }
-    }, [currentLoggedInUser?.email, navigate]);
+    }, [currentLoggedInUser?.token, navigate]);
 
     const onSubmitHandler = (event:  React.FormEvent<AuthFormElement>) => {
       event.preventDefault();
