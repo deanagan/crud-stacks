@@ -10,7 +10,7 @@ import { StorageTypes } from '../constants';
 const Wrapper = styled(ViewBox)`
     justify-content: center;
     background-color: ${({ theme }) => theme.Colors.blue };
-    margin-top: 55px;
+    margin-top: 250px;
 `;
 
 export const Login = () => {
