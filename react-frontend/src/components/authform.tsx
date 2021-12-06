@@ -1,4 +1,4 @@
-import { FC, useEffect } from "react"
+import { FC, useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate  } from "react-router-dom";
 import { bindActionCreators } from "redux";
@@ -17,7 +17,7 @@ const LoginButton = styled(ButtonWrapper)`
 `;
 
 const Section = styled.section`
-  height: 100%;
+  height: 19rem;
   display: block;
 `;
 
@@ -61,6 +61,12 @@ const FormEntryInput = styled.input`
   }
 `;
 
+const ErrorMessage = styled.div`
+  margin-left: 2rem;
+  margin-top: 0.1rem;
+  color: red;
+`;
+
 interface AuthFormProp {
   isLoginForm: boolean;
 }
@@ -77,9 +83,11 @@ interface AuthFormElement extends HTMLFormElement {
 export const AuthForm: FC<AuthFormProp> = ({isLoginForm}) => {
     const dispatch = useDispatch()
     const { logInUser } = bindActionCreators(authActionCreators, dispatch);
+
     const navigate = useNavigate ();
 
-    const { currentLoggedInUser } = useSelector((state: State) => state.auth);
+    const { currentLoggedInUser, error } = useSelector((state: State) => state.auth);
+    // const errors = useState(() => getAuthError());
 
     useEffect(() => {
       if (currentLoggedInUser?.token === '') {
@@ -113,6 +121,7 @@ export const AuthForm: FC<AuthFormProp> = ({isLoginForm}) => {
                 </FormEntry>
                 <LoginButton>{isLoginForm ? "Log In": "Register"}</LoginButton>
             </Form>
+            {error ? <ErrorMessage>*{error}</ErrorMessage> : undefined}
         </Section>
     );
 }

@@ -13,4 +13,13 @@ interface LogOutAction {
     type: AuthActionTypes.LOG_OUT;
 }
 
-export type AuthAction = LogInAction | LogOutAction;
+interface SetErrorAction {
+    type: AuthActionTypes.SET_ERROR;
+    error: string;
+}
+
+interface GetErrorAction {
+    type: AuthActionTypes.GET_ERROR;
+}
+
+export type AuthAction = LogInAction | LogOutAction | SetErrorAction | GetErrorAction;

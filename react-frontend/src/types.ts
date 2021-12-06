@@ -41,7 +41,7 @@ export interface AuthLoggedInUser {
 export interface AuthState {
     readonly loading: boolean;
     readonly currentLoggedInUser?: AuthLoggedInUser;
-    readonly errors?: string;
+    readonly error?: string;
 }
 
 export interface TodoState {

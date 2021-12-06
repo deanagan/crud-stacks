@@ -27,13 +27,20 @@ export const logInUser = (authForm: AuthForm) => {
             token: response.token
           }
         });
+
+        dispatch({
+          type: AuthActionTypes.SET_ERROR,
+          error: ''
+        })
       })
-      .catch((data) => {
-        console.log(data);
+      .catch(() => {
+        dispatch({
+          type: AuthActionTypes.SET_ERROR,
+          error: 'Invalid Credentials'
+        });
       });
   };
 };
-
 
 
 export const logOutUser = () => {
@@ -46,6 +53,14 @@ export const logOutUser = () => {
         role: '',
         token: '',
       }
+    });
+  };
+};
+
+export const getAuthError = () => {
+  return (dispatch: Dispatch<AuthAction>) => {
+    dispatch({
+      type: AuthActionTypes.GET_ERROR
     });
   };
 };
