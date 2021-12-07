@@ -67,7 +67,7 @@ const ErrorMessage = styled.div`
   color: red;
 `;
 
-interface AuthFormProp {
+interface LoginFormProp {
   isLoginForm: boolean;
 }
 
@@ -76,18 +76,17 @@ interface FormElements extends HTMLFormControlsCollection {
   password: HTMLInputElement
 }
 
-interface AuthFormElement extends HTMLFormElement {
+interface LoginFormElement extends HTMLFormElement {
   readonly elements: FormElements
 }
 
-export const AuthForm: FC<AuthFormProp> = ({isLoginForm}) => {
+export const LoginForm: FC<LoginFormProp> = ({isLoginForm}) => {
     const dispatch = useDispatch()
     const { logInUser } = bindActionCreators(authActionCreators, dispatch);
 
     const navigate = useNavigate ();
 
     const { currentLoggedInUser, error } = useSelector((state: State) => state.auth);
-    // const errors = useState(() => getAuthError());
 
     useEffect(() => {
       if (currentLoggedInUser?.token === '') {
@@ -98,7 +97,7 @@ export const AuthForm: FC<AuthFormProp> = ({isLoginForm}) => {
       }
     }, [currentLoggedInUser?.token, navigate]);
 
-    const onSubmitHandler = (event:  React.FormEvent<AuthFormElement>) => {
+    const onSubmitHandler = (event:  React.FormEvent<LoginFormElement>) => {
       event.preventDefault();
       const email = event.currentTarget.elements.email.value;
       const password = event.currentTarget.elements.password.value;

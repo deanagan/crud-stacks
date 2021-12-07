@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import {ViewBox} from '../design-system/atoms';
-import { AuthForm } from '../components';
+import { LoginForm } from '../components';
 import { useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { authActionCreators } from '../store';
@@ -25,7 +25,7 @@ export const Login = () => {
 
     return (
         <Wrapper w={40}>
-            <AuthForm isLoginForm/>
+            <LoginForm isLoginForm/>
         </Wrapper>
     );
 };

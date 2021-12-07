@@ -3,18 +3,18 @@ import { Dispatch } from "redux";
 import { HttpClient } from "../action-apis/commonActionApi";
 import { apiVersion, server } from "../../Appsettings";
 import { AuthAction } from "../actions/authActions";
-import { AuthForm, AuthLoggedInUser } from "../../types";
+import { LoginForm, AuthLoggedInUser } from "../../types";
 
 const backendBaseUrl = server;
 const backendType = "api";
 
-export const logInUser = (authForm: AuthForm) => {
+export const logInUser = (loginForm: LoginForm) => {
   return (dispatch: Dispatch<AuthAction>) => {
     new HttpClient()
-      .post<AuthLoggedInUser | AuthForm>({
+      .post<AuthLoggedInUser | LoginForm>({
         url: `${backendBaseUrl}/${apiVersion}/${backendType}/Auth/login`,
         requiresToken: false,
-        payload: authForm
+        payload: loginForm
       })
       .then((data) => {
         const response = data as AuthLoggedInUser;
