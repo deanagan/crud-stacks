@@ -19,7 +19,7 @@ export const DefaultLayout: React.FC = () => {
   const { currentLoggedInUser } = useSelector((state: State) => state.auth);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   useEffect(() => {
-    setIsLoggedIn(currentLoggedInUser?.email !== '');
+    setIsLoggedIn(!!currentLoggedInUser?.email);
   }, [currentLoggedInUser?.email]);
 
   return (
@@ -27,7 +27,7 @@ export const DefaultLayout: React.FC = () => {
       {isLoggedIn ? (
         <NavBar />
       ) : null}
-      <RoutesWrapper isLoggedIn={currentLoggedInUser?.email !== ""} />
+      <RoutesWrapper isLoggedIn={isLoggedIn} />
     </Wrapper>
   );
 };
