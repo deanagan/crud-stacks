@@ -31,6 +31,15 @@ export interface LoginForm {
     password: string;
 }
 
+export interface SignUpForm {
+    userName: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    password: string;
+    roleUniqueId: uuidv4Type;
+}
+
 export interface AuthLoggedInUser {
     userName: string;
     email: string;
