@@ -3,7 +3,7 @@ import { Dispatch } from "redux";
 import { HttpClient } from "../action-apis/commonActionApi";
 import { apiVersion, server } from "../../Appsettings";
 import { AuthAction } from "../actions/authActions";
-import { LoginForm, AuthLoggedInUser } from "../../types";
+import { LoginForm, AuthLoggedInUser, SignUpForm } from "../../types";
 
 const backendBaseUrl = server;
 const backendType = "api";
@@ -62,5 +62,39 @@ export const getAuthError = () => {
     dispatch({
       type: AuthActionTypes.GET_ERROR
     });
+  };
+};
+
+export const signUpUser = (signUpForm: SignUpForm) => {
+  return (dispatch: Dispatch<AuthAction>) => {
+    new HttpClient()
+      .post<AuthLoggedInUser | SignUpForm>({
+        url: `${backendBaseUrl}/${apiVersion}/${backendType}/Auth/login`,
+        requiresToken: false,
+        payload: SignUpForm
+      })
+      .then((data) => {
+        const response = data as AuthLoggedInUser;
+        dispatch({
+          type: AuthActionTypes.LOG_IN,
+          currentLoggedInUser: {
+            userName: response.userName,
+            email: response.email,
+            role: response.role,
+            token: response.token
+          }
+        });
+
+        dispatch({
+          type: AuthActionTypes.SET_ERROR,
+          error: ''
+        })
+      })
+      .catch(() => {
+        dispatch({
+          type: AuthActionTypes.SET_ERROR,
+          error: 'Invalid Credentials'
+        });
+      });
   };
 };
