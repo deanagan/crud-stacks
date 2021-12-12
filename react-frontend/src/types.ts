@@ -26,7 +26,7 @@ export interface User {
     email: string;
 }
 
-export interface LoginForm {
+export interface LoginEntryForm {
     email: string;
     password: string;
 }

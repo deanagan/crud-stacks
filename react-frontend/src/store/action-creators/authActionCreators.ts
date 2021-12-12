@@ -3,15 +3,15 @@ import { Dispatch } from "redux";
 import { HttpClient } from "../action-apis/commonActionApi";
 import { apiVersion, server } from "../../Appsettings";
 import { AuthAction } from "../actions/authActions";
-import { LoginForm, AuthLoggedInUser, SignUpForm } from "../../types";
+import { LoginEntryForm, AuthLoggedInUser, SignUpForm } from "../../types";
 
 const backendBaseUrl = server;
 const backendType = "api";
 
-export const logInUser = (loginForm: LoginForm) => {
+export const logInUser = (loginForm: LoginEntryForm) => {
   return (dispatch: Dispatch<AuthAction>) => {
     new HttpClient()
-      .post<AuthLoggedInUser | LoginForm>({
+      .post<AuthLoggedInUser | LoginEntryForm>({
         url: `${backendBaseUrl}/${apiVersion}/${backendType}/Auth/login`,
         requiresToken: false,
         payload: loginForm
@@ -71,7 +71,7 @@ export const signUpUser = (signUpForm: SignUpForm) => {
       .post<AuthLoggedInUser | SignUpForm>({
         url: `${backendBaseUrl}/${apiVersion}/${backendType}/Auth/login`,
         requiresToken: false,
-        payload: SignUpForm
+        payload: signUpForm
       })
       .then((data) => {
         const response = data as AuthLoggedInUser;
