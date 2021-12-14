@@ -50,6 +50,7 @@ export interface AuthLoggedInUser {
 export interface AuthState {
     readonly loading: boolean;
     readonly currentLoggedInUser?: AuthLoggedInUser;
+    readonly loggedIn: boolean;
     readonly error?: string;
 }
 

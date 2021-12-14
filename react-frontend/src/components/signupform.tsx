@@ -1,11 +1,10 @@
 import { FC, useEffect } from "react"
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 import { useNavigate  } from "react-router-dom";
-import { bindActionCreators } from "redux";
 import styled from "styled-components";
-import { StorageTypes } from "../constants";
 import { ButtonWrapper } from "../design-system/atoms";
-import { State, authActionCreators } from "../store";
+import { State } from "../store";
 
 
 const SignUpButton = styled(ButtonWrapper)`
@@ -81,35 +80,40 @@ interface SignUpFormElement extends HTMLFormElement {
 }
 
 export const SignUpForm: FC<SignUpFormProp> = ({isSignUpForm}) => {
-    const dispatch = useDispatch()
-    const { signUpUser } = bindActionCreators(authActionCreators, dispatch);
+    // const dispatch = useDispatch()
+    // const { signUpUser } = bindActionCreators(authActionCreators, dispatch);
 
     const navigate = useNavigate ();
 
     const { currentLoggedInUser, error } = useSelector((state: State) => state.auth);
 
     useEffect(() => {
-      if (currentLoggedInUser?.token === '') {
-        navigate('/signup');
-      } else {
-        window.localStorage.setItem(StorageTypes.TOKEN, currentLoggedInUser?.token || '');
-        navigate('/');
-      }
+      // if (currentLoggedInUser?.token === '') {
+      //   navigate('/signup');
+      // } else {
+      //   window.localStorage.setItem(StorageTypes.TOKEN, currentLoggedInUser?.token || '');
+      //   navigate('/');
+      // }
     }, [currentLoggedInUser?.token, navigate]);
 
     const onSubmitHandler = (event:  React.FormEvent<SignUpFormElement>) => {
       event.preventDefault();
-      const email = event.currentTarget.elements.email.value;
-      const password = event.currentTarget.elements.password.value;
-      signUpUser({
-        email, password
-      });
+      // const email = event.currentTarget.elements.email.value;
+      // const password = event.currentTarget.elements.password.value;
     };
 
     return (
         <Section>
             <Header>{isSignUpForm ? 'SignUp' : 'Sign Up'}</Header>
             <Form onSubmit={onSubmitHandler}>
+                <FormEntry>
+                    <FormEntryLabel htmlFor='firstName'>First Name</FormEntryLabel>
+                    <FormEntryInput id='first-name' required />
+                </FormEntry>
+                <FormEntry>
+                    <FormEntryLabel htmlFor='lastName'>Last Name</FormEntryLabel>
+                    <FormEntryInput id='last-name' required />
+                </FormEntry>
                 <FormEntry>
                     <FormEntryLabel htmlFor='email'>Email</FormEntryLabel>
                     <FormEntryInput type='email' id='email' required />
@@ -118,7 +122,12 @@ export const SignUpForm: FC<SignUpFormProp> = ({isSignUpForm}) => {
                     <FormEntryLabel htmlFor='password'>Password</FormEntryLabel>
                     <FormEntryInput type='password' id='password' required />
                 </FormEntry>
+                <FormEntry>
+                    <FormEntryLabel htmlFor='confirm-password'>Confirm Password</FormEntryLabel>
+                    <FormEntryInput type='password' id='confirm-password' required />
+                </FormEntry>
                 <SignUpButton>Sign Up</SignUpButton>
+                <span>Have an account? <Link to="/login">Login</Link> instead</span>
             </Form>
             {error ? <ErrorMessage>*{error}</ErrorMessage> : undefined}
         </Section>

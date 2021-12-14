@@ -1,6 +1,6 @@
-import { FC, useEffect } from "react"
+import { FC, useEffect, useRef } from "react"
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate  } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { bindActionCreators } from "redux";
 import styled from "styled-components";
 import { StorageTypes } from "../constants";
@@ -68,7 +68,7 @@ const ErrorMessage = styled.div`
 `;
 
 interface LoginFormProp {
-  isLoginForm: boolean;
+  needsClear?: boolean;
 }
 
 interface FormElements extends HTMLFormControlsCollection {
@@ -80,22 +80,31 @@ interface LoginFormElement extends HTMLFormElement {
   readonly elements: FormElements
 }
 
-export const LoginForm: FC<LoginFormProp> = ({isLoginForm}) => {
+export const LoginForm: FC<LoginFormProp> = ({needsClear=false}) => {
     const dispatch = useDispatch()
-    const { logInUser } = bindActionCreators(authActionCreators, dispatch);
-
+    const { logInUser, logOutUser } = bindActionCreators(authActionCreators, dispatch);
     const navigate = useNavigate ();
+    const submittedRef = useRef(false);
 
     const { currentLoggedInUser, error } = useSelector((state: State) => state.auth);
 
     useEffect(() => {
-      if (currentLoggedInUser?.token === '') {
-        navigate('/login');
-      } else {
-        window.localStorage.setItem(StorageTypes.TOKEN, currentLoggedInUser?.token || '');
-        navigate('/');
+      if (submittedRef.current && currentLoggedInUser?.token) {
+        localStorage.setItem(StorageTypes.TOKEN, currentLoggedInUser?.token || '');
+        localStorage.setItem(StorageTypes.EMAIL, currentLoggedInUser?.email ?? '');
+        navigate('/', {replace: true});
       }
-    }, [currentLoggedInUser?.token, navigate]);
+      submittedRef.current = false;
+    }, [currentLoggedInUser?.token, currentLoggedInUser?.email, navigate]);
+
+    useEffect(() => {
+      if (needsClear) {
+        localStorage.removeItem(StorageTypes.TOKEN);
+        localStorage.removeItem(StorageTypes.EMAIL);
+        logOutUser();
+      }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [needsClear]);
 
     const onSubmitHandler = (event:  React.FormEvent<LoginFormElement>) => {
       event.preventDefault();
@@ -104,11 +113,12 @@ export const LoginForm: FC<LoginFormProp> = ({isLoginForm}) => {
       logInUser({
         email, password
       });
+      submittedRef.current = true;
     };
 
     return (
         <Section>
-            <Header>{isLoginForm ? 'Login' : 'Sign Up'}</Header>
+            <Header>Login</Header>
             <Form onSubmit={onSubmitHandler}>
                 <FormEntry>
                     <FormEntryLabel htmlFor='email'>Email</FormEntryLabel>
@@ -118,7 +128,7 @@ export const LoginForm: FC<LoginFormProp> = ({isLoginForm}) => {
                     <FormEntryLabel htmlFor='password'>Password</FormEntryLabel>
                     <FormEntryInput type='password' id='password' required />
                 </FormEntry>
-                <LoginButton>{isLoginForm ? "Log In": "Register"}</LoginButton>
+                <LoginButton>Log In</LoginButton>
             </Form>
             {error ? <ErrorMessage>*{error}</ErrorMessage> : undefined}
         </Section>
