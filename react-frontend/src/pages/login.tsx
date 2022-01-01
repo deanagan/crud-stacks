@@ -1,11 +1,7 @@
 import styled from 'styled-components';
 import {ViewBox} from '../design-system/atoms';
 import { LoginForm } from '../components';
-import { useEffect, useRef } from 'react';
-import { useDispatch } from 'react-redux';
-import { authActionCreators } from '../store';
-import { bindActionCreators } from 'redux';
-import { StorageTypes } from '../constants';
+import React from 'react';
 
 const Wrapper = styled(ViewBox)`
     justify-content: center;
@@ -14,18 +10,10 @@ const Wrapper = styled(ViewBox)`
 `;
 
 export const Login = () => {
-    const dispatch = useDispatch();
-    const { logOutUser } = bindActionCreators(authActionCreators, dispatch);
-    const logOutUserRef = useRef(logOutUser);
-
-    useEffect(() => {
-        logOutUserRef.current();
-        window.localStorage.removeItem(StorageTypes.TOKEN);
-    }, []);
 
     return (
         <Wrapper w={40}>
-            <LoginForm isLoginForm/>
+            <LoginForm />
         </Wrapper>
     );
 };

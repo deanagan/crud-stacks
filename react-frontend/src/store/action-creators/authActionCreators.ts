@@ -57,6 +57,20 @@ export const logOutUser = () => {
   };
 };
 
+export const setLoggedInUser = (email: string, token: string) => {
+  return (dispatch: Dispatch<AuthAction>) => {
+    dispatch({
+      type: AuthActionTypes.LOG_IN,
+      currentLoggedInUser: {
+        userName: '', // TODO
+        email: email,
+        role: '', // TODO
+        token: token
+      }
+    });
+  };
+};
+
 export const getAuthError = () => {
   return (dispatch: Dispatch<AuthAction>) => {
     dispatch({

@@ -68,7 +68,7 @@ const ErrorMessage = styled.div`
 `;
 
 interface LoginFormProp {
-  needsClear?: boolean;
+  needsClear?: boolean; // TO remove
 }
 
 interface FormElements extends HTMLFormControlsCollection {
@@ -80,9 +80,10 @@ interface LoginFormElement extends HTMLFormElement {
   readonly elements: FormElements
 }
 
-export const LoginForm: FC<LoginFormProp> = ({needsClear=false}) => {
+export const LoginForm: FC<LoginFormProp> = (props) => {
     const dispatch = useDispatch()
     const { logInUser, logOutUser } = bindActionCreators(authActionCreators, dispatch);
+    const logOutUserRef = useRef(logOutUser);
     const navigate = useNavigate ();
     const submittedRef = useRef(false);
 
@@ -98,13 +99,10 @@ export const LoginForm: FC<LoginFormProp> = ({needsClear=false}) => {
     }, [currentLoggedInUser?.token, currentLoggedInUser?.email, navigate]);
 
     useEffect(() => {
-      if (needsClear) {
         localStorage.removeItem(StorageTypes.TOKEN);
         localStorage.removeItem(StorageTypes.EMAIL);
-        logOutUser();
-      }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [needsClear]);
+        logOutUserRef.current();
+    }, []);
 
     const onSubmitHandler = (event:  React.FormEvent<LoginFormElement>) => {
       event.preventDefault();

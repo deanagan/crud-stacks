@@ -22,4 +22,5 @@ interface GetErrorAction {
     type: AuthActionTypes.GET_ERROR;
 }
 
+
 export type AuthAction = LogInAction | LogOutAction | SetErrorAction | GetErrorAction;
