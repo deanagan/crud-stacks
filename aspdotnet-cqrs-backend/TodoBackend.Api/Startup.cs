@@ -26,6 +26,7 @@ using System.Text;
 using Microsoft.AspNetCore.Identity;
 using TodoBackend.Api.Data.Models;
 using TodoBackend.Api.Data.Identity;
+using Serilog;
 
 namespace TodoBackend.Api
 {
@@ -73,7 +74,8 @@ namespace TodoBackend.Api
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(options =>
+            })
+            .AddJwtBearer(options =>
             {
                 options.SaveToken = true;
                 options.TokenValidationParameters = new TokenValidationParameters()
@@ -101,6 +103,12 @@ namespace TodoBackend.Api
             services.AddScoped<ITodoService, TodoService>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddTransient<IEmailService, EmailService>();
+
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .WriteTo.Console()
+                .WriteTo.File("logs/todo_log.txt", rollingInterval: RollingInterval.Day)
+                .CreateLogger();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

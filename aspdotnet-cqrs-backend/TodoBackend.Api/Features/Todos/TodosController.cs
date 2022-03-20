@@ -23,6 +23,23 @@ namespace TodoBackend.Api.Features.Todos
     }
 
     [HttpGet]
-    public async Task<IEnumerable<TodoViewModel>> GetTodos() => await _mediator.Send(new GetTodos.Query());
+    public async Task<IActionResult> GetTodos()
+    {
+        try
+        {
+            var response = await _mediator.Send(new GetTodos.Query());
+
+            if (response == null)
+            {
+                return NoContent();
+            }
+
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
   }
 }
