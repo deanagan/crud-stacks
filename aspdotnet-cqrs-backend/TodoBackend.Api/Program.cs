@@ -7,7 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace aspdotnet_cqrs_backend
+namespace TodoBackend.Api
 {
     public class Program
     {
@@ -21,6 +21,11 @@ namespace aspdotnet_cqrs_backend
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
+                })
+                .ConfigureAppConfiguration((hostingContext, config) =>
+                {
+                    var env = hostingContext.HostingEnvironment.EnvironmentName;
+                    config.AddJsonFile($"appsettings.{env}.json", optional: true, reloadOnChange: true);
                 });
     }
 }
