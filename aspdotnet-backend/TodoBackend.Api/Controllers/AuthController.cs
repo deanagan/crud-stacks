@@ -74,12 +74,11 @@ namespace TodoBackend.Api.Controllers
             try
             {
 
-                var result = await _authService.RegisterUser(registerView);
+                var isRegisteredSuccessfully = await _authService.RegisterUser(registerView);
 
-                if (!result.Succeeded)
+                if (!isRegisteredSuccessfully)
                 {
-                    result.Errors.ToList().ForEach(err => ModelState.AddModelError(err.Code, err.Description));
-                    return BadRequest(ModelState);
+                    return BadRequest();
                 }
 
                 var email = registerView.Email;

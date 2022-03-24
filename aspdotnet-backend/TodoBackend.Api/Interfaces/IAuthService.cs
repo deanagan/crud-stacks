@@ -12,7 +12,7 @@ namespace TodoBackend.Api.Interfaces
         Task<string> RequestRegistrationToken(string email);
         Task<bool> ResetPassword(ResetPasswordViewModel resetPasswordView);
         Task<bool> ConfirmEmail(string token, string email);
-        Task<IdentityResult> RegisterUser(RegisterViewModel registerView);
+        Task<bool> RegisterUser(RegisterViewModel registerView);
         Task<AuthDataViewModel> Login(LoginViewModel loginView);
     }
 

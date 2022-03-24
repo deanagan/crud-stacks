@@ -13,6 +13,7 @@ using AutoMapper;
 using TodoBackend.Api.Data.Models;
 using TodoBackend.Api.Data.ViewModels;
 using TodoBackend.Api.Interfaces;
+using System.Transactions;
 
 namespace TodoBackend.Api.Services
 {
@@ -46,7 +47,7 @@ namespace TodoBackend.Api.Services
             }
         }
 
-        public async Task<IdentityResult> RegisterUser(RegisterViewModel registerView)
+        public async Task<bool> RegisterUser(RegisterViewModel registerView)
         {
             var userView = _mapper.Map<UserViewModel>(registerView);
             var user = _mapper.Map<User>(userView);
@@ -66,14 +67,20 @@ namespace TodoBackend.Api.Services
                 user.Role = availableRoles.Where(ar => ar.UniqueId == user.Role.UniqueId).FirstOrDefault();
             }
 
-            var result = await _userManager.CreateAsync(user, registerView.Password);
-            if (result.Succeeded)
+            var isRegisteredSuccessfully = false;
+            using ( var createUserTransaction = new TransactionScope() )
             {
-                var registeredUser = await _userManager.FindByNameAsync(user.UserName);
-                await _userManager.AddToRoleAsync(registeredUser, registeredUser.Role.Name);
+                var result = await _userManager.CreateAsync(user, registerView.Password);
+                if (result.Succeeded)
+                {
+                    var registeredUser = await _userManager.FindByNameAsync(user.UserName);
+                    await _userManager.AddToRoleAsync(registeredUser, registeredUser.Role.Name);
+                    isRegisteredSuccessfully = result.Succeeded;
+                }
+                createUserTransaction.Complete();
             }
 
-            return result;
+            return isRegisteredSuccessfully;
         }
 
         public async Task<string> RequestRegistrationToken(string email)
