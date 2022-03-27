@@ -1,6 +1,5 @@
 using System;
 
-
 namespace TodoBackend.Api.Data.ViewModels
 {
     public class AssigneeViewModel

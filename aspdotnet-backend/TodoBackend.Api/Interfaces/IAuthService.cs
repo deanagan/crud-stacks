@@ -1,6 +1,5 @@
 using System;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
 using TodoBackend.Api.Data.ViewModels;
 
 namespace TodoBackend.Api.Interfaces
