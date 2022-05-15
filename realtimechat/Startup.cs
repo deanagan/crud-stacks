@@ -4,8 +4,6 @@ namespace TodoBackend.Api
 {
     public class Startup
     {
-        readonly string AllowSpecificOrigins = "_AllowSpecificOrigins";
-
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -17,6 +15,16 @@ namespace TodoBackend.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSignalR();
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAllHeaders", builder =>
+                {
+                    builder.AllowAnyOrigin()
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -28,10 +36,12 @@ namespace TodoBackend.Api
             }
 
             app.UseRouting();
+            app.UseCors("AllowAllHeaders");
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapHub<ChatHub>("/chat");
+                endpoints.MapHub<ChatHub>("/signalr");
             });
         }
     }
