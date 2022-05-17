@@ -12,8 +12,8 @@ namespace RealTimeChat.Hubs
         }
         public async Task JoinRoom(UserConnection userConnection)
         {
-            await Groups.AddToGroupAsync(Context.ConnectionId, userConnection.Room);
-            await Clients.Group(userConnection.Room).SendAsync("ReceiveMessage", _botUser, $"{userConnection.User} has joined {userConnection.Room}");
+            await Groups.AddToGroupAsync(Context.ConnectionId, userConnection.Room ?? "Default");
+            await Clients.Group(userConnection.Room ?? "Default").SendAsync("ReceiveMessage", _botUser, $"{userConnection.Name} has joined {userConnection.Room}");
         }
     }
 }

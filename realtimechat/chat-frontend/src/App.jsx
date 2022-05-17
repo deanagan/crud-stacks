@@ -2,6 +2,7 @@ import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useState } from 'react';
 import Lobby from './components/Lobby';
+import Chat from './components/Chat';
 import { HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
 
 
@@ -9,6 +10,8 @@ const BACKENDURL = "https://localhost:7095/chat";
 
 function App() {
   const [connection, setConnection] = useState();
+  const [messages, setMessages] = useState([]);
+
   const joinRoom = async (name, room) => {
     try {
       const connection = new HubConnectionBuilder()
@@ -17,7 +20,7 @@ function App() {
         .build();
 
       connection.on("ReceiveMessage", (name, message) => {
-        console.log("got: ", message);
+        setMessages(m => [...m, { name, message }]);
       });
 
       await connection.start();
@@ -32,7 +35,10 @@ function App() {
     <div className="App">
       <h2>Chatter Box</h2>
       <hr className='line' />
+      {!connection ?
       <Lobby joinRoom={joinRoom} />
+      : <Chat messages={messages} />
+}
     </div>
   );
 }
