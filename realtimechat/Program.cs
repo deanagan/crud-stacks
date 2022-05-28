@@ -1,4 +1,5 @@
 using RealTimeChat.Hubs;
+using RealTimeChat.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +14,8 @@ builder.Services.AddCors(options =>
                 });
             });
 
+builder.Services.AddSingleton<IDictionary<string, UserConnection>>(opts => new Dictionary<string, UserConnection>());
+
 var app = builder.Build();
 
 app.UseRouting();
@@ -20,7 +23,7 @@ app.UseCors("AllowAllHeaders");
 
 app.UseEndpoints(endpoints =>
 {
-    endpoints.MapHub<ChatHub>("/chat");
+    endpoints.MapHub<AlertHub>("/chat");
 });
 
 app.Run();

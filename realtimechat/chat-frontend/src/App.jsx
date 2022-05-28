@@ -31,13 +31,21 @@ function App() {
     }
   };
 
+  const sendMessage = async (message) => {
+    try {
+      await connection.invoke("SendMessage", message);
+    } catch(e) {
+      console.log(e);
+    }
+  };
+
   return (
     <div className="App">
       <h2>Chatter Box</h2>
       <hr className='line' />
       {!connection ?
       <Lobby joinRoom={joinRoom} />
-      : <Chat messages={messages} />
+      : <Chat messages={messages} sendMessage={sendMessage} />
 }
     </div>
   );

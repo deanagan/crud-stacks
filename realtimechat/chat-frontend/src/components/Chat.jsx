@@ -1,4 +1,6 @@
-function Chat({messages}) {
+import SendMessageForm from "./SendMessageForm";
+
+function Chat({messages, sendMessage}) {
 
     return (
     <div className="chat">
@@ -14,6 +16,7 @@ function Chat({messages}) {
                 </div>
             ))}
         </div>
+        <SendMessageForm sendMessage={sendMessage} />
     </div>
     );
 }

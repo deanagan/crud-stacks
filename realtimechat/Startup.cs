@@ -1,4 +1,5 @@
 using RealTimeChat.Hubs;
+using RealTimeChat.Service;
 
 namespace TodoBackend.Api
 {
@@ -40,8 +41,8 @@ namespace TodoBackend.Api
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapHub<ChatHub>("/chat");
-                endpoints.MapHub<ChatHub>("/signalr");
+                endpoints.MapHub<AlertHub>("/chat");
+                endpoints.MapHub<AlertHub>("/signalr");
             });
         }
     }
