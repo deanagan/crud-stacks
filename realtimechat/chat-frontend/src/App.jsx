@@ -1,6 +1,6 @@
 import "./App.scss";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Lobby from "./components/Lobby";
 import Chat from "./components/Chat";
 import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
@@ -12,6 +12,7 @@ function App() {
   const [connection, setConnection] = useState();
   const [messages, setMessages] = useState([]);
   const [count, setCount] = useState([]);
+  const currentName = useRef('');
 
   const joinRoom = async (name, room) => {
     try {
@@ -21,13 +22,17 @@ function App() {
         .build();
 
       connection.on("ReceiveMessage", (name, message) => {
-        setMessages((m) => [...m, { name, message }]);
+        if (name !== currentName.current) {
+          setMessages((m) => [...m, { name, message }]);
+          setCount((c) => Math.min(9, c + 1));
+        }
       });
 
       await connection.start();
       await connection.invoke("JoinRoom", { name, room });
       setConnection(connection);
-      setCount((c) => Math.min(9, c + 1));
+      currentName.current = name;
+
     } catch (e) {
       console.log(e);
     }
@@ -36,7 +41,6 @@ function App() {
   const sendMessage = async (message) => {
     try {
       await connection.invoke("SendMessage", message);
-      setCount((c) => Math.min(9, c + 1));
     } catch (e) {
       console.log(e);
     }
@@ -52,7 +56,7 @@ function App() {
 
   return (
     <div className="App">
-      <h2>Chatter Box</h2>
+      <h2>Chat</h2>
 
       <hr className="line" />
       {!connection ? (
