@@ -122,3 +122,6 @@ Then using postman, send:
 `http://localhost:8081/hello`
 
 should see: `Hello basic setup!`
+
+
+22. To run, `npm run develop`
